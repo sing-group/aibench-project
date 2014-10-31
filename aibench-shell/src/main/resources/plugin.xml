@@ -1,0 +1,62 @@
+<!--
+
+Copyright 2007 Daniel Gonzalez Peña, Florentino Fernandez Riverola
+
+
+This file is part the AIBench Project. 
+
+AIBench Project is free software: you can redistribute it and/or modify
+it under the terms of the GNU Lesser Public License as published by
+the Free Software Foundation, either version 3 of the License, or
+(at your option) any later version.
+
+AIBench Project is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU Lesser Public License for more details.
+
+You should have received a copy of the GNU Lesser Public License
+along with AIBench Project.  If not, see <http://www.gnu.org/licenses/>.
+-->
+<plugin start="false">
+   <uid>aibench.shell</uid>
+   <name>AIBench Shell</name>
+   <version>0.3</version>
+   <lifecycleclass>es.uvigo.ei.sing.aibench.shell.ShellLifecycle</lifecycleclass>
+
+
+
+	<extensions>
+	  <!--  <extension uid="aibench.core" name="aibench.core.operation-definition" class="es.uvigo.ei.sing.aibench.shell.SampleOperation">
+			<operation-description name="Test operation" path="8@Test" uid= "sing.shell.Test1" type="0"/>
+	    </extension> --> 
+	    
+	    <extension uid="aibench.core" name="aibench.core.transformer-definition">
+			<transformer-description 
+				sourceType="java.lang.String" 
+				destinyType="es.uvigo.ei.sing.aibench.shell.DummyDataType" 
+				transformerClass="es.uvigo.ei.sing.aibench.shell.Transformer"
+				methodName="transform"
+				/>
+	    </extension>
+	    
+	    <!--
+	    <extension uid="aibench.workbench" name="aibench.workbench.view" >
+			<gui-operation  operation="sing.shell.Test1" class="es.uvigo.ei.sing.aibench.shell.SampleGUI"/>
+		</extension>-->
+		
+		
+		<extension uid="aibench.workbench" name="aibench.workbench.view" >
+			<component slotid="bottom" componentid="aibench.shell.shellWindow" name="AIBench Shell" class="es.uvigo.ei.sing.aibench.shell.ShellComponent"/>
+		</extension>
+		
+		
+	</extensions>
+
+		
+
+   <dependencies>
+   		<dependency uid="aibench.core"/>
+		<dependency uid="aibench.workbench"/>
+   </dependencies>
+</plugin>

@@ -1,0 +1,13 @@
+void listenLog(){
+	import org.apache.log4j.Appender;
+	import org.apache.log4j.AppenderSkeleton;
+	import org.apache.log4j.spi.LoggingEvent;
+	import org.apache.log4j.Logger;
+	Appender myApp = new AppenderSkeleton(){
+		protected void append(LoggingEvent arg0){
+				String logString = "["+arg0.getLocationInformation().getClassName()+"] "+arg0.getMessage();
+				print(logString);
+		}
+	};
+	Logger.getRootLogger().addAppender(myApp);
+}

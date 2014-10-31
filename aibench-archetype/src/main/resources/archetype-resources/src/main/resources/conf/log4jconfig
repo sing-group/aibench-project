@@ -1,0 +1,28 @@
+log4j.rootLogger=INFO,textArea,file,stdout
+
+#
+# My TextAreaAppender (build by us)
+#
+log4j.appender.textArea=es.uvigo.ei.aibench.TextAreaAppender
+log4j.appender.textArea.layout=org.apache.log4j.PatternLayout
+# The Text Area is user-oriented, no debug messages!
+log4j.appender.textArea.Threshold=DEBUG
+log4j.appender.textArea.layout.ConversionPattern=[%d{HH:mm:ss}] [%c] %m%n
+#log4j.appender.textArea.layout.ConversionPattern=%-4r [%t] %-5p %c %x - %m%n
+
+#
+# File Appender
+#
+log4j.appender.file=org.apache.log4j.FileAppender
+log4j.appender.file.File=${user.home}/AIBENCH.log
+log4j.appender.file.layout=org.apache.log4j.PatternLayout
+log4j.appender.file.layout.ConversionPattern=[%d{HH:mm:ss,SSS}] [%t] %-5p %c %x - %m%n
+log4j.appender.file.Append=false
+
+
+#
+# ConsoleAppender
+#
+log4j.appender.stdout=org.apache.log4j.ConsoleAppender
+log4j.appender.stdout.layout=org.apache.log4j.PatternLayout
+log4j.appender.stdout.layout.ConversionPattern=[%d{HH:mm:ss,SSS}] [%t] %-5p %c %x - %m%n

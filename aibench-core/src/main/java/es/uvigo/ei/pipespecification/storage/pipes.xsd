@@ -1,0 +1,133 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<schema xmlns="http://www.w3.org/2001/XMLSchema"
+	targetNamespace="http://sing.ei.uvigo.es/antispam/pipes"
+	xmlns:pipes="http://sing.ei.uvigo.es/antispam/pipes"
+	elementFormDefault="qualified">
+
+
+	<complexType name="pipe">
+		<sequence>
+			<element name="arg" minOccurs="0" maxOccurs="unbounded">
+				<complexType>
+					<attribute name="name" type="IDREF"
+						use="required">
+					</attribute>
+				</complexType>
+			</element>
+			<element name="port" minOccurs="0" maxOccurs="unbounded">
+				<complexType>
+					<all>
+						<element name="method_name">
+							<simpleType>
+								<restriction base="string">
+									<pattern value="[A-Za-z]\w*"></pattern>
+								</restriction>
+							</simpleType>
+						</element>
+						<element name="args">
+							<simpleType>
+								<list itemType="pipes:classFormat"></list>
+							</simpleType>
+						</element>
+
+					</all>
+					<attribute name="direction" default="both">
+						<simpleType>
+							<restriction base="string">
+								<enumeration value="both"></enumeration>
+								<enumeration value="input"></enumeration>
+								<enumeration value="output"></enumeration>
+							</restriction>
+						</simpleType>
+					</attribute>
+					<attribute name="result_treatment"
+						default="element">
+						<simpleType>
+							<restriction base="string">
+								<enumeration value="element"></enumeration>
+								<enumeration value="datasource"></enumeration>
+							</restriction>
+						</simpleType>
+					</attribute>
+					<attribute name="result_class"
+						type="pipes:classFormat" default="java.lang.Object">
+					</attribute>
+				</complexType>
+			</element>
+		</sequence>
+		<attribute name="class" type="pipes:classFormat" use="required" />
+	</complexType>
+
+	<simpleType name="classFormat">
+
+		<restriction base="NMTOKEN">
+			<pattern value="([A-Za-z]\w*\.)*(([A-Za-z]\w*))"></pattern>
+		</restriction>
+	</simpleType>
+
+	<complexType name="pipe-content">
+		<sequence>
+			<choice minOccurs="1" maxOccurs="unbounded">
+				<element name="pipe" type="pipes:pipe" />
+				<element ref="pipes:tee" />
+				<element ref="pipes:composited-pipe" />
+				<element name="include" type="pipes:argsRenamer" />
+			</choice>
+		</sequence>
+	</complexType>
+
+	<complexType name="argsRenamer">
+		<sequence>
+			<element name="arg" minOccurs="0" maxOccurs="unbounded">
+				<complexType>
+					<attribute name="name" type="IDREF" use="required" />
+					<attribute name="newName" type="NMTOKEN"
+						use="required" />
+				</complexType>
+			</element>
+		</sequence>
+		<attribute name="file" type="token" use="required" />
+	</complexType>
+
+	<element name="tee" type="pipes:pipe-content" />
+	<element name="parallelizer">
+		<complexType>
+			<sequence>
+				<choice minOccurs="1" maxOccurs="unbounded">
+					<element ref="pipes:tee" />
+					<element ref="pipes:composited-pipe" />
+					<element name="include" type="pipes:argsRenamer" />
+				</choice>
+			</sequence>
+		</complexType>
+	</element>
+	<element name="composited-pipe">
+		<complexType>
+			<sequence>
+				<element name="args" maxOccurs="1" minOccurs="0">
+					<complexType>
+						<sequence>
+							<element name="arg" maxOccurs="unbounded"
+								minOccurs="1">
+								<complexType>
+									<attribute name="name" type="ID"
+										use="required">
+									</attribute>
+									<attribute name="class"
+										type="pipes:classFormat" use="required">
+									</attribute>
+								</complexType>
+							</element>
+						</sequence>
+					</complexType>
+				</element>
+				<choice minOccurs="1" maxOccurs="unbounded">
+					<element name="pipe" type="pipes:pipe" />
+					<element name="tee" type="pipes:pipe-content" />
+					<element name="include" type="pipes:argsRenamer" />
+				</choice>
+			</sequence>
+		</complexType>
+	</element>
+
+</schema>

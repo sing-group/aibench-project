@@ -1,0 +1,101 @@
+<plugin start="true">
+	<uid>sampleplugin</uid>
+	<name>A sample Plugin</name>
+	   <version>1.0</version>
+	
+	   <!-- lifecycle class. Used to detect when the plugin is started. The class should inherit from org.platonos.pluginengine.PluginLifecycle-->
+	   <!-- <lifecycleclass>mylifecycleclass</lifecycleclass> -->
+
+	<!-- DEPENCENCIES: If you need classes from other plugins, you need a dependency! NOTE: If you need classes from plugins that you extend (for example, the core) you don't need to put the dependency. NOTE: This dependency is a sample. If you uncomment the following lines the plugin will fail! -->
+
+	<!--<dependencies>
+		
+		<dependency uid="aibench.workbench"/>
+		<dependency uid="aibench.core"/>
+		
+   		<dependency uid="sing.datatypes"/>
+	</dependencies> -->
+
+
+	<!-- EXTENSIONS: The extensions that this plugin is connected to -->
+	<extensions>
+
+
+		<!-- EXTENSION 1: A sample operation, extending the core. Please note: you can put as many operations as you wish: one extension per operation -->
+
+		<extension uid="aibench.core" name="aibench.core.operation-definition" class="${package}.Sum">
+			<operation-description name="Sum Operation" path="10@Sample/1@SubmenuExample" uid= "${package}.sumoperationid" shortcut="1"/>
+		</extension>
+
+
+	<!-- ========================= EXAMPLES ======================================= -->
+		
+		<!-- CORE EXTENSION SAMPLES: Operations, Datatypes... -->
+
+		<!-- "Transformers". A transformer definition tells AIBench that you have a method to convert a instance from one class to an instance of another class -->
+		<!-- 
+		<extension uid="aibench.core" name="aibench.core.transformer-definition">
+			<transformer-description 
+				sourceType="java.lang.String" 
+				destinyType="es.uvigo.ei.sing.aibench.shell.DummyDataType" 
+				transformerClass="es.uvigo.ei.sing.aibench.shell.Transformer"
+				methodName="transform"
+				/>
+	    </extension>
+	    -->
+
+		<!-- WORKBENCH EXTENSION SAMPLES (GUI related) -->
+		
+		<!-- Workbench extensions (GUI related) -->
+		
+		<!-- "Datatype Viewers". Map a class (datatype) to a viewer (JComponent). Remember: This JComponent must have a constructor taking the datatype instance -->
+		<!--
+		<extension uid="aibench.workbench" name="aibench.workbench.view" >
+			<view name="Sample Datatype View" datatype="sampleplugin.OneClass" class="sampleplugin.OneViewComponent" help="view.sampleplugin.oneclass"/>		
+		</extension>
+		-->
+		
+		<!-- "Custom icons" -->
+		<!--
+		<extension uid="aibench.workbench" name="aibench.workbench.view" >
+			<icon-operation operation="sampleplugin.sumoperationid" icon="icons/oneicon.png"/>
+			<big-icon-operation	operation="sampleplugin.sumoperationid" icon="icons/onebigicon.png"/>
+			<icon-datatype datatype="sampleplugin.OneClass" icon="icons/othericon.png"/> 
+		</extension>
+		-->
+		
+		<!-- "Custom input dialogs". If you don't like the default generated input dialog for some operation, put your own here -->
+		<!--
+		<extension uid="aibench.workbench" name="aibench.workbench.view" >
+			<gui-operation  operation="org.myorg.myoperationid" class="org.myorg.MyComponent"/>
+		</extension>
+		-->
+		
+		<!-- "Custom operation visibility". By default, all operations are displayed everywhere (main menu, popup menu and dialogs). But if you want to change this behaviour, use this option.
+		The current available options are (you can put more than one, separated with spaces)
+		  MENU - the operation can be accessed from the main menu
+		  POPUP - the operation can be accessed from the popup menu showed in the trees
+		  DIALOG - the operation can be accessed from dialogs
+		  TOOLBAR - the operation can be accessed from the toolbar
+		  NONE - the operation is hidden in the GUI  
+		-->
+		<!--
+		<extension uid="aibench.workbench" name="aibench.workbench.view" >
+			<operation-visibility operation="stringeditor.createroot" visibility="MENU POPUP"/>
+		</extension>
+		-->
+		
+		<!-- "Custom components". Components displayed in the main window. You can choose where to place it
+			using the slotid tag, so please see the /conf/template.xml file to know which slots are available
+			The component is any JComponent -->
+		<!--
+		<extension uid="aibench.workbench" name="aibench.workbench.view" >
+			<component slotid="bottom" componentid="aibench.shell.shellWindow" name="AIBench Shell" class="es.uvigo.ei.sing.aibench.shell.ShellComponent"/>
+		</extension>
+		-->
+		
+
+
+	</extensions>
+
+</plugin>

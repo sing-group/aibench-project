@@ -1,0 +1,23 @@
+<archetype xmlns="http://maven.apache.org/plugins/maven-archetype-plugin/archetype/1.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	   xsi:schemaLocation="http://maven.apache.org/plugins/maven-archetype-plugin/archetype/1.0.0 http://maven.apache.org/xsd/archetype-1.0.0.xsd">
+  <id>aibench-archetype</id>
+  <sources>
+    <source>src/main/java/Sum.java</source>
+  </sources>
+  <resources>
+    <resource>src/main/resources/scripts/run.sh</resource>
+    <resource>src/main/resources/conf/core.conf</resource>
+    <resource>src/main/resources/conf/plugins.conf</resource>
+    <resource>src/main/resources/conf/aibench.conf</resource>
+    <resource>src/main/resources/conf/workbench.conf</resource>
+    <resource>src/main/resources/conf/layout.zul</resource>
+    <resource>src/main/resources/conf/jetty.xml</resource>
+    <resource>src/main/resources/conf/template.xml</resource>
+    <resource>src/main/resources/conf/zkworkbench.conf</resource>
+    <resource>src/main/resources/conf/realm.properties</resource>
+    <resource>src/main/resources/conf/log4jconfig</resource>
+    <resource>src/main/resources/conf/resources/logo.png</resource>
+    <resource>src/main/resources/conf/pluginmanager.conf</resource>
+    <resource>src/main/resources/plugin.xml</resource>
+  </resources>
+</archetype>

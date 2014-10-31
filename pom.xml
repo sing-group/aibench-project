@@ -1,0 +1,38 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+	<groupId>es.uvigo.ei.sing</groupId>
+	<artifactId>aibench-project</artifactId>
+	<version>1.0-SNAPSHOT</version>
+	<name>The AIBench Project</name>
+	<url>http://www.aibench.org</url>
+	<packaging>pom</packaging>
+
+	<properties>
+	  <aibench.version>2.5.1-SNAPSHOT</aibench.version>
+	</properties>
+	
+	<distributionManagement>
+		<repository>
+			<id>sing-maven2-repository</id>
+			<url>ftp://sing.ei.uvigo.es</url>
+		</repository>
+	</distributionManagement>
+
+	<repositories>
+		<repository>
+			<id>sing-repository</id>
+			<name>SING repository</name>
+			<url>http://sing.ei.uvigo.es/maven2</url>
+		</repository>
+	</repositories>
+
+	<modules>
+	  <module>aibench-aibench</module>
+	  <module>aibench-core</module>
+	  <module>aibench-workbench</module>
+	  <module>aibench-shell</module>
+	  <module>aibench-archetype</module>
+	</modules>
+	
+</project>

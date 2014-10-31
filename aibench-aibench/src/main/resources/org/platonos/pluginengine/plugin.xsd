@@ -1,0 +1,71 @@
+<?xml version="1.0"?>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" elementFormDefault="qualified">
+
+<xs:element name="plugin">
+	<xs:complexType>
+		<xs:all>
+			<xs:element name="uid" type="xs:string"/>
+			<xs:element name="name" type="xs:string" minOccurs="0"/>
+			<xs:element name="version" type="xs:string" minOccurs="0"/>
+			<xs:element name="lifecycleclass" type="xs:string" minOccurs="0"/>
+			<xs:element name="dependencies" minOccurs="0">
+				<xs:complexType>
+					<xs:sequence>
+						<xs:element name="dependency" minOccurs="0" maxOccurs="unbounded">
+							<xs:complexType>
+								<xs:attribute name="uid" type="xs:string"/>
+								<xs:attribute name="optional" type="xs:string" use="optional"/>
+								<xs:attribute name="version" type="xs:string" use="optional"/>
+								<xs:attribute name="minversion" type="xs:string" use="optional"/>
+								<xs:attribute name="maxversion" type="xs:string" use="optional"/>
+							</xs:complexType>
+						</xs:element>
+					</xs:sequence>
+				</xs:complexType>
+			</xs:element>
+			<xs:element name="extensionpoints" minOccurs="0">
+				<xs:complexType>
+					<xs:sequence>
+						<xs:element name="extensionpoint" minOccurs="0" maxOccurs="unbounded">
+							<xs:complexType>
+								<xs:attribute name="name" type="xs:string"/>
+								<xs:attribute name="interface" type="xs:string" use="optional"/>
+								<xs:attribute name="schema" type="xs:string" use="optional"/>
+							</xs:complexType>
+						</xs:element>
+					</xs:sequence>
+				</xs:complexType>
+			</xs:element>
+			<xs:element name="extensions" minOccurs="0">
+				<xs:complexType>
+					<xs:sequence>
+						<xs:element name="extension" minOccurs="0" maxOccurs="unbounded">
+							<xs:complexType mixed="true">
+								<xs:sequence>
+									<xs:any minOccurs="0" maxOccurs="unbounded" processContents="lax"/>
+								</xs:sequence>
+								<xs:attribute name="uid" type="xs:string"/>
+								<xs:attribute name="name" type="xs:string"/>
+								<xs:attribute name="class" type="xs:string" use="optional"/>
+								<xs:anyAttribute processContents="lax"/>
+							</xs:complexType>
+						</xs:element>
+					</xs:sequence>
+				</xs:complexType>
+			</xs:element>
+			<xs:element name="metadata" minOccurs="0">
+				<xs:complexType mixed="true">
+					<xs:sequence>
+						<xs:any minOccurs="0" maxOccurs="unbounded" processContents="lax"/>
+					</xs:sequence>
+					<xs:anyAttribute processContents="lax"/>
+				</xs:complexType>
+			</xs:element>
+		</xs:all>
+		<xs:attribute name="start" type="xs:boolean" use="optional"/>
+		<xs:attribute name="startOrder" type="xs:nonNegativeInteger" use="optional"/>
+		<xs:attribute name="dependentPluginLookup" type="xs:boolean" use="optional"/>
+	</xs:complexType>
+</xs:element>
+
+</xs:schema>
