@@ -1,7 +1,7 @@
 <plugin start="true">
-	<uid>sampleplugin</uid>
-	<name>A sample Plugin</name>
-	   <version>1.0</version>
+	<uid>${artifactId}</uid>
+	<name>${artifactId}</name>
+	   <version>${version}</version>
 	
 	   <!-- lifecycle class. Used to detect when the plugin is started. The class should inherit from org.platonos.pluginengine.PluginLifecycle-->
 	   <!-- <lifecycleclass>mylifecycleclass</lifecycleclass> -->

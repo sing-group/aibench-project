@@ -21,7 +21,7 @@ along with AIBench Project.  If not, see <http://www.gnu.org/licenses/>.
 <plugin start="true" startOrder="0">
    <uid>aibench.core</uid>
    <name>AIBench Core</name>
-   <version>1.9.3</version>
+   <version>${aibench.version}</version>
    <lifecycleclass>es.uvigo.ei.aibench.core.CoreLifecycle</lifecycleclass>
    <extensionpoints>
 		<extensionpoint name="aibench.core.gui" interface="es.uvigo.ei.aibench.core.IGenericGUI"/>

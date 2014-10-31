@@ -223,6 +223,13 @@
 					<exclude>scripts</exclude>
 				</excludes>
 			</resource>
+			<resource>
+				<directory>src/main/resources</directory>
+				<filtering>true</filtering>
+				<includes>
+					<include>plugin.xml</include>
+				</includes>
+			</resource>
 		</resources>
 		<pluginManagement>
 			<plugins>

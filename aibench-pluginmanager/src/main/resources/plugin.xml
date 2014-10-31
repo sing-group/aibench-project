@@ -21,7 +21,7 @@ along with AIBench Project.  If not, see <http://www.gnu.org/licenses/>.
 <plugin start="false">
    <uid>aibench.pluginmanager</uid>
    <name>AIBench Plugin Manager</name>
-   <version>0.1</version>
+   <version>${aibench.version}</version>
    <!--lifecycleclass>es.uvigo.ei.sing.aibench.pluginmanager.PluginManagerLifecycle</lifecycleclass-->
 
    <dependencies>
