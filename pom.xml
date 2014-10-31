@@ -32,6 +32,7 @@
 	  <module>aibench-core</module>
 	  <module>aibench-workbench</module>
 	  <module>aibench-shell</module>
+	  <module>aibench-pluginmanager</module>
 	  <module>aibench-archetype</module>
 	</modules>
 	
