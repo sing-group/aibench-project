@@ -38,7 +38,7 @@ import es.uvigo.ei.aibench.core.operation.annotation.Port;
 import es.uvigo.ei.aibench.workbench.ParamsReceiver;
 
 public class EnumParamProviderCombo extends AbstractParamProvider {
-	private JComboBox combo = new JComboBox();
+	private JComboBox<Object> combo = new JComboBox<Object>();
 
 	public EnumParamProviderCombo(ParamsReceiver receiver, Port p, Class<?> clazz, Object operationObject){
 		super(receiver, p,clazz, operationObject);
