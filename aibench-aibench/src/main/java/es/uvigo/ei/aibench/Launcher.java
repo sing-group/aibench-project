@@ -118,7 +118,7 @@ public class Launcher {
 
 	public static void main(String[] args) {
 		readConfig();
-		Launcher.pluginsDir = (args.length >= 1) ? args[0] : ".";
+		Launcher.pluginsDir = (args.length >= 1) ? args[0] : "plugins_bin";
 
 		SplashFrame splash = null;
 		if (System.getProperty("aibench.nogui") == null) {
