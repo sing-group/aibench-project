@@ -180,10 +180,6 @@ public class MonitorizeDialog extends JDialog {
 			
 			BeanInfo info = Introspector.getBeanInfo(bean.getClass());
 			this.descriptors = info.getPropertyDescriptors();
-			int descriptorsWithRead = 0;
-			for (PropertyDescriptor desc: descriptors){
-				if (desc.getReadMethod()!=null && !desc.getName().equals("class")) descriptorsWithRead ++;
-			}
 			
 			int i = 0;
 			for (PropertyDescriptor descriptor: this.descriptors ){
