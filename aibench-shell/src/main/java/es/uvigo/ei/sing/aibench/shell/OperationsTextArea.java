@@ -51,10 +51,8 @@ import es.uvigo.ei.aibench.core.history.HistoryListener;
 import es.uvigo.ei.aibench.core.operation.annotation.Port;
 
 public class OperationsTextArea extends JTextArea implements HistoryListener, ClipboardListener{
-	/**
-	 * 
-	 */
 	private static final long serialVersionUID = 1L;
+	
 	static Logger logger = Logger.getLogger("AIBench Shell");
 	public OperationsTextArea(){
 		this.setEditable(true);
@@ -266,10 +264,6 @@ public class OperationsTextArea extends JTextArea implements HistoryListener, Cl
 		for (ParamSpec spec: params){
 			if (spec.getSource()==ParamSource.MIXED){
 				String type = opName+".getIncomingArgumentTypes().get("+(deep==0?(paramCount):global)+")";
-				String typeInternal=type+".getComponentType()";
-				for(int j =0; j<deep; j++){
-					typeInternal+=".getComponentType()";
-				}
 				String arrayName = createParams(opName, paramCount, deep+1, (ParamSpec[])spec.getValue(), operationName);
 				String paramName ="param_"+(paramCounter++);
 				paramNames.add(paramName);
