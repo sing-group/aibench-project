@@ -257,6 +257,7 @@ final class PluginClassLoader extends URLClassLoader {
 
 					String libName = (String)packagesMap.get(packageName);
 					try {
+						@SuppressWarnings("resource")
 						ZipFile parFile = new ZipFile(getURLs()[0].getFile());
 						ZipInputStream libInput = new ZipInputStream(parFile.getInputStream(parFile.getEntry(libName)));
 						ZipEntry entry;
@@ -365,6 +366,7 @@ final class PluginClassLoader extends URLClassLoader {
 	 */
 	private synchronized void buildPackagesMap () {
 		try {
+			@SuppressWarnings("resource")
 			ZipFile zipFile = new ZipFile(plugin.getPluginURL().getFile());
 			Enumeration<? extends ZipEntry> entries = zipFile.entries();
 			while (entries.hasMoreElements()) {
@@ -563,6 +565,7 @@ final class PluginClassLoader extends URLClassLoader {
 		 * @param name The name of the resource within the Plugin archive file to find.
 		 * @return The URL of the resource or null if the resource doens't exist.
 		 */
+		@SuppressWarnings("resource")
 		private URL getParResource (String name) {
 			if (packagesMap.isEmpty()) buildPackagesMap();
 			int index = name.lastIndexOf('/');

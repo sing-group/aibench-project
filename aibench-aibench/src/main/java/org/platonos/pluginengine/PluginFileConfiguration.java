@@ -44,10 +44,6 @@ import org.platonos.pluginengine.logging.LoggerLevel;
  *
  */
 public class PluginFileConfiguration implements IPluginConfiguration {
-	/**
-	 * Serial version.
-	 */
-	private static final long serialVersionUID = 1L;
 	
 	private static final ILogger logger = new DefaultLogger();
 	/**
