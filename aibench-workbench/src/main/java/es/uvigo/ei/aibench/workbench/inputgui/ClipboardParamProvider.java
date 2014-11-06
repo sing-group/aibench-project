@@ -67,7 +67,8 @@ public class ClipboardParamProvider extends AbstractParamProvider {
 	private final static FocusListener FOCUS_LISTENER = new FocusAdapter() {
 		public void focusGained(FocusEvent e) {
 			if (e.getComponent() instanceof JComboBox) {
-				JComboBox combo = (JComboBox) e.getComponent();
+				@SuppressWarnings("unchecked")
+				JComboBox<Object> combo = (JComboBox<Object>) e.getComponent();
 				if (combo.isEditable()) {
 					combo.getEditor().selectAll();
 				}
@@ -79,7 +80,7 @@ public class ClipboardParamProvider extends AbstractParamProvider {
 
 	private JPanel panel = new JPanel(new BorderLayout());
 	private final boolean hasStringConstructor; 
-	private JComboBox combo = null;
+	private JComboBox<Object> combo = null;
 	private JTextField textField = null;
 	private boolean showCreateButton = true;
 	private int countItemsInClipboard = 0;
@@ -164,7 +165,7 @@ public class ClipboardParamProvider extends AbstractParamProvider {
 		return this.hasStringConstructor;
 	}
 	
-	public JComboBox getCombo() {
+	public JComboBox<Object> getCombo() {
 		return this.combo;
 	}
 	
@@ -275,7 +276,7 @@ public class ClipboardParamProvider extends AbstractParamProvider {
 					this.textField.removeKeyListener(this);
 					this.textField = null;
 				}
-				this.combo = new JComboBox();
+				this.combo = new JComboBox<Object>();
 				this.combo.addActionListener(this);
 				this.combo.addFocusListener(ClipboardParamProvider.FOCUS_LISTENER);
 			}
