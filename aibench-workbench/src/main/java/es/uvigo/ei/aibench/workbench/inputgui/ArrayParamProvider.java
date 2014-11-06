@@ -118,7 +118,7 @@ public class ArrayParamProvider extends AbstractParamProvider implements Observe
 		}
 	}
 	
-	private DefaultListModel model = new DefaultListModel();
+	private DefaultListModel<Object> model = new DefaultListModel<Object>();
 	private final JPanel panel = new JPanel(new BorderLayout());
 	private final JPanel newArrayPanel = new JPanel(new BorderLayout());
 	private final JPanel arraySelector = new JPanel();
@@ -153,7 +153,7 @@ public class ArrayParamProvider extends AbstractParamProvider implements Observe
 	private void initNewArrayComponent() {
 		this.newArrayPanel.removeAll();
 		
-		final JList itemsList = new JList(this.model);
+		final JList<Object> itemsList = new JList<Object>(this.model);
 
 		JPanel upper = new JPanel(new BorderLayout()); // here will be placed
 														// the component and the
@@ -171,7 +171,7 @@ public class ArrayParamProvider extends AbstractParamProvider implements Observe
 			 * @see java.awt.event.ActionListener#actionPerformed(java.awt.event.ActionEvent)
 			 */
 			public void actionPerformed(ActionEvent e) {
-				for (Object value : itemsList.getSelectedValues()) {
+				for (Object value : itemsList.getSelectedValuesList()) {
 					model.removeElement(value);
 				}
 
