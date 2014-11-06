@@ -9,7 +9,7 @@
 	<packaging>pom</packaging>
 
 	<properties>
-	  <aibench.version>2.5.1-SNAPSHOT</aibench.version>
+	  <aibench.version>2.5.2-SNAPSHOT</aibench.version>
 	</properties>
 	
 	<distributionManagement>
