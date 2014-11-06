@@ -201,8 +201,9 @@ public class ParamSpec {
 			
 			// deserialize
 			if (this.unserializedInstance==null){
+				ObjectInputStream ois = null;
 				try {
-					ObjectInputStream ois = new PluginsObjectInputStream(new ByteArrayInputStream(Base64Coder.decode(this.value.toString())));
+					ois = new PluginsObjectInputStream(new ByteArrayInputStream(Base64Coder.decode(this.value.toString())));
 					this.unserializedInstance = ois.readObject();
 				} catch (IOException e) {
 					// TODO Auto-generated catch block
@@ -210,6 +211,13 @@ public class ParamSpec {
 				} catch (ClassNotFoundException e) {
 					// TODO Auto-generated catch block
 					e.printStackTrace();
+				} finally {
+					try {
+						ois.close();
+					} catch (IOException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
 				}
 			}
 			
