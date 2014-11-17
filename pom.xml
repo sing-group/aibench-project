@@ -1,17 +1,16 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>es.uvigo.ei.sing</groupId>
 	<artifactId>aibench-project</artifactId>
-	<version>1.0-SNAPSHOT</version>
+	<version>2.5.3</version><!-- WARNING: change version using 
+			mvn versions:set -DnewVersion=[new_version] in order to
+			change the version in all modules at-once
+		-->
 	<name>The AIBench Project</name>
 	<url>http://www.aibench.org</url>
 	<packaging>pom</packaging>
 
-	<properties>
-	  <aibench.version>2.5.2-SNAPSHOT</aibench.version>
-	</properties>
-	
 	<distributionManagement>
 		<repository>
 			<id>sing-maven2-repository</id>
@@ -34,6 +33,6 @@
 	  <module>aibench-shell</module>
 	  <module>aibench-pluginmanager</module>
 	  <module>aibench-archetype</module>
-	</modules>
+  </modules>
 	
 </project>
