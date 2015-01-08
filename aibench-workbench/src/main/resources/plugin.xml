@@ -21,7 +21,7 @@ along with AIBench Project.  If not, see <http://www.gnu.org/licenses/>.
 <plugin start="false" startOrder="1">
    <uid>aibench.workbench</uid>
    <name>AIBench Workbench</name>
-   <version>${aibench.version}</version>
+   <version>${version}</version>
    <lifecycleclass>es.uvigo.ei.aibench.workbench.Lifecycle</lifecycleclass>
    <dependencies>
       <dependency uid="aibench.core"/>
