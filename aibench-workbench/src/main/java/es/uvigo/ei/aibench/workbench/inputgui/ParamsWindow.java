@@ -52,6 +52,7 @@ import java.util.Observer;
 
 import javax.help.HelpBroker;
 import javax.swing.AbstractAction;
+import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JComponent;
 import javax.swing.JDialog;
@@ -178,15 +179,29 @@ public class  ParamsWindow extends JDialog implements InputGUI {
 					}
 					
 					// Description label
-					JLabel descLabel = new JLabel(incomingPorts.get(i).description());
+					JComponent descriptionComponent = null;
+					String showHelp = Workbench.CONFIG
+							.getProperty("paramswindow.showhelpicon");
+					if (showHelp != null && showHelp.equalsIgnoreCase("true")) {
+						JLabel iconLabel = new JLabel();
+						iconLabel.setIcon(new ImageIcon(getClass().getResource(
+								"/images/dialog-help.png")));
+						iconLabel.setToolTipText(
+								incomingPorts.get(i).description());
+						
+						descriptionComponent = iconLabel;
+					} else {
+						descriptionComponent = new JLabel(incomingPorts.get(i).description());
+					}
+					
 					c.gridx = 2;
 					c.gridy = i + 1;
-					c.anchor = GridBagConstraints.NORTHEAST;
+					c.anchor = GridBagConstraints.CENTER;
 					c.weightx = 0.0f;
 					
-					layout.setConstraints(descLabel, c);
+					layout.setConstraints(descriptionComponent, c);
 					
-					toret.add(descLabel);
+					toret.add(descriptionComponent);
 					this.setResizable(true);
 					i++;					
 				}
