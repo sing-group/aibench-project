@@ -182,7 +182,9 @@ public class  ParamsWindow extends JDialog implements InputGUI {
 					JComponent descriptionComponent = null;
 					String showHelp = Workbench.CONFIG
 							.getProperty("paramswindow.showhelpicon");
-					if (showHelp != null && showHelp.equalsIgnoreCase("true")) {
+					if (showHelp != null && showHelp.equalsIgnoreCase("true")
+                                          && incomingPorts.get(i).description()!=null && 
+                                          incomingPorts.get(i).description().length()>0) {
 						JLabel iconLabel = new JLabel();
 						iconLabel.setIcon(new ImageIcon(getClass().getResource(
 								"/images/dialog-help.png")));
