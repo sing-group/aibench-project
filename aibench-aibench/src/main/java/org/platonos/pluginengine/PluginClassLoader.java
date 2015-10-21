@@ -221,7 +221,18 @@ final class PluginClassLoader extends URLClassLoader {
 			return null;
 		}
 	}
+	
+	/**
+         * Called by the getResource method when it is looking to find a resource in a dependent loader.
+         */
+        private URL getResourceFromDependentLoader (String name) {
+               synchronized (plugin) {}
 
+               URL url = getResourceFromClassPath(name);
+               logger.log(LoggerLevel.FINE, "Found resource in dependent Plugin \"" + plugin + "\": " + name, null);
+               return url;                
+        }
+        
 	/**
 	 * Overrides findClass to handle Plugin archive file lookup.
 	 */
@@ -308,39 +319,61 @@ final class PluginClassLoader extends URLClassLoader {
 	}
 
 	/**
+         * Called by the getResource method to find a resource within a plugin's classpath.
+         */
+	private URL getResourceFromClassPath(final String name) {
+                URL url = findResource(name);
+                
+                if (url == null && plugin.isArchive()) {
+                
+                        url = AccessController.doPrivileged(new PrivilegedAction<URL>() {
+                                public URL run () {
+                                        return ucp.getParResource(name);
+                                }
+                        }, acc);
+                
+                }
+
+                if (url == null) {
+                        if (getParent() != null) {
+                                url = getParent().getResource(name);
+                
+
+                        } else {
+                                url = ClassLoader.getSystemResource(name);
+                        }
+                }
+
+                if (url != null) {
+                        // Make resource access start the plugin.
+                        if (!plugin.start()) {
+                                url = null;
+                                logger.log(LoggerLevel.WARNING, "Unable to start Plugin \"" + plugin + "\". Resource cannot be acquired: "
+                                        + name, null);
+                        }
+                }
+                return url;
+	}
+	
+	/**
 	 * Gets the first resource with the given name or null if it is not found. Looks first in the URLClassPath of the Plugin, if
 	 * the resource is not found then if there is a parent the parent URLClassPath is checked, else the bootstrap URLClassPath is
 	 * used.
 	 * @return The URL of the resource or null if the resource is not found.
 	 */
 	public URL getResource (final String name) {
-		URL url = findResource(name);
-
-		if (url == null && plugin.isArchive()) {
-			url = AccessController.doPrivileged(new PrivilegedAction<URL>() {
-				public URL run () {
-					return ucp.getParResource(name);
-				}
-			}, acc);
-		}
-
-		if (url == null) {
-			if (getParent() != null) {
-				url = getParent().getResource(name);
-			} else {
-				url = ClassLoader.getSystemResource(name);
-			}
-		}
-
-		if (url != null) {
-			// Make resource access start the plugin.
-			if (!plugin.start()) {
-				url = null;
-				logger.log(LoggerLevel.WARNING, "Unable to start Plugin \"" + plugin + "\". Resource cannot be acquired: "
-					+ name, null);
-			}
-		}
-
+		
+		URL url = getResourceFromClassPath(name);
+                
+                if (url == null) {
+                        // The resource is not yet found. Look in dependencies.
+                        for (Dependency dependency:plugin.getDependencies()) {                                
+                                if (!dependency.isResolved()) continue; // Dependency is unresolved.                                
+                                url = dependency.getResolvedToPlugin().pluginClassloader.getResourceFromDependentLoader(name);
+                                
+                                if (url != null) break;
+                        }
+                }
 		return url;
 	}
 
