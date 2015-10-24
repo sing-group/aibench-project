@@ -5,7 +5,7 @@
 	<parent>
 	  <groupId>es.uvigo.ei.sing</groupId>
 	  <artifactId>aibench-project</artifactId>
-	  <version>2.5.4-SNAPSHOT</version><!-- WARNING: change version using 
+	  <version>2.5.4</version><!-- WARNING: change version using 
 			mvn versions:set -DnewVersion=[new_version] on parent project
 		-->
 	  <relativePath>../pom.xml</relativePath>
