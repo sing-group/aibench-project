@@ -34,15 +34,19 @@ import java.awt.Cursor;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
+import javax.swing.AbstractAction;
 import javax.swing.BorderFactory;
 import javax.swing.Icon;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
+import javax.swing.JPopupMenu;
 import javax.swing.JTabbedPane;
 import javax.swing.SwingConstants;
 import javax.swing.border.Border;
+
+import es.uvigo.ei.aibench.workbench.Workbench;
 
 /**
  * @author Miguel Reboiro-Jato
@@ -222,10 +226,75 @@ public class CloseableJTabbedPane extends JTabbedPane {
 				this.addActionListener(new ActionListener() {
 					@Override
 					public void actionPerformed(ActionEvent e) {
-						final int index = CloseableJTabbedPane.this.indexOfTabComponent(CloseTab.this);
-						CloseableJTabbedPane.this.fireTabClosingEvent(index);
+						closeCurrentButtonTab();
 					}
 				});
+				if(mustShowPopupMenu())
+					this.setComponentPopupMenu(new JPopupMenu());
+			}
+	
+			private boolean mustShowPopupMenu() {
+				return Workbench.CONFIG.getProperty("documentviewer.show_close_tabs_menu")!=null 
+						&& Workbench.CONFIG.getProperty("documentviewer.show_close_tabs_menu").equals("true");
+			}
+
+			public JPopupMenu getComponentPopupMenu() {
+				if(mustShowPopupMenu()) {
+			    	JPopupMenu toret = new JPopupMenu();
+			    	toret.add(new AbstractAction("Close all tabs") {
+						private static final long serialVersionUID = 1L;
+			
+						@Override
+						public void actionPerformed(ActionEvent e) {
+							closeAllTabs();
+						}
+					});
+			    	toret.add(new AbstractAction("Close this tab") {
+			    		private static final long serialVersionUID = 1L;
+			    		
+			    		@Override
+			    		public void actionPerformed(ActionEvent e) {
+			    			closeCurrentButtonTab();
+			    		}
+			    	});
+			    	toret.add(new AbstractAction("Close other tabs") {
+			    		private static final long serialVersionUID = 1L;
+			    		
+			    		@Override
+			    		public void actionPerformed(ActionEvent e) {
+			    			closeOtherTabs();
+			    		}
+			    		
+			    		@Override
+			    		public boolean isEnabled() {
+			    			return CloseableJTabbedPane.this.getTabCount() > 1;
+			    		}
+			    	});
+					return toret;
+				} else {
+					return super.getComponentPopupMenu();
+				}
+			};
+			
+		}
+		
+		private void closeAllTabs() {
+			for(int toRemove = CloseableJTabbedPane.this.getTabCount()-1; toRemove >= 0; toRemove-- ) {
+				CloseableJTabbedPane.this.fireTabClosingEvent(toRemove);
+			}
+		}
+		
+		private void closeCurrentButtonTab() {
+			final int index = CloseableJTabbedPane.this.indexOfTabComponent(CloseTab.this);
+			CloseableJTabbedPane.this.fireTabClosingEvent(index);
+		}
+		
+		private void closeOtherTabs() {
+			final int index = CloseableJTabbedPane.this.indexOfTabComponent(CloseTab.this);
+			for(int toRemove = CloseableJTabbedPane.this.getTabCount()-1; toRemove >= 0; toRemove-- ) {
+				if(toRemove != index) {
+					CloseableJTabbedPane.this.fireTabClosingEvent(toRemove);
+				}
 			}
 		}
 	}
