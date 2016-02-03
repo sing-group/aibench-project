@@ -66,6 +66,8 @@ public class FileParamProvider extends AbstractParamProvider {
 	public static final String FILTERS_EXTRAS_ALLOWALL_FILTER= "allowAll";
 	public static final String FILTERS_EXTRAS_SELECTION_MODE = "selectionMode";
 	
+	private JComponent component = null;
+	
 	public void actionPerformed(ActionEvent e) {
 		if (e.getSource() == this.findButton) {
 			this.showFileChooser();
@@ -246,40 +248,42 @@ public class FileParamProvider extends AbstractParamProvider {
 	}
 
 	public JComponent getComponent() {
-		JPanel panel = new JPanel();
-		panel.setLayout(new BorderLayout());
+                if (this.component == null) {
+                  this.component = new JPanel();
+                  this.component.setLayout(new BorderLayout());
+                  
+                  this.field.setPreferredSize(new Dimension(150, field.getPreferredSize().height));
+                  this.findButton.setToolTipText("Browse the local filesystem to select a file");
+                  
+                  this.component.add(this.field, BorderLayout.CENTER);
+                  this.component.add(this.findButton, BorderLayout.EAST);
+                  new  FileDrop( this.field, new FileDrop.Listener(){
+                    public void  filesDropped( java.io.File[] files ){   
+                      if (files.length > 0){
+                        FileParamProvider.this.field.setText(files[0].getPath());
+                        FileParamProvider.this.setChanged();
+                        FileParamProvider.this.notifyObservers();
+                      }
+                    }
+                  });
+                  
+                  this.field.addMouseListener(new MouseAdapter() {
+                          /* (non-Javadoc)
+                          * @see java.awt.event.MouseAdapter#mouseClicked(java.awt.event.MouseEvent)
+                          */
+                          @Override
+                          public void mouseClicked(MouseEvent e) {
+                                  FileParamProvider.this.showFileChooser();
+                                  FileParamProvider.this.setChanged();
+                                  FileParamProvider.this.notifyObservers();
+                          }
+                  });
+                  this.findButton.addActionListener(this);
+		}
 		
-		this.field.setPreferredSize(new Dimension(150, field.getPreferredSize().height));
-		this.findButton.setToolTipText("Browse the local filesystem to select a file");
-		
-		panel.add(this.field, BorderLayout.CENTER);
-		panel.add(this.findButton, BorderLayout.EAST);
-		new  FileDrop( this.field, new FileDrop.Listener(){   
-		  public void  filesDropped( java.io.File[] files ){   
-    	  if (files.length > 0){
-    		  FileParamProvider.this.field.setText(files[0].getPath());
-    		  FileParamProvider.this.setChanged();
-    		  FileParamProvider.this.notifyObservers();
-			}
-          }   
-		}); 
-		this.field.addMouseListener(new MouseAdapter() {
-			/* (non-Javadoc)
-			 * @see java.awt.event.MouseAdapter#mouseClicked(java.awt.event.MouseEvent)
-			 */
-			@Override
-			public void mouseClicked(MouseEvent e) {
-				FileParamProvider.this.showFileChooser();
-				FileParamProvider.this.setChanged();
-				FileParamProvider.this.notifyObservers();
-			}
-		});
-		this.findButton.addActionListener(this);
-		
-		return panel;
+		return this.component;
 	}
-
-
+        
 	public ParamSpec getParamSpec() {
 		if (field.getText().equals("")){
 			return new ParamSpec(this.port.name(), clazz, null, ParamSource.CLIPBOARD);
