@@ -70,6 +70,7 @@ import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
 
 import es.uvigo.ei.aibench.Launcher;
+import es.uvigo.ei.aibench.Util;
 import es.uvigo.ei.aibench.core.Core;
 import es.uvigo.ei.aibench.core.ParamSource;
 import es.uvigo.ei.aibench.core.ParamSpec;
@@ -297,19 +298,9 @@ public class AIBenchJTreeManager implements HistoryListener, ClipboardListener, 
 					if (leaf == false
 							&& !(node.getUserObject() instanceof ClipboardItem)) {
 						final String iconDatatype = Workbench.CONFIG.getProperty("icon.datatype");
-						URL imageURL = Launcher.class.getProtectionDomain().getCodeSource().getLocation();
-						try {
-							if (imageURL.getFile().endsWith(".jar")) {
-								imageURL = new URL(imageURL.toString()
-									.substring(0, imageURL.toString().lastIndexOf('/')) + "/../" + iconDatatype);
-							} else {
-								imageURL = new URL(imageURL + "../" + iconDatatype);
-							}
-						} catch (MalformedURLException e) {
-						}
-						c.setIcon(new ImageIcon(
-								iconDatatype == null ? getClass().getResource(
-										"/images/datatype.png") : imageURL));
+						URL imageURL = Util.getGlobalResourceURL(iconDatatype);
+						c.setIcon(new ImageIcon(iconDatatype == null ? 
+							getClass().getResource("/images/datatype.png") : imageURL));
 					}
 					if (node.equals(tree.getModel().getRoot())) {
 						final String iconClipboard = Workbench.CONFIG

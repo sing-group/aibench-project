@@ -45,6 +45,7 @@ import java.awt.event.ComponentEvent;
 import java.awt.event.KeyEvent;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Observable;
@@ -67,6 +68,7 @@ import javax.swing.KeyStroke;
 import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
 
+import es.uvigo.ei.aibench.Util;
 import es.uvigo.ei.aibench.core.Core;
 import es.uvigo.ei.aibench.core.CoreUtils;
 import es.uvigo.ei.aibench.core.ParamSpec;
@@ -186,10 +188,13 @@ public class  ParamsWindow extends JDialog implements InputGUI {
                                           && incomingPorts.get(i).description()!=null && 
                                           incomingPorts.get(i).description().length()>0) {
 						JLabel iconLabel = new JLabel();
-						iconLabel.setIcon(new ImageIcon(getClass().getResource(
-								"/images/dialog-help.png")));
+						String iconFile = Workbench.CONFIG.getProperty("paramswindow.helpicon");
+						URL imageURL = Util.getGlobalResourceURL(iconFile);
+						
+						iconLabel.setIcon(new ImageIcon(iconFile == null ? 
+							getClass().getResource("dialog-help.png") : imageURL));
 						iconLabel.setToolTipText(
-								incomingPorts.get(i).description());
+							incomingPorts.get(i).description());
 						
 						descriptionComponent = iconLabel;
 					} else {
@@ -212,7 +217,7 @@ public class  ParamsWindow extends JDialog implements InputGUI {
 		
 		return toret;
 	}
-	
+
 	/**
 	 * Override this method to change the component used in one port
 	 * @param dialog

@@ -60,13 +60,11 @@ public class Util {
 				}else{
 					url = new URL(url+"../"+resourcePath);
 				}
-				
-				
 				return url;
 			} catch (MalformedURLException e1) {
 				throw new RuntimeException("Not found a aibench configuration file, searching in url: "+url.getFile());
 			}
-		}catch(NullPointerException e){
+		} catch (NullPointerException e) {
 			try {
 				return new File(resourcePath).toURI().toURL();
 			} catch (Exception e1) {

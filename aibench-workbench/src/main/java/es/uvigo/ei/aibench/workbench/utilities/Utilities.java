@@ -190,9 +190,9 @@ public class Utilities {
 			}
 			JMenu child = new JMenu(noAt);
 
-			if (root instanceof JMenuBar){
-				((JMenuBar)root).add(child);
-			}else if (root instanceof JPopupMenu){
+			if (root instanceof JMenuBar) {
+				((JMenuBar) root).add(child);
+			} else if (root instanceof JPopupMenu) {
 				((JPopupMenu) root).add(child);
 			}
 			else{
@@ -203,12 +203,7 @@ public class Utilities {
 					GridLayout menuGrid = new GridLayout(/*MAX_MENUITEMS*/rootMenu.getItemCount()/((rootMenu.getItemCount() / MAX_MENUITEMS)+1)+1,rootMenu.getItemCount() / (MAX_MENUITEMS+1));
 					rootMenu.getPopupMenu().setLayout(menuGrid);
 				}
-
-
-
 			}
-
-
 			root = child;
 		}
 
@@ -229,7 +224,6 @@ public class Utilities {
 //			Layout for large menus
 			JMenu rootMenu = (JMenu) root;
 
-
 			if(rootMenu.getItemCount() > MAX_MENUITEMS){
 				
 				GridLayout menuGrid = new GridLayout(/*MAX_MENUITEMS*/rootMenu.getItemCount()/((rootMenu.getItemCount() / MAX_MENUITEMS)+1)+1,rootMenu.getItemCount() / (MAX_MENUITEMS+1));
@@ -237,13 +231,7 @@ public class Utilities {
 				rootMenu.getPopupMenu().setLayout(menuGrid);
 			}
 
-		}else{
-
-
-
+		} else {
 		}
 	}
-	
-	
-
 }
