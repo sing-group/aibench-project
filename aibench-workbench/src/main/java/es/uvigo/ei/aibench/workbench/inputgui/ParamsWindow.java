@@ -252,8 +252,8 @@ public class  ParamsWindow extends JDialog implements InputGUI {
 		private static final long serialVersionUID = 1L;
 //		private boolean finished = false;
 
-		public JButtonOk() {
-			super("OK");
+		public JButtonOk(String label) {
+			super(label);
 			this.addActionListener(this);
 			for (ParamProvider provider:ParamsWindow.this.providers) {
 				if (provider instanceof Observable) {
@@ -261,7 +261,7 @@ public class  ParamsWindow extends JDialog implements InputGUI {
 				}
 			}
 		}
-		
+
 		/* (non-Javadoc)
 		 * @see java.awt.event.ActionListener#actionPerformed(java.awt.event.ActionEvent)
 		 */
@@ -320,8 +320,11 @@ public class  ParamsWindow extends JDialog implements InputGUI {
 			JButton okButton = getOKButton();
 			this.getRootPane().setDefaultButton(okButton);
 	
-	
-			JButton cancelButton = new JButton("Cancel");
+			String cancelButtonLabel = Workbench.CONFIG.getProperty("paramswindow.buttontext.cancel");
+			if (cancelButtonLabel == null) {
+				cancelButtonLabel = "Cancel";
+			}
+			JButton cancelButton = new JButton(cancelButtonLabel);
 			cancelButton.addActionListener(new ActionListener(){
 				public void actionPerformed(ActionEvent e) {
 					ParamsWindow.this.wasCancelled = true;
@@ -403,7 +406,11 @@ public class  ParamsWindow extends JDialog implements InputGUI {
 	private JButton okButton;
 	private JButton getOKButton(){
 		if (okButton == null){
-			this.okButton = new JButtonOk();
+			String okButtonLabel = Workbench.CONFIG.getProperty("paramswindow.buttontext.ok");
+			if(okButtonLabel == null) {
+				okButtonLabel = "OK";
+			}
+			this.okButton = new JButtonOk(okButtonLabel);
 			((JButtonOk) this.okButton).checkEnabled();
 //			okButton=  new JButton("OK");
 //			okButton.addActionListener(new ActionListener(){
