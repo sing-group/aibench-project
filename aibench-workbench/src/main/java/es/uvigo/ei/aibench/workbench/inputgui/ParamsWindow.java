@@ -90,6 +90,12 @@ import es.uvigo.ei.aibench.workbench.Workbench;
  */
 public class  ParamsWindow extends JDialog implements InputGUI {
 	private static final long serialVersionUID = 1L;
+	
+	private static final String BUTTONICON_CANCEL = "paramswindow.buttonicon.cancel";
+	private static final String BUTTONTEXT_CANCEL = "paramswindow.buttontext.cancel";
+	private static final String BUTTONTEXT_OK = "paramswindow.buttontext.ok";
+	private static final String BUTTONICON_OK = "paramswindow.buttonicon.ok";
+	
 	static Logger logger = Logger.getLogger(ParamsWindow.class.getName());
 
 	//// COMPONENTS
@@ -106,16 +112,20 @@ public class  ParamsWindow extends JDialog implements InputGUI {
 	public static ClipboardItem preferredClipboardItem;
 	private GridBagLayout layout;
 	private JPanel inputComponents;
-	public ParamsWindow(){
+
+	public ParamsWindow() {
 		super(Workbench.getInstance().getMainFrame());
 	}
-	public JPanel createInputComponents(){
-		if (inputComponents != null) throw new RuntimeException("Can't create input components twice (app bug)");
+
+	public JPanel createInputComponents() {
+		if (inputComponents != null) {
+			throw new RuntimeException("Can't create input components twice (app bug)");
+		}
+		
 		JPanel toret = new JPanel();
 		
 		layout = new GridBagLayout();
 		toret.setLayout(layout);
-		
 		
 		GridBagConstraints c = new GridBagConstraints();
 		int i = 0;
@@ -129,7 +139,6 @@ public class  ParamsWindow extends JDialog implements InputGUI {
 		for (Class<?> clazz : this.operation.getIncomingArgumentTypes()){
 
 			//Name label
-
 			JLabel nameLabel = new JLabel(incomingPorts.get(i).name());
 			nameLabel.setHorizontalAlignment(JLabel.RIGHT);
 			nameLabel.setVerticalAlignment(JLabel.TOP);
@@ -316,15 +325,21 @@ public class  ParamsWindow extends JDialog implements InputGUI {
 			this.buttonsPanel = new JPanel();
 			this.buttonsPanel.setLayout(new FlowLayout());
 			
-	
 			JButton okButton = getOKButton();
 			this.getRootPane().setDefaultButton(okButton);
 	
-			String cancelButtonLabel = Workbench.CONFIG.getProperty("paramswindow.buttontext.cancel");
+			String cancelButtonLabel = Workbench.CONFIG.getProperty(BUTTONTEXT_CANCEL);
 			if (cancelButtonLabel == null) {
 				cancelButtonLabel = "Cancel";
 			}
 			JButton cancelButton = new JButton(cancelButtonLabel);
+			
+			String iconFile = Workbench.CONFIG.getProperty(BUTTONICON_CANCEL);
+			if (iconFile != null) {
+				URL imageURL = Util.getGlobalResourceURL(iconFile);
+				cancelButton.setIcon(new ImageIcon(imageURL));
+			}
+			
 			cancelButton.addActionListener(new ActionListener(){
 				public void actionPerformed(ActionEvent e) {
 					ParamsWindow.this.wasCancelled = true;
@@ -394,23 +409,25 @@ public class  ParamsWindow extends JDialog implements InputGUI {
 			
 		});*/
 		
-		
-		
 		this.add(scroll, BorderLayout.CENTER);
 		this.add(getButtonsPane(), BorderLayout.SOUTH);
-		
-
-		
 	}
 	
 	private JButton okButton;
 	private JButton getOKButton(){
 		if (okButton == null){
-			String okButtonLabel = Workbench.CONFIG.getProperty("paramswindow.buttontext.ok");
+			String okButtonLabel = Workbench.CONFIG.getProperty(BUTTONTEXT_OK);
 			if(okButtonLabel == null) {
 				okButtonLabel = "OK";
 			}
 			this.okButton = new JButtonOk(okButtonLabel);
+
+			String iconFile = Workbench.CONFIG.getProperty(BUTTONICON_OK);
+			if (iconFile != null) {
+				URL imageURL = Util.getGlobalResourceURL(iconFile);
+				this.okButton.setIcon(new ImageIcon(imageURL));
+			}
+			
 			((JButtonOk) this.okButton).checkEnabled();
 //			okButton=  new JButton("OK");
 //			okButton.addActionListener(new ActionListener(){
@@ -425,6 +442,7 @@ public class  ParamsWindow extends JDialog implements InputGUI {
 		}
 		return okButton;
 	}
+	
 	//Needed to detect the ESCAPE KEY to cancel and close
 	protected JRootPane createRootPane() {
 		  KeyStroke stroke = KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0);
@@ -440,8 +458,6 @@ public class  ParamsWindow extends JDialog implements InputGUI {
 
 		  return rootPane;
 	}
-
-
 
 	private ParamSpec[] getParamSpec(){
 		if (this.wasCancelled)
@@ -534,8 +550,3 @@ public class  ParamsWindow extends JDialog implements InputGUI {
 		}
 	}
 }
-
-
-
-
-
