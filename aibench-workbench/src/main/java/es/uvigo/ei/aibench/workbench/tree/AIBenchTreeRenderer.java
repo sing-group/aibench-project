@@ -49,48 +49,52 @@ import es.uvigo.ei.aibench.workbench.Workbench;
 public class AIBenchTreeRenderer extends DefaultTreeCellRenderer {
 	private static final long serialVersionUID = 1L;
 
-	public Component getTreeCellRendererComponent(JTree tree, Object value, boolean sel, boolean expanded, boolean leaf, int row, boolean hasFocus) {
+	public Component getTreeCellRendererComponent(JTree tree, Object value, boolean sel, boolean expanded, boolean leaf,
+		int row, boolean hasFocus
+	) {
 
 		JLabel c = (JLabel) super.getTreeCellRendererComponent(tree, value, sel, expanded, leaf, row, hasFocus);
 
-		
 		DefaultMutableTreeNode node = (DefaultMutableTreeNode) value;
-		
 		DefaultMutableTreeNode parent = (DefaultMutableTreeNode) node.getParent();
-		if (parent!=null && parent.getUserObject() instanceof OperationDefinition<?>){
-			//its a params node
-			
-		}else if (leaf &&  !(node.getUserObject() instanceof ClipboardItem)){
+
+		if (parent != null && parent.getUserObject() instanceof OperationDefinition<?>) {
+			// its a params node
+
+		} else if (leaf && !(node.getUserObject() instanceof ClipboardItem)) {
 			c.setIcon(null);
 		}
-		
-		if (node.getUserObject() instanceof ClipboardItem){
+
+		if (node.getUserObject() instanceof ClipboardItem) {
 			c.setText(((ClipboardItem) node.getUserObject()).getName());
-			ImageIcon icon =Workbench.getInstance().getDataTypeIcon(((ClipboardItem) node.getUserObject()).getRegisteredUserClass());
-			if (icon == null){
+			ImageIcon icon = Workbench.getInstance()
+					.getDataTypeIcon(((ClipboardItem) node.getUserObject()).getRegisteredUserClass());
+			if (icon == null) {
 				c.setIcon(new ImageIcon(getClass().getResource("/images/attach.png")));
-			}else{
+			} else {
 				c.setIcon(icon);
 			}
-
-
-		}else if (node.getUserObject() instanceof HistoryElement){
+		} else if (node.getUserObject() instanceof HistoryElement) {
 			c.setText(((HistoryElement) node.getUserObject()).getOperation().getName());
-			ImageIcon icon =Workbench.getInstance().getOperationIcon(((HistoryElement) node.getUserObject()).getOperation());
-			if (icon == null){
+			ImageIcon icon = Workbench.getInstance()
+					.getOperationIcon(((HistoryElement) node.getUserObject()).getOperation());
+			if (icon == null) {
 				c.setIcon(new ImageIcon(getClass().getResource("/images/process.png")));
-			}else{
+			} else {
 				c.setIcon(icon);
 			}
 
-
-		}
-		else if (node.equals(tree.getModel().getRoot())){
+		} else if (node.equals(tree.getModel().getRoot())) {
 			c.setIcon(new ImageIcon(getClass().getResource("/images/session.gif")));
 			c.setText("");
-		}
-		else{
+		} else {
 			c.setText(value.toString());
+
+			if (leaf) {
+				c.setToolTipText(node.getUserObject().toString());
+			} else {
+				c.setToolTipText(null);
+			}
 		}
 
 		return c;

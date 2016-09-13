@@ -52,6 +52,7 @@ import javax.swing.ImageIcon;
 import javax.swing.JLabel;
 import javax.swing.JTree;
 import javax.swing.SwingUtilities;
+import javax.swing.ToolTipManager;
 import javax.swing.event.CellEditorListener;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.TreeSelectionEvent;
@@ -282,7 +283,8 @@ public class AIBenchJTreeManager implements HistoryListener, ClipboardListener, 
 			clipboardTree.setEditable(false);
 			clipboardTree.getSelectionModel().setSelectionMode(TreeSelectionModel.SINGLE_TREE_SELECTION);
 			clipboardTree.setShowsRootHandles(true);
-
+			ToolTipManager.sharedInstance().registerComponent(clipboardTree);
+			
 			clipboardTree.setCellRenderer(new AIBenchTreeRenderer() {
 
 				private static final long serialVersionUID = 1L;
@@ -326,6 +328,7 @@ public class AIBenchJTreeManager implements HistoryListener, ClipboardListener, 
 										"/images/clipboard.gif") : imageURL));
 						c.setText("");
 					}
+					
 					return c;
 				}
 			});
