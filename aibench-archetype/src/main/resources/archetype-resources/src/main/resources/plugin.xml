@@ -67,7 +67,7 @@
 		<!-- "Custom input dialogs". If you don't like the default generated input dialog for some operation, put your own here -->
 		<!--
 		<extension uid="aibench.workbench" name="aibench.workbench.view" >
-			<gui-operation  operation="org.myorg.myoperationid" class="org.myorg.MyComponent"/>
+			<gui-operation operation="org.myorg.myoperationid" class="org.myorg.MyComponent"/>
 		</extension>
 		-->
 		
@@ -94,7 +94,12 @@
 		</extension>
 		-->
 		
-
+		<!-- "Welcome screen". You can set any JComponent as welcome screen and it will be added to the main window at start. -->
+		<!--
+		<extension uid="aibench.workbench" name="aibench.workbench.view" >
+			<welcomescreen class="org.myorg.MyComponent" title="Welcome screen"/>
+		</extension>
+		-->
 
 	</extensions>
 

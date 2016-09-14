@@ -151,6 +151,9 @@ public class Workbench implements IGenericGUI, ClipboardListener {
 	 */
 	private final Map<Class<?>, List<IViewFactory>> dataTypeViews = new HashMap<Class<?>, List<IViewFactory>>();
 
+	private JComponent welcomeScreen;
+	private String welcomeScreenTitle;
+	
 	/**
 	 * Custom operation icons
 	 */
@@ -1007,6 +1010,7 @@ public class Workbench implements IGenericGUI, ClipboardListener {
 	// temporal variable used in removeComponentFromSlot
 	private JComponent toret;
 
+
 	/**
 	 * 
 	 */
@@ -1053,6 +1057,7 @@ public class Workbench implements IGenericGUI, ClipboardListener {
 	 */
 	public void init() {
 		createViewFactories();
+		createWelcomeScreen();
 		createOperationWrappers();
 		createIconMappings();
 		createInputGUIMappings();
@@ -1286,6 +1291,11 @@ public class Workbench implements IGenericGUI, ClipboardListener {
 
 	private void createMainWindow() {
 		this.mainWindow = new MainWindow(interceptedOperations);
+		
+		if (this.welcomeScreen != null) {
+			this.mainWindow.getDocumentTabbedPane().addTab(this.welcomeScreenTitle, this.welcomeScreen);
+		}
+		
 		if (Boolean.parseBoolean(Core.CONFIG.getProperty("help.enabled", "false"))) {
 			Container container = this.mainWindow.getContentPane();
 			if (container instanceof JComponent) {
@@ -1606,6 +1616,50 @@ public class Workbench implements IGenericGUI, ClipboardListener {
 			}
 		}
 		
+	}
+	
+	private void createWelcomeScreen() {
+		final Plugin plugin = PluginEngine.getPlugin(this.getClass());
+		final ExtensionPoint point = plugin.getExtensionPoint("aibench.workbench.view");
+
+		for (Extension extension : point.getExtensions()) {
+			for (PluginXmlNode node : extension.getExtensionXmlNode().getChildren()) {
+				if (node.getName().equals("welcomescreen")) {
+					String className = node.getAttribute("class");
+					if (className == null) {
+						continue;
+					}
+					
+					String title = node.getAttribute("title");
+					if (title == null) {
+						title = "Welcome screen";
+					}
+
+					try {
+						final Class<?> extensionClass = extension.getPlugin().getPluginClassLoader().loadClass(className);
+						if (JComponent.class.isAssignableFrom(extensionClass)) {
+							try {
+								this.welcomeScreen = (JComponent) extensionClass.newInstance();
+								this.welcomeScreenTitle = title;
+							} catch (InstantiationException | IllegalAccessException e) {
+								logger.warn(extensionClass + " can't be instantiated, ignoring extensiong point");
+								continue;
+							}
+						} else {
+							logger.warn(extensionClass + " is not a JComponent, ignoring extensiong point");
+							continue;
+						}
+					} catch (ClassNotFoundException e) {
+						logger.warn(e.getMessage() + " ignoring extensiong point");
+					}
+					
+					/**
+					 * Just take the first welcomescreen in each plugin.xml
+					 */
+					break;
+				}
+			}
+		}
 	}
 	
 	private void createViewFactories() {

@@ -367,9 +367,10 @@ public class MainWindow extends JFrame {
 		
 	}
 	
-	private CloseableJTabbedPane getDocumentTabbedPane() {
+	public CloseableJTabbedPane getDocumentTabbedPane() {
 		if (this.documentTabbedPane == null) {
 			this.documentTabbedPane = new CloseableJTabbedPane();
+			
 			this.documentTabbedPane.addChangeListener(new ChangeListener() {
 				@Override
 				public void stateChanged(ChangeEvent e) {
@@ -387,7 +388,12 @@ public class MainWindow extends JFrame {
 				@Override
 				public void tabClosing(TabCloseEvent event) {
 					event.cancel(); // Will be closed by the MainWindow
-					Workbench.getInstance().hideData(MainWindow.this.dataByTab.get(event.getTabIndex()));
+					ClipboardItem clipboardItem = MainWindow.this.dataByTab.get(event.getTabIndex());
+					if (clipboardItem != null) {
+						Workbench.getInstance().hideData(clipboardItem);
+					} else {
+						documentTabbedPane.removeTabAt(event.getTabIndex());
+					}
 				}
 			});
 			
