@@ -870,6 +870,12 @@ public class AIBenchJTreeManager implements HistoryListener, ClipboardListener, 
 						parentNode = AIBenchJTreeManager.locateClassNode(AIBenchJTreeManager.this.clipboardTree, item.getUserData().getClass());//classNodes.get(item.getUserData().getClass());
 						if (parentNode == null) {
 							String name = item.getUserData().getClass().getSimpleName();
+							
+							Datatype datatypeAnnot = item.getUserData().getClass().getAnnotation(Datatype.class);
+							if(datatypeAnnot!= null && !datatypeAnnot.clipboardClassName().equals("")) {
+								name = datatypeAnnot.clipboardClassName();
+							}
+							
 							parentNode = new ClassTreeNode(name, item.getUserData().getClass());
 //							classNodes.put(item.getUserData().getClass(), classNode);
 							

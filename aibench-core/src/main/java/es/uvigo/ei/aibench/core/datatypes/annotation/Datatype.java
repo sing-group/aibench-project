@@ -97,4 +97,10 @@ public @interface Datatype {
 	 * @return the url or the id of the help documentation.
 	 */
 	String help() default "";
+	
+	/**
+	 * Returns the clipboard name for the current datatype's class.
+	 * @return the clipboard name for the current datatype's class.
+	 */
+	String clipboardClassName() default "";
 }
