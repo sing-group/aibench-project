@@ -6,6 +6,7 @@
   </sources>
   <resources>
     <resource>src/main/resources/scripts/run.sh</resource>
+    <resource>src/main/resources/scripts/run.bat</resource>
     <resource>src/main/resources/conf/core.conf</resource>
     <resource>src/main/resources/conf/plugins.conf</resource>
     <resource>src/main/resources/conf/aibench.conf</resource>
