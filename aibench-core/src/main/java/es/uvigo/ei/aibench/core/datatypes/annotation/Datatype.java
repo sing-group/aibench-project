@@ -103,4 +103,10 @@ public @interface Datatype {
 	 * @return the clipboard name for the current datatype's class.
 	 */
 	String clipboardClassName() default "";
+	
+	/**
+	 * This method sets whether the datatype should be automatically shown. 
+	 * @return true if the datatype should be automatically shown and false if not.
+	 */
+	boolean autoOpen() default false;
 }

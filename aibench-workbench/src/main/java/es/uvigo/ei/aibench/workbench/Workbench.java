@@ -1142,8 +1142,9 @@ public class Workbench implements IGenericGUI, ClipboardListener {
 	 * @see es.uvigo.ei.aibench.core.clipboard.ClipboardListener#elementAdded(es.uvigo.ei.aibench.core.clipboard.ClipboardItem)
 	 */
 	public void elementAdded(ClipboardItem item) {
-		// TODO Auto-generated method stub
-		
+		if(item.getUserData().getClass().getAnnotation(Datatype.class).autoOpen()) {
+			Workbench.getInstance().showData(item);	
+		}
 	}
 
 	/* (non-Javadoc)
