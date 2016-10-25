@@ -51,20 +51,29 @@ public class Util {
 	}
 	
 	public static URL getGlobalResourceURL(String resourcePath){
-		try{
+		try {
 			URL url = Util.class.getProtectionDomain().getCodeSource().getLocation();
 			
 			try {
-				if (url.getFile().endsWith(".jar")){
+				if (url.getFile().endsWith(".jar")) {
 					url = new URL(url.toString().substring(0,url.toString().lastIndexOf('/'))+"/../"+resourcePath);
-				}else{
+				} else {
 					url = new URL(url+"../"+resourcePath);
+				}
+				
+				if (!new File(url.getFile()).exists()) {
+					//fallback to current dir
+					File fallbackFile = new File(resourcePath);
+					if (!fallbackFile.exists()) {
+						throw new IllegalArgumentException("cannot find global resource "+resourcePath);
+					}
+					return fallbackFile.toURI().toURL();
 				}
 				return url;
 			} catch (MalformedURLException e1) {
 				throw new RuntimeException("Not found a aibench configuration file, searching in url: "+url.getFile());
 			}
-		} catch (NullPointerException e) {
+		} catch(NullPointerException e) {
 			try {
 				return new File(resourcePath).toURI().toURL();
 			} catch (Exception e1) {
