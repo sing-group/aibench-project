@@ -7,6 +7,12 @@ import javax.swing.JButton;
 import es.uvigo.ei.aibench.core.Core;
 import es.uvigo.ei.aibench.workbench.Workbench;
 
+/**
+ * A button that opens the associated Java help.
+ * 
+ * @author Hugo López-Fernández
+ *
+ */
 public class HelpButton extends JButton {
 	private static final long serialVersionUID = 1L;
 
