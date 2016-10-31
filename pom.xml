@@ -11,6 +11,10 @@
 	<url>http://www.aibench.org</url>
 	<packaging>pom</packaging>
 
+	<properties>
+		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+	</properties>
+	
 	<distributionManagement>
 		<repository>
 			<id>sing-maven2-repository</id>
