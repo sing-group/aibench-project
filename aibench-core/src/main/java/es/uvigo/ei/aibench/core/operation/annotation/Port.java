@@ -71,4 +71,6 @@ public @interface Port {
 	boolean lock() default false;
 	
 	String extras() default "";
+
+	boolean advanced() default false;
 }

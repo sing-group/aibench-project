@@ -31,6 +31,7 @@ package es.uvigo.ei.aibench.workbench.inputgui;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
+import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.GraphicsEnvironment;
@@ -45,14 +46,19 @@ import java.awt.event.ComponentEvent;
 import java.awt.event.KeyEvent;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
+import java.beans.PropertyChangeEvent;
+import java.beans.PropertyChangeListener;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Observable;
 import java.util.Observer;
 
 import javax.help.HelpBroker;
 import javax.swing.AbstractAction;
+import javax.swing.BorderFactory;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JComponent;
@@ -67,6 +73,8 @@ import javax.swing.KeyStroke;
 
 import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
+import org.jdesktop.swingx.JXTaskPane;
+import org.jdesktop.swingx.JXTaskPaneContainer;
 
 import es.uvigo.ei.aibench.Util;
 import es.uvigo.ei.aibench.core.Core;
@@ -110,7 +118,6 @@ public class  ParamsWindow extends JDialog implements InputGUI {
 	private ParamsReceiver receiver;
 
 	public static ClipboardItem preferredClipboardItem;
-	private GridBagLayout layout;
 	private JPanel inputComponents;
 
 	public ParamsWindow() {
@@ -121,25 +128,100 @@ public class  ParamsWindow extends JDialog implements InputGUI {
 		if (inputComponents != null) {
 			throw new RuntimeException("Can't create input components twice (app bug)");
 		}
-		
-		JPanel toret = new JPanel();
-		
-		layout = new GridBagLayout();
-		toret.setLayout(layout);
-		
-		GridBagConstraints c = new GridBagConstraints();
-		int i = 0;
-		ArrayList<Port> incomingPorts = new ArrayList<Port>();
-		for (Port p: this.operation.getPorts()){
-			if (p.direction()!=Direction.OUTPUT){
+
+		List<Port> incomingPorts = getIncomingPorts();
+		Map<Port, Class<?>> portClass = getPortClasses(incomingPorts);
+
+		List<Port> incomingVisiblePorts = new ArrayList<Port>();
+		List<Port> incomingAdvancedPorts = new ArrayList<Port>();
+		for (Port p : incomingPorts) {
+			if (p.advanced()) {
+				incomingAdvancedPorts.add(p);
+			} else {
+				incomingVisiblePorts.add(p);
+			}
+		}
+
+		JPanel advancedPortsPane = null;
+		if (!incomingAdvancedPorts.isEmpty()) {
+			advancedPortsPane = createParamsPanel(incomingAdvancedPorts, portClass);
+		}
+		JPanel basicPortsPane = createParamsPanel(incomingVisiblePorts, portClass); 
+
+		JPanel toret = new JPanel(new BorderLayout());
+		toret.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
+		toret.add(basicPortsPane, BorderLayout.NORTH);
+
+		if (!incomingAdvancedPorts.isEmpty()) {
+			toret.add(createAdvancedOptionsTaskPaneContainer(advancedPortsPane), BorderLayout.CENTER);
+		}
+
+		return toret;
+	}
+
+	protected List<Port> getIncomingPorts() {
+		List<Port> incomingPorts = new ArrayList<Port>();
+		for (Port p : this.operation.getPorts()) {
+			if (p.direction() != Direction.OUTPUT) {
 				incomingPorts.add(p);
 			}
 		}
+		return incomingPorts;
+	}
+
+	private Map<Port, Class<?>> getPortClasses(List<Port> incomingPorts) {
+		Map<Port, Class<?>> portClass = new HashMap<>();
+		int i = 0;
+		for (Class<?> clazz : this.operation.getIncomingArgumentTypes()) {
+			portClass.put(incomingPorts.get(i++), clazz);
+		}
+		return portClass;
+	}
+
+	private Component createAdvancedOptionsTaskPaneContainer(JPanel advancedPortsPane) {
+		JXTaskPaneContainer advancedOptionsTaskPaneContainer =
+				new JXTaskPaneContainer();
+		advancedOptionsTaskPaneContainer.setOpaque(false);
+		
+		JXTaskPane advancedOptionsTaskPane = new JXTaskPane();
+		advancedOptionsTaskPane.setTitle(getAdvancedOptionsTitle());
+		advancedOptionsTaskPane.setCollapsed(true);
+		advancedOptionsTaskPane.addPropertyChangeListener("collapsed",
+				new PropertyChangeListener() {
+			@Override
+			public void propertyChange(PropertyChangeEvent evt) {
+				_pack();
+			}
+		});
+		advancedOptionsTaskPane.add(advancedPortsPane, BorderLayout.CENTER);
+		advancedOptionsTaskPaneContainer.add(advancedOptionsTaskPane);
+
+		return advancedOptionsTaskPaneContainer;
+	}
+
+	private String getAdvancedOptionsTitle() {
+		String showHelp = Workbench.CONFIG.getProperty("paramswindow.advancedoptionstitle");
+		if (showHelp != null) {
+			return showHelp;
+		} else {
+			return "Advanced options";
+		}
+	}
+
+	protected final JPanel createParamsPanel(List<Port> ports, Map<Port, Class<?>> portClass) {
+		JPanel toret = new JPanel();
+		
+		GridBagLayout layout = new GridBagLayout();
+		toret.setLayout(layout);
+		
+		GridBagConstraints c = new GridBagConstraints();
+
+		int i = 0;
 		boolean first = true;
-		for (Class<?> clazz : this.operation.getIncomingArgumentTypes()){
+		for (Port incomingPort: ports){
 
 			//Name label
-			JLabel nameLabel = new JLabel(incomingPorts.get(i).name());
+			JLabel nameLabel = new JLabel(incomingPort.name());
 			nameLabel.setHorizontalAlignment(JLabel.RIGHT);
 			nameLabel.setVerticalAlignment(JLabel.TOP);
 
@@ -159,7 +241,7 @@ public class  ParamsWindow extends JDialog implements InputGUI {
 			toret.add(nameLabel);
 
 			//Input Component
-			ParamProvider provider = getParamProvider(incomingPorts.get(i), clazz, operationObject);
+			ParamProvider provider = getParamProvider(incomingPort, portClass.get(incomingPort), operationObject);
 			if (provider != null) {
 				provider.init();
 				
@@ -193,9 +275,11 @@ public class  ParamsWindow extends JDialog implements InputGUI {
 					JComponent descriptionComponent = null;
 					String showHelp = Workbench.CONFIG
 							.getProperty("paramswindow.showhelpicon");
-					if (showHelp != null && showHelp.equalsIgnoreCase("true")
-                                          && incomingPorts.get(i).description()!=null && 
-                                          incomingPorts.get(i).description().length()>0) {
+					if (	showHelp != null && 
+							showHelp.equalsIgnoreCase("true") && 
+							incomingPort.description()!=null && 
+                             incomingPort.description().length()>0
+					) {
 						JLabel iconLabel = new JLabel();
 						String iconFile = Workbench.CONFIG.getProperty("paramswindow.helpicon");
 						URL imageURL = Util.getGlobalResourceURL(iconFile);
@@ -203,11 +287,11 @@ public class  ParamsWindow extends JDialog implements InputGUI {
 						iconLabel.setIcon(new ImageIcon(iconFile == null ? 
 							getClass().getResource("dialog-help.png") : imageURL));
 						iconLabel.setToolTipText(
-							incomingPorts.get(i).description());
+								incomingPort.description());
 						
 						descriptionComponent = iconLabel;
 					} else {
-						descriptionComponent = new JLabel(incomingPorts.get(i).description());
+						descriptionComponent = new JLabel(incomingPort.description());
 					}
 					
 					c.gridx = 2;
@@ -223,7 +307,7 @@ public class  ParamsWindow extends JDialog implements InputGUI {
 				}
 			}
 		}
-		
+
 		return toret;
 	}
 
