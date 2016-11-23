@@ -5,4 +5,6 @@
 */target
 .settings
 **/pom.xml.versionsBackup
+*.iml
+.idea
 
