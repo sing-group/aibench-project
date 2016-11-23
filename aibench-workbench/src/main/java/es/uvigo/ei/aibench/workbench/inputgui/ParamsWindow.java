@@ -95,6 +95,8 @@ public class  ParamsWindow extends JDialog implements InputGUI {
 	private static final String BUTTONTEXT_CANCEL = "paramswindow.buttontext.cancel";
 	private static final String BUTTONTEXT_OK = "paramswindow.buttontext.ok";
 	private static final String BUTTONICON_OK = "paramswindow.buttonicon.ok";
+	private static final String BUTTONTEXT_HELP = "paramswindow.buttontext.help";
+	private static final String BUTTONICON_HELP = "paramswindow.buttonicon.help";
 	
 	static Logger logger = Logger.getLogger(ParamsWindow.class.getName());
 
@@ -434,10 +436,14 @@ public class  ParamsWindow extends JDialog implements InputGUI {
 	
 			this.buttonsPanel.add(okButton);
 			this.buttonsPanel.add(cancelButton);
-			
 			if (this.operation.getHelp() != null && !this.operation.getHelp().trim().equals("")) {
+				String helpButtonLabel = Workbench.CONFIG.getProperty(BUTTONTEXT_HELP);
+				if(helpButtonLabel == null) {
+					helpButtonLabel = "Help";
+				}
+				JButton helpButton;
 				if (CoreUtils.isValidURL(this.operation.getHelp())) {
-					JButton helpButton = new JButton(new AbstractAction("Help") {
+					helpButton = new JButton(new AbstractAction(helpButtonLabel) {
 						private static final long serialVersionUID = 1L;
 
 						public void actionPerformed(ActionEvent e) {
@@ -455,13 +461,18 @@ public class  ParamsWindow extends JDialog implements InputGUI {
 					});
 					this.buttonsPanel.add(helpButton);
 				} else {
-					JButton helpButton = new JButton("Help");
+					helpButton = new JButton(helpButtonLabel);
 					HelpBroker helpBroker = Core.getInstance().getHelpBroker();
 					if (helpBroker != null) {
 						helpBroker.enableHelpOnButton(helpButton, this.operation.getHelp(), helpBroker.getHelpSet());
 						helpBroker.enableHelpKey(this.getContentPane(), this.operation.getHelp(), helpBroker.getHelpSet());
 						this.buttonsPanel.add(helpButton);
 					}
+				}
+				String helpIconFile = Workbench.CONFIG.getProperty(BUTTONICON_HELP);
+				if (helpIconFile != null) {
+					URL imageURL = Util.getGlobalResourceURL(helpIconFile);
+					helpButton.setIcon(new ImageIcon(imageURL));
 				}
 			}
 		}
