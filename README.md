@@ -1,4 +1,4 @@
-The AIBench Project [![license](https://img.shields.io/badge/LICENSE-GPLv3-blue.svg)]() 
+The AIBench Project [![license](https://img.shields.io/badge/LICENSE-LGPLv3-blue.svg)]() 
 ========================
 
 The AIBench Project is a Java application development framework focused on GUI-based scientific applications. More info at the [AIBench home page](http://www.aibench.org)

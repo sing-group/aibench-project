@@ -8,11 +8,64 @@
 			change the version in all modules at-once
 		-->
 	<name>The AIBench Project</name>
+	<inceptionYear>2006</inceptionYear>
 	<url>http://www.aibench.org</url>
 	<packaging>pom</packaging>
 
+	<developers>
+		<developer>
+			<name>Daniel Glez-Peña</name>
+			<organization>SING Group - University of Vigo</organization>
+			<organizationUrl>http://sing.ei.uvigo.es/</organizationUrl>
+			<email>dgpena@uvigo.es</email>
+		</developer>
+		<developer>
+			<name>Miguel Reboiro-Jato</name>
+			<organization>SING Group - University of Vigo</organization>
+			<organizationUrl>http://sing.ei.uvigo.es/</organizationUrl>
+			<email>mrjato@uvigo.es</email>
+		</developer>
+		<developer>
+			<name>Hugo López-Fernández</name>
+			<organization>SING Group - University of Vigo</organization>
+			<organizationUrl>http://sing.ei.uvigo.es/</organizationUrl>
+			<email>hlfernandez@uvigo.es</email>
+		</developer>
+		<developer>
+			<name>Paulo Maia</name>
+		</developer>
+		<developer>
+			<name>Rubén Domínguez Carbajales</name>
+		</developer>
+	</developers>
+	<contributors>
+		<contributor>
+			<name>Florentino Fdez-Riverola</name>
+			<organization>SING Group - University of Vigo</organization>
+			<organizationUrl>http://sing.ei.uvigo.es/</organizationUrl>
+			<email>riverola@cnio.es</email>
+			<roles>
+				<role>Project Coordinator</role>
+			</roles>
+		</contributor>
+	</contributors>
+	<licenses>
+		<license>
+			<name>GNU LESSER GENERAL PUBLIC LICENSE, Version 3</name>
+			<url>https://www.gnu.org/licenses/lgpl-3.0.en.html</url>
+			<distribution>repo</distribution>
+		</license>
+	</licenses>
+
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+		<license-maven-plugin.version>1.8</license-maven-plugin.version>
+
+		<!-- license-maven-plugin configuration -->
+		<license.licenseName>lgpl_v3</license.licenseName>
+		<license.copyrightOwners>Daniel Glez-Peña and Florentino Fdez-Riverola</license.copyrightOwners>
+		<license.organizationName>SING Group (University of Vigo)</license.organizationName>
+		<license.addJavaLicenseAfterPackage>false</license.addJavaLicenseAfterPackage>
 	</properties>
 	
 	<distributionManagement>
@@ -38,5 +91,15 @@
 	  <module>aibench-pluginmanager</module>
 	  <module>aibench-archetype</module>
   </modules>
+
+	<build>
+		<plugins>
+			<plugin>
+				<groupId>org.codehaus.mojo</groupId>
+				<artifactId>license-maven-plugin</artifactId>
+				<version>${license-maven-plugin.version}</version>
+			</plugin>
+		</plugins>
+	</build>
 	
 </project>
