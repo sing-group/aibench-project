@@ -159,7 +159,7 @@
 					<!-- aibench core libraries -->
 					<execution>
 						<id>copy-dependencies-aibench-lib</id>
-						<phase>process-resources</phase>
+						<phase>package</phase>
 						<goals>
 							<goal>copy-dependencies</goal>
 						</goals>
@@ -176,7 +176,7 @@
 					<!-- aibench plugins -->
 					<execution>
 						<id>copy-dependencies-aibench-plugins</id>
-						<phase>process-resources</phase>
+						<phase>package</phase>
 						<goals>
 							<goal>copy-dependencies</goal>
 						</goals>
@@ -192,7 +192,7 @@
 					<!-- rest of dependencies inside current aibench plugin -->
 					<execution>
 						<id>copy-dependencies-plugin-dependencies</id>
-						<phase>process-resources</phase>
+						<phase>package</phase>
 						<goals>
 							<goal>copy-dependencies</goal>
 						</goals>
