@@ -24,9 +24,12 @@ package es.uvigo.ei.aibench;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Font;
+import java.awt.event.ActionEvent;
 
+import javax.swing.AbstractAction;
 import javax.swing.JComponent;
 import javax.swing.JPanel;
+import javax.swing.JPopupMenu;
 import javax.swing.JScrollPane;
 import javax.swing.JTextPane;
 import javax.swing.text.BadLocationException;
@@ -40,39 +43,41 @@ import org.apache.log4j.Level;
 import org.apache.log4j.spi.LoggingEvent;
 
 public class TextAreaAppender extends AppenderSkeleton {
-    private static Font DEBUGFont = new Font("monospaced", Font.BOLD, 12);
-    private static Color DEBUGColor = Color.BLUE;
-    private static Font INFOFont = new Font("monospaced", Font.BOLD, 12);
-    private static Color INFOColor = Color.GREEN;
-    private static Font WARNFont = new Font("monospaced", Font.BOLD, 12);
-    private static Color WARNColor = new Color(255, 153, 51);
-    private static Font ERRORFont = new Font("monospaced", Font.BOLD, 12);
-    private static Color ERRORColor = Color.RED;
-    private static Font FATALFont = new Font("monospaced", Font.BOLD, 12);
-    private static Color FATALColor = Color.RED;
-    private static Font defaultFont = new Font("monospaced", Font.BOLD, 12);
-    private static Color defaultColor = Color.BLACK;
+    private static final Font 	DEBUGFont = new Font("monospaced", Font.BOLD, 12);
+    private static final Color 	DEBUGColor = Color.BLUE;
+    private static final Font 	INFOFont = new Font("monospaced", Font.BOLD, 12);
+    private static final Color 	INFOColor = Color.GREEN;
+    private static final Font 	WARNFont = new Font("monospaced", Font.BOLD, 12);
+    private static final Color 	WARNColor = new Color(255, 153, 51);
+    private static final Font 	ERRORFont = new Font("monospaced", Font.BOLD, 12);
+    private static final Color 	ERRORColor = Color.RED;
+    private static final Font 	FATALFont = new Font("monospaced", Font.BOLD, 12);
+    private static final Color 	FATALColor = Color.RED;
+
     private static LogTextArea _textArea;
+    private static Color defaultColor = Color.BLACK;
+    private static Font defaultFont = new Font("monospaced", Font.BOLD, 12);
 
     public static int MAXSIZE=-1;
+
+	static {
+		_textArea = new LogTextArea();
+	}
     
-    static{
-    
-    	_textArea = new LogTextArea();
-    	/*JFrame frame = new JFrame();
-    	frame.setLayout(new BorderLayout());
-    	frame.setSize(500,500);
-    	frame.add(_textArea);
-    	frame.setVisible(true);*/
-    }
     /**
      * Gives you the GUI component in which the log messages appear.
      * @return The GUI component.
      */
-    public static JComponent getGUIComponent() {
-    	
-        return _textArea;
-    }
+	public static JComponent getGUIComponent() {
+		return _textArea;
+	}
+
+	/**
+	 * Clears previous log messages in the GUI component.
+	 */
+	public static void clearGUIComponent() {
+		_textArea.clearLog();
+	}
 
     /* (non-Javadoc)
      * @see org.apache.log4j.Appender#close()
@@ -89,9 +94,9 @@ public class TextAreaAppender extends AppenderSkeleton {
         return true;
     }
 
-    protected void append(LoggingEvent arg0) {
-        JTextPane pane = (JTextPane) _textArea.jTextPane;
-       
+	protected void append(LoggingEvent arg0) {
+		JTextPane pane = (JTextPane) _textArea.jTextPane;
+
         Font f = defaultFont;
         Color c = defaultColor;
 
@@ -155,27 +160,17 @@ public class TextAreaAppender extends AppenderSkeleton {
 	 * @author   Rub�n Dom�nguez Carbajales 13-feb-2006 - 2006
 	 */
     private static class LogTextArea extends JPanel {
-        
     	private static final long serialVersionUID = 1L;
+    	
 		private JScrollPane jScrollPane = null;
         private JTextPane jTextPane = null;
-        
 
-        /**
-             * This is the default constructor
-             */
-        public LogTextArea() {
-            super();
-            initialize();        
-        }
+		public LogTextArea() {
+			super();
+			initialize();
+		}
 
-        
-
-        /**
-		 * This method initializes jScrollPane
-		 * @return   javax.swing.JScrollPane
-		 */
-        private JScrollPane getJScrollPane() {
+		private JScrollPane getJScrollPane() {
             if (jScrollPane == null) {
                 jScrollPane = new JScrollPane();
                 jScrollPane.setViewportView(getJTextPane());
@@ -184,34 +179,38 @@ public class TextAreaAppender extends AppenderSkeleton {
             return jScrollPane;
         }
 
-        /**
-		 * This method initializes jTextPane
-		 * @return   javax.swing.JTextPane
-		 */
         private JTextPane getJTextPane() {
             if (jTextPane == null) {
                 jTextPane = new JTextPane();
                 jTextPane.setBackground(Color.LIGHT_GRAY);
                 jTextPane.setEditable(false);
                 jTextPane.setBackground(Color.BLACK);
+                jTextPane.setComponentPopupMenu(createPopup());
             }
-
             return jTextPane;
         }
 
-      
+		private void clearLog() {
+			this.jTextPane.setText("");
+		}
 
-        /**
-             * This method initializes this
-             *
-             * @return void
-             */
-        private void initialize() {
+		private void initialize() {
             this.setLayout(new BorderLayout());
             this.setSize(100, 200);
-            
-            //this.add(getToolBar(), java.awt.BorderLayout.NORTH);
             this.add(getJScrollPane(), java.awt.BorderLayout.CENTER);
         }
+
+		private JPopupMenu createPopup() {
+			JPopupMenu popup = new JPopupMenu();
+			popup.add(new AbstractAction("Clear log") {
+				private static final long serialVersionUID = 1L;
+
+				@Override
+				public void actionPerformed(ActionEvent e) {
+					clearLog();
+				}
+			});
+			return popup;
+		}
     }
 }
