@@ -64,7 +64,6 @@ import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
 
 import es.uvigo.ei.aibench.Launcher;
-import es.uvigo.ei.aibench.TextAreaAppender;
 import es.uvigo.ei.aibench.Util;
 import es.uvigo.ei.aibench.core.Core;
 import es.uvigo.ei.aibench.core.CoreListener;
@@ -88,7 +87,7 @@ import es.uvigo.ei.aibench.workbench.utilities.Utilities;
 public class MainWindow extends JFrame {
 	private static final long serialVersionUID = 1L;
 
-	private static Logger logger = Logger.getLogger(TextAreaAppender.class.getName());
+	private static Logger logger = Logger.getLogger(MainWindow.class);
 
 	private final int MAX_TAB_TITLE = 20;
 
@@ -152,6 +151,7 @@ public class MainWindow extends JFrame {
 	
 	public MainWindow(List<OperationWrapper> operaciones) {
 		super();
+		logger.info("MainWindow creation");
 		this.interceptedOperations = operaciones;
 		
 		// locate the template.xml
