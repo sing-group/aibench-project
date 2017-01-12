@@ -1,56 +1,57 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-  xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 
 	<parent>
-	  <groupId>es.uvigo.ei.sing</groupId>
-	  <artifactId>aibench-project</artifactId>
-	  <version>2.7.0</version><!-- WARNING: change version using 
-			mvn versions:set -DnewVersion=[new_version] on parent project
+		<groupId>es.uvigo.ei.sing</groupId>
+		<artifactId>aibench-project</artifactId>
+		<version>2.7.1</version>
+		<!--
+			WARNING: change version using (in the parent project):
+				mvn versions:set -DnewVersion=[new_version]
+				mvn versions:commit
+			
+			This will change the version in all modules at-once
 		-->
-	  <relativePath>../pom.xml</relativePath>
+		<relativePath>../pom.xml</relativePath>
 	</parent>
 
 	<artifactId>aibench-archetype</artifactId>
 	<packaging>jar</packaging>
 	<name>The AIBench Maven Archetype for plugins/apps</name>
-	
-	<build>
-	  
-	  <!-- enable filtering of the pom.xml in archetype-resources 
-	  aiming at insert the aibench project version in the dependencies
-	  declared in the archetype
-	  -->
-	  <resources>
-	    <resource>
-	      <directory>src/main/resources</directory>
-	      <filtering>true</filtering>
-	      <includes>
-		<include>archetype-resources/pom.xml</include>
-	      </includes>
-	    </resource>
-	    <resource>
-	      <directory>src/main/resources</directory>
-	      <filtering>false</filtering>
-	      <excludes>
-		<exclude>archetype-resources/pom.xml</exclude>
-	      </excludes>
-	    </resource>
-	  </resources>
-	  
-	<pluginManagement>
-	<plugins>    
-	  <plugin>
-	    <groupId>org.apache.maven.plugins</groupId>
-	    <artifactId>maven-resources-plugin</artifactId>
-	    <version>2.5</version>
-	    <configuration>
-	      <escapeString>\</escapeString>
-	    </configuration>
-	  </plugin>
-	</plugins>
-      </pluginManagement>
 
-      </build>
+	<build>
+		<!-- enable filtering of the pom.xml in archetype-resources aiming at insert 
+			the aibench project version in the dependencies declared in the archetype -->
+		<resources>
+			<resource>
+				<directory>src/main/resources</directory>
+				<filtering>true</filtering>
+				<includes>
+					<include>archetype-resources/pom.xml</include>
+				</includes>
+			</resource>
+			
+			<resource>
+				<directory>src/main/resources</directory>
+				<filtering>false</filtering>
+				<excludes>
+					<exclude>archetype-resources/pom.xml</exclude>
+				</excludes>
+			</resource>
+		</resources>
+
+		<pluginManagement>
+			<plugins>
+				<plugin>
+					<groupId>org.apache.maven.plugins</groupId>
+					<artifactId>maven-resources-plugin</artifactId>
+					<configuration>
+						<escapeString>\</escapeString>
+					</configuration>
+				</plugin>
+			</plugins>
+		</pluginManagement>
+	</build>
 </project>
 

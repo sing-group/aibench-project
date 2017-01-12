@@ -234,6 +234,7 @@ public abstract class AbstractBean {
      * test each element to see if it's a
      * <code>PropertyChangeListenerProxy</code>, perform the cast, and examine
      * the parameter.
+     * </p>
      * 
      * <pre>
      * PropertyChangeListener[] listeners = bean.getPropertyChangeListeners();

@@ -41,6 +41,8 @@ public abstract class PluginLifecycle {
 
 	/**
 	 * Returns the Plugin this PluginLifecycle is managing.
+	 * 
+	 * @return the Plugin this PluginLifecycle is managing.
 	 */
 	public Plugin getPlugin () {
 		if (plugin == null) plugin = PluginEngine.getPlugin(getClass());
@@ -48,7 +50,10 @@ public abstract class PluginLifecycle {
 	}
 
 	/**
-	 * Returns an ExtensionPoint defined in the Plugin this PluginLifecycle manages or null if the ExtensionPoint does not exist.
+	 * Returns an ExtensionPoint defined in the Plugin this PluginLifecycle manages or {@code null} if the ExtensionPoint does not exist.
+	 * 
+	 * @param name the name of the extension point.
+	 * @return an ExtensionPoint defined in the Plugin this PluginLifecycle manages or {@code null} if the ExtensionPoint does not exist.
 	 */
 	public ExtensionPoint getExtensionPoint (String name) {
 		return getPlugin().getExtensionPoint(name);
@@ -56,6 +61,8 @@ public abstract class PluginLifecycle {
 
 	/**
 	 * Returns the PluginEngine of the Plugin this PluginLifecycle is managing.
+	 * 
+	 * @return the PluginEngine of the Plugin this PluginLifecycle is managing.
 	 */
 	public PluginEngine getPluginEngine () {
 		return getPlugin().getPluginEngine();

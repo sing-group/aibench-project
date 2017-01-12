@@ -76,35 +76,36 @@ package bsh;
  * @see UtilTargetError
  */
 public class UtilEvalError extends Exception {
-        protected UtilEvalError() {
-        }
+	private static final long serialVersionUID = 1L;
 
-        public UtilEvalError(String s) {
-                super(s);
-        }
+	protected UtilEvalError() {}
 
-        /**
-         * Re-throw as an eval error, prefixing msg to the message and
-         * specifying the node. If a node already exists the addNode is ignored.
-         * 
-         * @see #setNode( bsh.SimpleNode )
-         *      <p>
-         * @param msg
-         *                may be null for no additional message.
-         */
-        public EvalError toEvalError(String msg, SimpleNode node, CallStack callstack) {
-                if (Interpreter.DEBUG)
-                        printStackTrace();
+	public UtilEvalError(String s) {
+		super(s);
+	}
 
-                if (msg == null)
-                        msg = "";
-                else
-                        msg = msg + ": ";
-                return new EvalError(msg + getMessage(), node, callstack);
-        }
+	/**
+	 * Re-throw as an eval error, prefixing msg to the message and specifying
+	 * the node. If a node already exists the addNode is ignored.
+	 * 
+	 * @param msg may be {@code null} for no additional message.
+	 * @param node the node that will be prefixed.
+	 * @param callstack the callstack of the invocation.
+	 * @return the EvalError created.
+	 */
+	public EvalError toEvalError(String msg, SimpleNode node, CallStack callstack) {
+		if (Interpreter.DEBUG)
+			printStackTrace();
 
-        public EvalError toEvalError(SimpleNode node, CallStack callstack) {
-                return toEvalError(null, node, callstack);
-        }
+		if (msg == null)
+			msg = "";
+		else
+			msg = msg + ": ";
+		return new EvalError(msg + getMessage(), node, callstack);
+	}
+
+	public EvalError toEvalError(SimpleNode node, CallStack callstack) {
+		return toEvalError(null, node, callstack);
+	}
 
 }

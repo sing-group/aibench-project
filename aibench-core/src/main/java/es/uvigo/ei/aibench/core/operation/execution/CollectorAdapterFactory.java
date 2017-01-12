@@ -42,12 +42,12 @@ public class CollectorAdapterFactory {
 	}
 
 	public static List<Entry<Class<?>, Integer>> join(PipeDefinition present,
-			PipeDefinition next) throws IncompatibleContraintsException {
+			PipeDefinition next) throws IncompatibleConstraintsException {
 		List<Entry<Class<?>, Integer>> unify = null;
 		try {
 			unify = unify(present.getOutcomeTypes(), next.getIncomeTypes());
 		} catch (IllegalArgumentException e) {
-			throw new IncompatibleContraintsException(e.getMessage());
+			throw new IncompatibleConstraintsException(e.getMessage());
 		}
 		return unify;
 	}

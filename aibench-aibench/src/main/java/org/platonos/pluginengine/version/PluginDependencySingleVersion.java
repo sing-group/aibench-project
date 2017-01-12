@@ -54,33 +54,18 @@ package org.platonos.pluginengine.version;
  *
  */
 public final class PluginDependencySingleVersion extends PluginSingleVersion {
-	/**
-	 * 
-	 */
 	public PluginDependencySingleVersion() {
 		super();
 	}
 	
-	/**
-	 * @param releaseVersion
-	 */
 	public PluginDependencySingleVersion(int releaseVersion) {
 		super(releaseVersion);
 	}
 	
-	/**
-	 * @param releaseVersion
-	 * @param updateVersion
-	 */
 	public PluginDependencySingleVersion(int releaseVersion, int updateVersion) {
 		super(releaseVersion, updateVersion);
 	}
 
-	/**
-	 * @param releaseVersion
-	 * @param updateVersion
-	 * @param patchVersion
-	 */
 	public PluginDependencySingleVersion(int releaseVersion, int updateVersion,
 			int patchVersion) {
 		super(releaseVersion, updateVersion, patchVersion);
@@ -145,9 +130,6 @@ public final class PluginDependencySingleVersion extends PluginSingleVersion {
 		}
 	}
 	
-	/* (non-Javadoc)
-	 * @see org.platonos.pluginengine.PluginVersion#equals(java.lang.Object)
-	 */
 	@Override
 	public boolean equals(Object object) {
 		if (object instanceof PluginDependencySingleVersion) {
@@ -160,9 +142,6 @@ public final class PluginDependencySingleVersion extends PluginSingleVersion {
 		}
 	}
 	
-	/* (non-Javadoc)
-	 * @see org.platonos.pluginengine.PluginVersion#toString()
-	 */
 	@Override
 	public String toString() {
 		String release = (this.getReleaseVersion() < 0)?"*":Integer.toString(this.getReleaseVersion());

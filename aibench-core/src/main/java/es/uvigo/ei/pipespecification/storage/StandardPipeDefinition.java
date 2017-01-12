@@ -34,7 +34,7 @@ import org.w3c.dom.Element;
 
 import es.uvigo.ei.aibench.core.operation.OperationDefinition;
 import es.uvigo.ei.aibench.core.operation.execution.Executable;
-import es.uvigo.ei.aibench.core.operation.execution.IncompatibleContraintsException;
+import es.uvigo.ei.aibench.core.operation.execution.IncompatibleConstraintsException;
 import es.uvigo.ei.pipespecification.InvalidAnnotationsException;
 
 class StandardPipeDefinition<T> extends PipeDefinition {
@@ -143,7 +143,7 @@ class StandardPipeDefinition<T> extends PipeDefinition {
 
 	@Override
 	public PipeDefinition join(PipeDefinition rightPart)
-			throws IncompatibleContraintsException {
+			throws IncompatibleConstraintsException {
 		return new CompositedPipeDefinition(this, rightPart);
 	}
 

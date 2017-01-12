@@ -58,15 +58,19 @@ package bsh.util;
  * The interface for name completion.
  */
 public interface NameCompletion {
-        /**
-         * Return an array containing a string element of the maximum
-         * unambiguous namespace completion or, if there is no common prefix,
-         * return the list of ambiguous names. e.g. input: "java.l" output: [
-         * "java.lang." ] input: "java.lang." output: [ "java.lang.Thread",
-         * "java.lang.Integer", ... ]
-         * 
-         * Note: Alternatively, make a NameCompletionResult object someday...
-         */
-        public String[] completeName(String part);
+	/**
+	 * Return an array containing a string element of the maximum unambiguous
+	 * namespace completion or, if there is no common prefix, return the list of
+	 * ambiguous names. e.g. input: "java.l" output: [ "java.lang." ] input:
+	 * "java.lang." output: [ "java.lang.Thread", "java.lang.Integer", ... ]
+	 * 
+	 * Note: Alternatively, make a NameCompletionResult object someday...
+	 * 
+	 * @param part the part of the name to be completed.
+	 * @return an array containing a string element of the maximum unambiguous
+	 * namespace completion or, if there is no common prefix, return the list of
+	 * ambiguous names.
+	 */
+	public String[] completeName(String part);
 
 }

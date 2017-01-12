@@ -58,7 +58,6 @@ import es.uvigo.ei.pipespecification.InvalidAnnotationsException;
  */
 
 public class OperationDefinition<T> {
-
 	private String name = "";
 
 	private String id = "";
@@ -74,6 +73,22 @@ public class OperationDefinition<T> {
 	//NOTE: added by paulo maia
 	private String shortcut = "";
 	
+	private boolean enabledByDefault;
+
+	private List<EndpointsFactory<T>> factories;
+
+	private List<Class<?>> outcomingArgumentTypes;
+
+	private List<Class<?>> incomingArgumentTypes;
+
+	private Port[] ports;
+
+	/**
+	 * Should not be used
+	 */
+	protected OperationDefinition() {
+
+	}
 	
 	public String getPluginID() {
 		return this.pluginID;
@@ -164,11 +179,10 @@ public class OperationDefinition<T> {
 		this.path = path;
 	}
 
-	
-
 	/**
+	 * Returns whether the operation is enabled or not.
 	 * 
-	 * @return
+	 * @return whether the operation is enabled or not.
 	 */
 	public boolean isEnabled() {
 		return Core.getInstance().isOperationEnabled(this);
@@ -178,12 +192,13 @@ public class OperationDefinition<T> {
 		return instance.isOperationEnabled(this);
 	}
 	
-	private boolean enabledByDefault;
 	public boolean isEnabledByDefault(){
 		return this.enabledByDefault;
 	}
+	
 	public static <T> OperationDefinition<T> createOperationDefinition(
-			Class<T> annotatedClass) throws InvalidAnnotationsException {
+		Class<T> annotatedClass
+	) throws InvalidAnnotationsException {
 		Operation pipeElement = annotatedClass.getAnnotation(Operation.class);
 		if (pipeElement == null)
 			throw new IllegalArgumentException("the class ("
@@ -292,14 +307,6 @@ public class OperationDefinition<T> {
 		);
 	}
 
-	private List<EndpointsFactory<T>> factories;
-
-	private List<Class<?>> outcomingArgumentTypes;
-
-	private List<Class<?>> incomingArgumentTypes;
-
-	private Port[] ports;
-
 	private OperationDefinition(Class<T> annotatedClass,
 			List<EndpointsFactory<T>> factories, Port[] ports, String name,
 			String description, String help) throws InvalidAnnotationsException {
@@ -372,14 +379,7 @@ public class OperationDefinition<T> {
 	}
 
 	/**
-	 * Should not be used
-	 */
-	protected OperationDefinition() {
-
-	}
-
-	/**
-	 * @return Returns the description.
+	 * @return the description.
 	 */
 	public String getDescription() {
 		return this.description;

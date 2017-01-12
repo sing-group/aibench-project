@@ -29,7 +29,7 @@ import java.util.Map;
 import java.util.Map.Entry;
 
 import es.uvigo.ei.aibench.core.operation.execution.Executable;
-import es.uvigo.ei.aibench.core.operation.execution.IncompatibleContraintsException;
+import es.uvigo.ei.aibench.core.operation.execution.IncompatibleConstraintsException;
 
 public abstract class PipeDefinition {
 
@@ -45,7 +45,7 @@ public abstract class PipeDefinition {
 	}
 
 	public abstract PipeDefinition join(PipeDefinition rightPart)
-			throws IncompatibleContraintsException;
+			throws IncompatibleConstraintsException;
 
 	public abstract int length();
 

@@ -32,36 +32,41 @@ import es.uvigo.ei.aibench.core.clipboard.ClipboardItem;
 public interface WorkbenchListener {
 	
 	/**
-	 * Called when some data is showed (or bringed to front) in the document area
-	 * @param data
+	 * Called when some data is showed (or bringed to front) in the document area.
+	 * 
+	 * @param data the clipboard item showed.
 	 */
 	public void dataShowed(ClipboardItem data);
 	
 	/**
-	 * Called when some data is hidden
-	 * @param data
+	 * Called when some data is hidden.
+	 * 
+	 * @param data the clipboard item hidden.
 	 */
 	public void dataHidded(ClipboardItem data);
 	
 	/**
-	 * Called when some data is closed
-	 * @param data
+	 * Called when some data is closed.
+	 * 
+	 * @param data the clipboard item closed.
 	 */
 	public void dataClosed(ClipboardItem data);
 	
 	/**
-	 * Called when some component is added
-	 * @param slotID
-	 * @param componentName
-	 * @param componentID
-	 * @param component
+	 * Called when some component is added.
+	 * 
+	 * @param slotID the slot where the component was added.
+	 * @param componentName the name of the component.
+	 * @param componentID the identifier of the component.
+	 * @param component the component added.
 	 */
 	public void componentAdded(String slotID, String componentName,  String componentID, JComponent component);
 
 	/**
-	 * Called when some component is removed
-	 * @param slotID
-	 * @param component
+	 * Called when some component is removed.
+	 * 
+	 * @param slotID the slot from where the component was removed.
+	 * @param component the component removed.
 	 */
 	public void componentRemoved(String slotID, JComponent component);
 }

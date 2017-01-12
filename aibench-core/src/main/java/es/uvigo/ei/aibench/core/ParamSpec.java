@@ -38,16 +38,21 @@ import es.uvigo.ei.aibench.core.datatypes.Transformer;
 public class ParamSpec {
 	private Class<?> type;
 	private Object value; // if this keeps information of a simple value (most cases) we only use the 0 position
-	//private ParamSpec[] subSpecs;
+	private Object transformedValue;
+	
 	private ParamSource source;
 	private String name;
 	private String transformerSignature;
 
 	private Object unserializedInstance = null; //when ParamSource.SERIALIZED
+	
 	/**
-	 * @param type
-	 * @param values
-	 * @throws IllegalArgumentException if the class type is not an array
+	 * Constructs a ParamSpec of an array parameter.
+	 * 
+	 * @param name name of the parameter.
+	 * @param type type of the parameter. An array type is required.
+	 * @param values values of the parameter.
+	 * @throws IllegalArgumentException if the class type is not an array.
 	 */
 	public ParamSpec(String name, Class<?> type,  ParamSpec[] values) throws IllegalArgumentException{
 		super();
@@ -58,45 +63,57 @@ public class ParamSpec {
 		this.source = ParamSource.MIXED;
 		this.name = name;
 	}
+	
 	/**
-	 * @param type
-	 * @param value
-	 * @param source
-	 * @throws IllegalArgumentException if this class is an array or the source is MIXED
+	 * Constructs a ParamSpect with a single value.
+	 * 
+	 * @param name name of the parameter.
+	 * @param type type of the parameter.
+	 * @param value the value of the parameter.
+	 * @param source the source of the parameter. If the type of the parameter is array,
+	 * then the source must be ParamSource.CLIBOARD. ParamSource.MIXED are not allowed. 
+	 * @throws IllegalArgumentException if this class is an array or the source is MIXED.
 	 */
-	public ParamSpec(String name, Class<?> type,  Object value, ParamSource source) throws IllegalArgumentException{
+	public ParamSpec(String name, Class<?> type, Object value, ParamSource source) throws IllegalArgumentException {
 		super();
-		if ((type.isArray() && source!=ParamSource.CLIPBOARD) || source == ParamSource.MIXED) throw new IllegalArgumentException("can't use MIXED source with only one value");
+		if ((type.isArray() && source != ParamSource.CLIPBOARD) || source == ParamSource.MIXED)
+			throw new IllegalArgumentException("can't use MIXED source with only one value");
 		this.type = type;
 		this.value = value;
 		this.source = source;
 		this.name = name;
 	}
 
-
-
 	/**
-	 * @return The value used in the constructor.
+	 * @return the value used in the constructor.
 	 */
 	public Object getValue(){
 		return this.value;
 	}
+	
 	/**
-	 * Return the "useable" object.
-	 * @return
-	 * If <code>this</code>
-	 * If <code>this</code> was created with <code>ParamSource.MIXED</code>, this method returns the array with
+	 * Returns the raw value of this parameter specification.
+	 * 
+	 * @return the raw value of this parameter specification.
+	 * 
+	
+	/**
+	 * Returns the "usable" object.
+	 * 
+	 * It the {@code value} attribute is {@code null}, returns {@code null}. 
+	 * If {@code this} was created with {@code ParamSource.MIXED}, this method returns the array with
 	 * the real values of each sub-ParamSpec (not the ParamSpec[] array).
-	 * If <code>this</code> was created with <code>ParamSource.STRING_CONSTRUCTOR</code>, it uses the type and ParamSource params used
+	 * If {@code this} was created with {@code ParamSource.STRING_CONSTRUCTOR}, it uses the type and ParamSource params used
 	 * in this constructor to create the return value. For example, if the type was Integer.class and the value
 	 * was "7", this method returns a new Integer("7").
-	 * If <code>this</code> was created with <code>ParamSource.CLIPBOARD</code>, it returns the real object. If there
+	 * If {@code this} was created with {@code ParamSource.CLIPBOARD}, it returns the real object. If there
 	 * is a transformer defined, it will invoke it, but only once
 	 * 4. Else, returns the value used in the constructor.
+	 * 
+	 * @return the "usable" object.
 	 */
-	public Object transformedValue;
-	public Object getRawValue(){
-		if (this.value==null) return null; //Bomb launched...
+	public Object getRawValue() {
+		if (this.value == null) return null; //Bomb launched...
 
 		if (source == ParamSource.MIXED){
 			Object arrayResult = Array.newInstance(this.type.getComponentType(), ((ParamSpec[]) this.value).length);
@@ -213,16 +230,16 @@ public class ParamSpec {
 	}
 
 	/**
-	 * The source from which this param was obtained
-	 * @return
+	 * Returns the source from which this param was obtained.
+	 * 
+	 * @return the source from which this param was obtained.
 	 */
 	public ParamSource getSource(){
 		return this.source;
 	}
 
-	
+	@Override
 	public String toString(){
-
 		String toret = "---ParamSpec----";
 		toret+="\nClass: "+this.type;
 		toret+="\nValue: "+this.value;
@@ -250,39 +267,41 @@ public class ParamSpec {
 		}
 		return toret;
 	}
+	
 	/**
-	 * @return Returns the name.
+	 * @return the name.
 	 */
 	public String getName() {
 		return this.name;
 	}
+	
 	/**
-	 * @return Returns the type.
+	 * @return the type.
 	 */
 	public Class<?> getType() {
 		return this.type;
 	}
+	
 	/**
-	 * @param type The type to set.
+	 * @param type the type to set.
 	 */
 	public void setType(Class<?> type) {
 		this.type = type;
 	}
 	
 	/**
-	 * @return the transformerSignature
+	 * @return the transformer signature.
 	 */
 	public String getTransformerSignature() {
 		return this.transformerSignature;
 	}
+	
 	/**
-	 * @param transformerSignature the transformerSignature to set
+	 * @param transformerSignature the transformer signature to set.
 	 */
 	public void setTransformerSignature(String transformerSignature) {
 		this.transformerSignature = transformerSignature;
 	}
-
-
 
 }
 

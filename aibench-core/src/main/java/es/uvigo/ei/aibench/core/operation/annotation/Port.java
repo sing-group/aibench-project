@@ -40,10 +40,10 @@ public @interface Port {
 	ResultTreatment resultTreatment() default ResultTreatment.ELEMENT;
 
 	/**
-	 * ignored unless <tt>resultTreatment</tt> is <tt>DataSource</tt> and
+	 * Ignored unless {@code resultTreatment} is {@code DataSource} and
 	 * the return type is not an array.
 	 *
-	 * @return
+	 * @return the class of the results. 
 	 */
 	Class<?> resultClass() default Object.class;
 
@@ -52,8 +52,9 @@ public @interface Port {
 	String description() default "";
 
 	/**
-	 * The ports will be invocated in the order specified by <code>order</code>.
-	 * @return The position in the port's invocation order
+	 * The ports will be invoked in the order specified by {@code order}.
+	 * 
+	 * @return the position in the port's invocation order.
 	 */
 	int order() default -1;
 

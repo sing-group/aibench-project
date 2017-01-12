@@ -44,6 +44,9 @@ public class PluginXmlNode {
 
 	/**
 	 * Sets the value of the attribute with the specified name.
+	 * 
+	 * @param name the name of the attribute.
+	 * @param value the value of the attribute.
 	 */
 	public void setAttribute (String name, String value) {
 		attributes.put(name.toLowerCase(), value);
@@ -51,6 +54,9 @@ public class PluginXmlNode {
 
 	/**
 	 * Returns the value of the attribute with the specified name.
+	 * 
+	 * @param name the name of the attribute.
+	 * @return the value of the attribute.
 	 */
 	public String getAttribute (String name) {
 		return (String)attributes.get(name.toLowerCase());
@@ -58,6 +64,8 @@ public class PluginXmlNode {
 
 	/**
 	 * Returns the name/value pairs of all attributes on this PluginXmlNode.
+	 * 
+	 * @return the name/value pairs of all attributes on this PluginXmlNode.
 	 */
 	public Map<String, String> getAttributes () {
 		return attributes;
@@ -65,28 +73,37 @@ public class PluginXmlNode {
 
 	/**
 	 * Returns the number of attributes on this PluginXmlNode.
+	 * 
+	 * @return the number of attributes on this PluginXmlNode.
 	 */
 	public int getAttributeCount () {
 		return (null != attributes) ? attributes.size() : 0;
 	}
 
 	/**
-	 * Returns true if there is at least one child node, otherwise returns false.
+	 * Returns {@code true} if there is at least one child node, otherwise returns {@code false}.
+	 * 
+	 * @return {@code true} if there is at least one child node, otherwise returns {@code false}.
 	 */
 	public boolean hasChildren () {
 		return (null != children && children.size() > 0);
 	}
 
 	/**
-	 * Returns a List of PluginXmlNodes that make up the children of this PluginXmlNode. The List returned is used in the internal
-	 * implementation so modifying the List will affect this PluginXmlNode.
+	 * Returns a list of PluginXmlNodes that make up the children of this PluginXmlNode. The list returned is used in the internal
+	 * implementation so modifying the list will affect this PluginXmlNode.
+	 * 
+	 * @return a list of PluginXmlNodes that make up the children of this PluginXmlNode.
 	 */
 	public List<PluginXmlNode> getChildren () {
 		return children;
 	}
 
 	/**
-	 * Returns the child at the specified index or null if the index is out of range.
+	 * Returns the child at the specified index or {@code null} if the index is out of range.
+	 * 
+	 * @param index the index of the child.
+	 * @return the child at the specified index or {@code null} if the index is out of range.
 	 */
 	public PluginXmlNode getChild (int index) {
 		if (index > children.size() - 1) return null;
@@ -94,7 +111,10 @@ public class PluginXmlNode {
 	}
 
 	/**
-	 * Returns the first child with the specified element name or null if it could not be found.
+	 * Returns the first child with the specified element name or {@code null} if it could not be found.
+	 * 
+	 * @param name the name of the child.
+	 * @return the first child with the specified element name or {@code null} if it could not be found.
 	 */
 	public PluginXmlNode getChild (String name) {
 		for (PluginXmlNode child:children) {
@@ -104,7 +124,11 @@ public class PluginXmlNode {
 	}
 
 	/**
-	 * Returns a List of PluginXmlNodes representing all children with the specified element name. An empty List will be returned
+	 * Returns a list of PluginXmlNodes representing all children with the specified element name. An empty list will be returned
+	 * if none are found.
+	 * 
+	 * @param name the name of the children.
+	 * @return a list of PluginXmlNodes representing all children with the specified element name. An empty list will be returned
 	 * if none are found.
 	 */
 	public List<PluginXmlNode> getChildren (String name) {
@@ -117,6 +141,8 @@ public class PluginXmlNode {
 
 	/**
 	 * Adds an PluginXmlNode as a child of this PluginXmlNode.
+	 * 
+	 * @param child the child to be added.
 	 */
 	public void addChild (PluginXmlNode child) {
 		child.setParent(this);
@@ -125,6 +151,9 @@ public class PluginXmlNode {
 
 	/**
 	 * Removes an PluginXmlNode from this PluginXmlNode.
+	 * 
+	 * @param child the child to be removed.
+	 * @return {@code true} if the child was removed. {@code false} otherwise.
 	 */
 	public boolean removeChild (PluginXmlNode child) {
 		child.setParent(null);
@@ -133,6 +162,8 @@ public class PluginXmlNode {
 
 	/**
 	 * Sets the name of this PluginXmlNode.
+	 * 
+	 * @param name the name of this PluginXmlNode.
 	 */
 	public void setName (String name) {
 		this.name = name;
@@ -140,6 +171,8 @@ public class PluginXmlNode {
 
 	/**
 	 * Returns the name of this PluginXmlNode.
+	 * 
+	 * @return the name of this PluginXmlNode.
 	 */
 	public String getName () {
 		return name;
@@ -147,13 +180,17 @@ public class PluginXmlNode {
 
 	/**
 	 * Sets the parent PluginXmlNode.
+	 * 
+	 * @param parent the parent PluginXmlNode.
 	 */
 	public void setParent (PluginXmlNode parent) {
 		this.parent = parent;
 	}
 
 	/**
-	 * Returns the parent PluginXmlNode or null if this PluginXmlNode is at the root.
+	 * Returns the parent PluginXmlNode or {@code null} if this PluginXmlNode is at the root.
+	 * 
+	 * @return the parent PluginXmlNode or {@code null} if this PluginXmlNode is at the root.
 	 */
 	public PluginXmlNode getParent () {
 		return parent;
@@ -161,6 +198,8 @@ public class PluginXmlNode {
 
 	/**
 	 * Sets the text of this PluginXmlNode.
+	 * 
+	 * @param text the text of this PluginXmlNode.
 	 */
 	public void setText (String text) {
 		this.text = text;
@@ -168,6 +207,8 @@ public class PluginXmlNode {
 
 	/**
 	 * Returns the text between the beginning and ending XML tags for this PluginXmlNode.
+	 * 
+	 * @return the text between the beginning and ending XML tags for this PluginXmlNode.
 	 */
 	public String getText () {
 		return text == null ? "" : text;
@@ -175,20 +216,24 @@ public class PluginXmlNode {
 
 	/**
 	 * Returns the XML of this PluginXmlNode and all of its children.
+	 * 
+	 * @return the XML of this PluginXmlNode and all of its children.
 	 */
 	public String toXML () {
-		StringBuffer buffer = new StringBuffer(100);
+		StringBuilder buffer = new StringBuilder(100);
 		toXML(buffer);
 		return buffer.toString();
 	}
 
 	/**
 	 * Appends the XML of this PluginXmlNode and all of its children to the specified StringBuffer.
+	 * 
+	 * @param buffer the buffer to which the XML will be added.
 	 */
-	void toXML (StringBuffer buffer) {
+	void toXML(StringBuilder buffer) {
 		buffer.append('<');
 		buffer.append(getName());
-		for (String name:getAttributes().keySet()) {
+		for (String name : getAttributes().keySet()) {
 			buffer.append(' ');
 			buffer.append(name);
 			buffer.append("=\"");
@@ -209,7 +254,7 @@ public class PluginXmlNode {
 			}
 		} else {
 			buffer.append('>');
-			for (PluginXmlNode child:children) {
+			for (PluginXmlNode child : children) {
 				child.toXML(buffer);
 			}
 			buffer.append("</");
@@ -218,6 +263,7 @@ public class PluginXmlNode {
 		}
 	}
 
+	@Override
 	public String toString () {
 		return toXML();
 	}

@@ -39,7 +39,7 @@ import org.xml.sax.ErrorHandler;
 import org.xml.sax.SAXException;
 import org.xml.sax.SAXParseException;
 
-import es.uvigo.ei.aibench.core.operation.execution.IncompatibleContraintsException;
+import es.uvigo.ei.aibench.core.operation.execution.IncompatibleConstraintsException;
 
 public class PipeLoader {
 
@@ -101,7 +101,7 @@ public class PipeLoader {
 
 	public static PipeDefinition load(File xmlFile) throws SAXException,
 			IOException, ClassNotFoundException,
-			IncompatibleContraintsException, InvalidAnnotationsFormatException {
+			IncompatibleConstraintsException, InvalidAnnotationsFormatException {
 		Document doc = docBuilder.parse(xmlFile);
 		NodeList argsList = getSpecificationArgs(doc);
 		Map<String, Class<?>> argsMap = new HashMap<String, Class<?>>();

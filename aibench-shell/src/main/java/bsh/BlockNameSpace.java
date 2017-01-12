@@ -60,7 +60,6 @@ package bsh;
  * within it (block local scope) or untyped variables explicitly set in it via
  * setBlockVariable(). Otherwise variable assignment (including untyped variable
  * usage) acts like it is part of the containing block.
- * <p>
  */
 /*
  * Note: This class essentially just delegates most of its methods to its

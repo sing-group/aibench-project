@@ -22,21 +22,31 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 	<modelVersion>4.0.0</modelVersion>
+	
 	<groupId>\${groupId}</groupId>
 	<artifactId>\${artifactId}</artifactId>
-	<packaging>jar</packaging>
 	<version>\${version}</version>
+	<packaging>jar</packaging>
+	
 	<name>An AIBench Project</name>
 	<url>http://www.aibench.org</url>
+	
 	<repositories>
 		<repository>
 			<id>sing-repository</id>
 			<name>SING repository</name>
-			<url>http://sing.ei.uvigo.es/maven2</url>
+			<url>http://maven.sing-group.org/repository/maven/</url>
 		</repository>
 	</repositories>
 
 	<properties>
+		<!-- General configuration -->
+		<maven.compiler.source>1.7</maven.compiler.source>
+		<maven.compiler.target>1.7</maven.compiler.target>
+		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+		<project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
+		
+		<!-- AIBench dependencies management -->
 		<aibench.lib.artifactIds>javatar,aibench-aibench,jhall,log4j</aibench.lib.artifactIds>
 		<aibench.plugins.artifactIds>aibench-core,aibench-workbench,aibench-shell,aibench-pluginmanager</aibench.plugins.artifactIds>
 		<aibench.version>${project.version}</aibench.version>
@@ -44,25 +54,20 @@
 
 	<dependencies>
 		<dependency>
-			<groupId>junit</groupId>
-			<artifactId>junit</artifactId>
-			<version>3.8.1</version>
-			<scope>test</scope>
-		</dependency>
-		<dependency>
 			<groupId>es.uvigo.ei.sing</groupId>
 			<artifactId>aibench-aibench</artifactId>
 			<version>\${aibench.version}</version>
 			<scope>compile</scope>
 		</dependency>
+		
 		<dependency>
 			<groupId>es.uvigo.ei.sing</groupId>
 			<artifactId>aibench-shell</artifactId>
 			<version>\${aibench.version}</version>
 			<scope>compile</scope>
 		</dependency>
+		
 		<!-- example of AIBench plugins dependencies -->
-
 		<dependency>
 			<groupId>es.uvigo.ei.sing</groupId>
 			<artifactId>aibench-core</artifactId>
@@ -77,6 +82,7 @@
 				</exclusion>
 			</exclusions>
 		</dependency>
+		
 		<dependency>
 			<groupId>es.uvigo.ei.sing</groupId>
 			<artifactId>aibench-workbench</artifactId>
@@ -89,6 +95,7 @@
 				</exclusion>
 			</exclusions>
 		</dependency>
+		
 		<dependency>
 			<groupId>es.uvigo.ei.sing</groupId>
 			<artifactId>aibench-pluginmanager</artifactId>
@@ -101,23 +108,22 @@
 				</exclusion>
 			</exclusions>
 		</dependency>
+		
+		<!-- Test dependencies -->
+		<dependency>
+			<groupId>junit</groupId>
+			<artifactId>junit</artifactId>
+			<version>4.12</version>
+			<scope>test</scope>
+		</dependency>
 	</dependencies>
 
 	<build>
 		<directory>\${project.basedir}/target</directory>
 		<outputDirectory>\${project.build.directory}/plugins_bin/\${project.artifactId}</outputDirectory>
 		<plugins>
-			<!-- Java version -->
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-compiler-plugin</artifactId>
-				<version>3.1</version>
-				<configuration>
-					<source>1.7</source>
-					<target>1.7</target>
-				</configuration>
-			</plugin>
-			<plugin>
 				<artifactId>maven-resources-plugin</artifactId>
 				<version>2.7</version>
 				<executions>
@@ -139,6 +145,7 @@
 							</resources>
 						</configuration>
 					</execution>
+					
 					<!-- copy scripts -->
 					<execution>
 						<id>copy-resources-scripts</id>
@@ -157,7 +164,6 @@
 							</resources>
 						</configuration>
 					</execution>
-
 				</executions>
 			</plugin>
 
@@ -166,11 +172,10 @@
 				<artifactId>maven-dependency-plugin</artifactId>
 				<version>2.1</version>
 				<executions>
-
 					<!-- aibench core libraries -->
 					<execution>
 						<id>copy-dependencies-aibench-lib</id>
-						<phase>package</phase>
+						<phase>prepare-package</phase>
 						<goals>
 							<goal>copy-dependencies</goal>
 						</goals>
@@ -180,14 +185,14 @@
 							<overWriteSnapshots>false</overWriteSnapshots>
 							<overWriteIfNewer>true</overWriteIfNewer>
 							<includeArtifactIds>\${aibench.lib.artifactIds}</includeArtifactIds>
+							<includeScope>runtime</includeScope>
 						</configuration>
 					</execution>
-
 
 					<!-- aibench plugins -->
 					<execution>
 						<id>copy-dependencies-aibench-plugins</id>
-						<phase>package</phase>
+						<phase>prepare-package</phase>
 						<goals>
 							<goal>copy-dependencies</goal>
 						</goals>
@@ -197,13 +202,14 @@
 							<overWriteSnapshots>false</overWriteSnapshots>
 							<overWriteIfNewer>true</overWriteIfNewer>
 							<includeArtifactIds>\${aibench.plugins.artifactIds}</includeArtifactIds>
+							<includeScope>runtime</includeScope>
 						</configuration>
 					</execution>
 
 					<!-- rest of dependencies inside current aibench plugin -->
 					<execution>
 						<id>copy-dependencies-plugin-dependencies</id>
-						<phase>package</phase>
+						<phase>prepare-package</phase>
 						<goals>
 							<goal>copy-dependencies</goal>
 						</goals>
@@ -213,10 +219,9 @@
 							<overWriteSnapshots>false</overWriteSnapshots>
 							<overWriteIfNewer>true</overWriteIfNewer>
 							<excludeArtifactIds>\${aibench.plugins.artifactIds},\${aibench.lib.artifactIds}</excludeArtifactIds>
-
+							<includeScope>runtime</includeScope>
 						</configuration>
 					</execution>
-
 				</executions>
 			</plugin>
 		</plugins>
@@ -235,6 +240,7 @@
 					<exclude>scripts</exclude>
 				</excludes>
 			</resource>
+			
 			<resource>
 				<directory>src/main/resources</directory>
 				<filtering>true</filtering>

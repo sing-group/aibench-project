@@ -30,6 +30,10 @@ package org.platonos.pluginengine.logging;
 public interface ILogger {
 	/**
 	 * Logs the appropriate message at the provided level, including the optional Throwable parameter when necessary.
+	 * 
+	 * @param level log level.
+	 * @param message message to log.
+	 * @param thr exception thrown. Optional.
 	 */
 	public void log (LoggerLevel level, String message, Throwable thr);
 }

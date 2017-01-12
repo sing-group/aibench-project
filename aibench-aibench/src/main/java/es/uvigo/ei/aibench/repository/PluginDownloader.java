@@ -42,6 +42,8 @@ import org.apache.log4j.Logger;
 import es.uvigo.ei.aibench.repository.info.PluginInfo;
 
 /**
+ * Class that manages the plugin download process.
+ * 
  * @author Miguel Reboiro Jato
  * 
  */
@@ -49,17 +51,12 @@ public class PluginDownloader {
 	private final static Logger logger = Logger.getLogger(PluginDownloader.class);
 	
 	private final static Map<String, Object> DOWNLOAD_LOCKS = new Hashtable<String, Object>();
-	/**
-	 * 
-	 */
+	
 	private static final int BUFFER_SIZE = 8192;
 
-	/**
-	 * 
-	 */
 	private static final String DEFAULT_INFO_FILE = "plugins.dat";
 
-	private static int DOWNLOADID_COUNTER = 0;
+	private static int DOWNLOAD_ID_COUNTER = 0;
 	
 	private final String host;
 	private final String infoFile;
@@ -115,9 +112,6 @@ public class PluginDownloader {
 	public void notifyInfoDownloadStarted(final PluginDownloadInfoEvent event) {
 		synchronized (this.downloadListeners) {
 			this.notifierThreads.execute(new Runnable() {
-				/* (non-Javadoc)
-				 * @see java.lang.Runnable#run()
-				 */
 				public void run() {
 					for (PluginDownloadListener listener:PluginDownloader.this.downloadListeners) {
 						listener.downloadInfoStarted(event);
@@ -130,9 +124,6 @@ public class PluginDownloader {
 	public void notifyInfoDownloadFinished(final PluginDownloadInfoEvent event) {
 		synchronized (this.downloadListeners) {
 			this.notifierThreads.execute(new Runnable() {
-				/* (non-Javadoc)
-				 * @see java.lang.Runnable#run()
-				 */
 				public void run() {
 					for (PluginDownloadListener listener:PluginDownloader.this.downloadListeners) {
 						listener.downloadInfoFinished(event);
@@ -145,9 +136,6 @@ public class PluginDownloader {
 	public void notifyInfoDownloadError(final PluginDownloadInfoEvent event) {
 		synchronized (this.downloadListeners) {
 			this.notifierThreads.execute(new Runnable() {
-				/* (non-Javadoc)
-				 * @see java.lang.Runnable#run()
-				 */
 				public void run() {
 					for (PluginDownloadListener listener:PluginDownloader.this.downloadListeners) {
 						listener.downloadInfoError(event);
@@ -160,9 +148,6 @@ public class PluginDownloader {
 	public void notifyDownloadStarted(final PluginDownloadEvent event) {
 		synchronized (this.downloadListeners) {
 			this.notifierThreads.execute(new Runnable() {
-				/* (non-Javadoc)
-				 * @see java.lang.Runnable#run()
-				 */
 				public void run() {
 					for (PluginDownloadListener listener:PluginDownloader.this.downloadListeners) {
 						listener.downloadStarted(event);
@@ -175,9 +160,6 @@ public class PluginDownloader {
 	public void notifyDownloadStep(final PluginDownloadEvent event) {
 		synchronized (this.downloadListeners) {
 			this.notifierThreads.execute(new Runnable() {
-				/* (non-Javadoc)
-				 * @see java.lang.Runnable#run()
-				 */
 				public void run() {
 					for (PluginDownloadListener listener:PluginDownloader.this.downloadListeners) {
 						listener.downloadStep(event);
@@ -190,9 +172,6 @@ public class PluginDownloader {
 	public void notifyDownloadError(final PluginDownloadEvent event) {
 		synchronized (this.downloadListeners) {
 			this.notifierThreads.execute(new Runnable() {
-				/* (non-Javadoc)
-				 * @see java.lang.Runnable#run()
-				 */
 				public void run() {
 					for (PluginDownloadListener listener:PluginDownloader.this.downloadListeners) {
 						listener.downloadError(event);
@@ -205,9 +184,6 @@ public class PluginDownloader {
 	public void notifyDownloadFinished(final PluginDownloadEvent event) {
 		synchronized (this.downloadListeners) {
 			this.notifierThreads.execute(new Runnable() {
-				/* (non-Javadoc)
-				 * @see java.lang.Runnable#run()
-				 */
 				public void run() {
 					for (PluginDownloadListener listener:PluginDownloader.this.downloadListeners) {
 						listener.downloadFinished(event);
@@ -217,55 +193,42 @@ public class PluginDownloader {
 		}
 	}
 	
-	/**
-	 * 
-	 * @param key
-	 * @return
-	 */
 	private final static String getPluginFromKey(String key) {
 		return key.substring(0, key.lastIndexOf('.'));
 	}
 	
-	/**
-	 * 
-	 * @param key
-	 * @return
-	 */
 	private final static String getPropertyFromKey(String key) {
 		return key.substring(key.lastIndexOf('.')+1, key.length());
 	}
 	
-	/**
-	 * 
-	 * @param file
-	 * @return
-	 */
 	private final String getFileURL(String file) {
 		return String.format("%s/%s", this.host, file);
 	}
 	
 	/**
-	 * @return the host
+	 * @return the host.
 	 */
 	public String getHost() {
 		return this.host;
 	}
 
 	/**
-	 * @return the infoFile
+	 * @return the info file.
 	 */
 	public String getInfoFile() {
 		return this.infoFile;
 	}
 	
 	/**
-	 * 
-	 * @return
+	 * @return the URL of the info file.
 	 */
 	public String getInfoFileURL() {
 		return this.getFileURL(this.infoFile);
 	}
 
+	/**
+	 * @return {@code true} if contains plugin information.
+	 */
 	public synchronized boolean hasInfo() {
 		return !this.infoPlugins.isEmpty();
 	}
@@ -423,7 +386,7 @@ public class PluginDownloader {
 			this(plugin, null);
 		}
 		public DownloadThread(PluginInfo plugin, String updatePlugin) {
-			this.downloadId = PluginDownloader.DOWNLOADID_COUNTER++;
+			this.downloadId = PluginDownloader.DOWNLOAD_ID_COUNTER++;
 			this.plugin = plugin;
 			this.updatePlugin = updatePlugin;
 			this.directory = new File(PluginDownloader.this.installDir, plugin.getUID());

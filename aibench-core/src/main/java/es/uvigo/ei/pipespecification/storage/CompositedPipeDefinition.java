@@ -30,7 +30,7 @@ import java.util.Map.Entry;
 
 import es.uvigo.ei.aibench.core.operation.execution.CollectorAdapterFactory;
 import es.uvigo.ei.aibench.core.operation.execution.Executable;
-import es.uvigo.ei.aibench.core.operation.execution.IncompatibleContraintsException;
+import es.uvigo.ei.aibench.core.operation.execution.IncompatibleConstraintsException;
 import es.uvigo.ei.aibench.core.operation.execution.SerialExecutable;
 
 class CompositedPipeDefinition extends PipeDefinition {
@@ -62,12 +62,12 @@ class CompositedPipeDefinition extends PipeDefinition {
 	}
 
 	CompositedPipeDefinition(PipeDefinition pipe1, PipeDefinition pipe2)
-			throws IncompatibleContraintsException {
+			throws IncompatibleConstraintsException {
 		this(aggregateArgumentsSpecification(pipe1, pipe2), join(pipe1, pipe2));
 	}
 
 	private static List<PipeDefinition> join(PipeDefinition pipe1,
-			PipeDefinition pipe2) throws IncompatibleContraintsException {
+			PipeDefinition pipe2) throws IncompatibleConstraintsException {
 		CollectorAdapterFactory.join(pipe1, pipe2);
 		return Arrays.asList(pipe1, pipe2);
 	}
@@ -123,7 +123,7 @@ class CompositedPipeDefinition extends PipeDefinition {
 
 	@Override
 	public PipeDefinition join(PipeDefinition rightPart)
-			throws IncompatibleContraintsException {
+			throws IncompatibleConstraintsException {
 		CollectorAdapterFactory.join(this, rightPart);
 		List<PipeDefinition> newSons = new ArrayList<PipeDefinition>(sons);
 		newSons.add(rightPart);

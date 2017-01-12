@@ -63,13 +63,13 @@ public class Util {
 				}
 				return url;
 			} catch (MalformedURLException e1) {
-				throw new RuntimeException("Not found a aibench configuration file, searching in url: "+url.getFile());
+				throw new RuntimeException("Not found a aibench configuration file, searching in url: "+url.getFile(), e1);
 			}
 		} catch(NullPointerException e) {
 			try {
 				return new File(resourcePath).toURI().toURL();
 			} catch (Exception e1) {
-				throw new RuntimeException("Can't find resource in path "+resourcePath+" due to "+e1);
+				throw new RuntimeException("Can't find resource in path " + resourcePath + " due to " + e1, e1);
 			}
 		}
 	}

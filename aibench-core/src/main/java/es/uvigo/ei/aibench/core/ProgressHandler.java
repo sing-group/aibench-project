@@ -32,28 +32,30 @@ import es.uvigo.ei.aibench.core.clipboard.ClipboardItem;
 public interface ProgressHandler {
 
 	/**
-	 * Called when some parameter could'n be validated
-	 * @param t
+	 * Called when some parameter could not be validated.
+	 * 
+	 * @param t an exception thrown on parameter validation.
 	 */
 	public void validationError(Throwable t);
 	
 	/**
-	 * Called when the operation starts
-	 * @param progressBean A POJO with properties holding some operation's specific progress information. This bean may be updated periodically during the operation progress
-	 * @param operationID A unique identifier of the operation's execution
+	 * Called when the operation starts-
+	 * @param progressBean a POJO with properties holding some operation's specific progress information. This bean may be updated periodically during the operation progress.
+	 * @param operationID an unique identifier of the operation's execution.
 	 */
 	public void operationStart(Object progressBean, Object operationID);
 	
 	/**
-	 * Called when the operation finishes (with error or whithout)
-	 * @param results The port outputs
-	 * @param clipboardItems All clipboard elements (nested elements in complex data-types are also included)
+	 * Called when the operation finishes (with error or whithout).
+	 * @param results the port outputs.
+	 * @param clipboardItems all clipboard elements (nested elements in complex data-types are also included).
 	 */
 	public void operationFinished(List<Object> results, List<ClipboardItem> clipboardItems);
 	
 	/**
-	 * Called when some error has occurred during the operation execution
-	 * @param t The error
+	 * Called when some error has occurred during the operation execution.
+	 * 
+	 * @param t the error.
 	 */
 	public void operationError(Throwable t);
 }

@@ -26,8 +26,8 @@ import org.platonos.pluginengine.logging.LoggerLevel;
 import org.platonos.pluginengine.version.PluginVersion;
 
 /**
- * Describes a dependency one Plugin has on another Plugin. The Dependency is required unless {@link #setOptional(boolean)}is set
- * to true.
+ * Describes a dependency one Plugin has on another Plugin. The Dependency is required unless
+ * {@link #setOptional(boolean)} is set to {@code true}.
  * @author Nathan Sweet (misc@n4te.com)
  */
 public class Dependency {
@@ -40,6 +40,7 @@ public class Dependency {
 	private Plugin resolvedToPlugin;
 
 	/**
+	 * @param dependentPlugin the plugin to which this dependency depends.
 	 * @param resolveToPluginUID Plugin UID that the dependent Plugin is dependent upon.
 	 */
 	public Dependency (Plugin dependentPlugin, String resolveToPluginUID) {
@@ -50,6 +51,7 @@ public class Dependency {
 	}
 
 	/**
+	 * @param dependentPlugin the plugin to which this dependency depends.
 	 * @param resolveToPluginUID Plugin UID that the Plugin is dependent upon.
 	 * @param requiredVersion The Plugin that the dependent Plugin depends upon must be of this version.
 	 */
@@ -75,21 +77,21 @@ public class Dependency {
 //	}
 
 	/**
-	 * Returns the dependent Plugin that this Dependency applies to.
+	 * @return the dependent Plugin that this Dependency applies to.
 	 */
 	public Plugin getDependentPlugin () {
 		return dependentPlugin;
 	}
 
 	/**
-	 * Returns the Plugin that this Dependency is resolved to or null if this Dependency is unresolved.
+	 * @return the Plugin that this Dependency is resolved to or null if this Dependency is unresolved.
 	 */
 	public Plugin getResolvedToPlugin () {
 		return resolvedToPlugin;
 	}
 	
 	/**
-	 * Return the UID of the Plugin that this Dependency has to be resolved.
+	 * @return the UID of the Plugin that this Dependency has to be resolved.
 	 * 
 	 * @author Miguel Reboiro Jato
 	 */
@@ -98,28 +100,28 @@ public class Dependency {
 	}
 
 	/**
-	 * Returns true if this Dependency is resolved.
+	 * @return true if this Dependency is resolved.
 	 */
 	public boolean isResolved () {
 		return resolvedToPlugin != null;
 	}
 
 	/**
-	 * Returns the exact required version or null if there is none.
+	 * @return the exact required version or null if there is none.
 	 */
 	public PluginVersion getRequiredVersion () {
 		return requiredVersion;
 	}
 //
 //	/**
-//	 * Returns the minimum required version or null if there is none.
+//	 * @return the minimum required version or null if there is none.
 //	 */
 //	public PluginVersion getMinVersion () {
 //		return minVersion;
 //	}
 //
 //	/**
-//	 * Returns the maximum required version or null if there is none.
+//	 * @return the maximum required version or null if there is none.
 //	 */
 //	public PluginVersion getMaxVersion () {
 //		return maxVersion;
@@ -129,6 +131,8 @@ public class Dependency {
 	 * Sets whether this Dependency is required for the dependent Plugin to function. Dependencies are required by default. If this
 	 * Dependency is optional and is resolved then setting it to be required will cause the dependent Plugin to be unresolved.
 	 * @see Plugin#addExtension(Extension)
+	 * 
+	 * @param isOptional {@code true} if this dependency is required for the dependent Plugin to function. {@code false} otherwise. 
 	 */
 	synchronized public void setOptional (boolean isOptional) {
 		if (dependentPlugin != null) {
@@ -144,7 +148,7 @@ public class Dependency {
 	}
 
 	/**
-	 * Returns whether this Dependency is required for the dependent Plugin to function.
+	 * @return whether this Dependency is required for the dependent Plugin to function.
 	 */
 	public boolean isOptional () {
 		return isOptional;
@@ -152,6 +156,8 @@ public class Dependency {
 
 	/**
 	 * Resolves this Dependency.
+	 * 
+	 * @param resolvedToPlugin the Plugin to which this Dependency is resolved.
 	 */
 	void resolve (Plugin resolvedToPlugin) {
 		this.resolvedToPlugin = resolvedToPlugin;
@@ -167,14 +173,20 @@ public class Dependency {
 	}
 
 	/**
-	 * Returns true if the specified Plugin meets this Dependency's requirements.
+	 * Checks if a plugin is compatible with this dependency.
+	 * 
+	 * @param plugin the Plugin to be checked.
+	 * @return {@code true} if the specified Plugin meets this Dependency's requirements.
 	 */
 	public boolean isCompatible (Plugin plugin) {
 		return resolveToPluginUID.equals(plugin.getUID()) && isVersionCompatible(plugin.getVersion());
 	}
 
 	/**
-	 * Returns true if the specified version matches this Dependency's version rules.
+	 * Checks if a plugin version is compatible with this dependency.
+	 * 
+	 * @param dependentPluginVersion the plugin version to be checked.
+	 * @return {@code true} if the specified version matches this Dependency's version rules.
 	 */
 	boolean isVersionCompatible (PluginVersion dependentPluginVersion) {
 		if (dependentPluginVersion == null) throw new NullPointerException("Invalid argument: dependentPluginVersion");

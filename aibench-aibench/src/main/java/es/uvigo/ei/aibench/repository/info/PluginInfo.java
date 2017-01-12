@@ -43,12 +43,6 @@ public class PluginInfo {
 	
 	private PluginVersion pluginVersion;
 	
-//	private final ReadWriteLock pluginVersionLock = new ReentrantReadWriteLock();
-	
-	/**
-	 * 
-	 * @param pluginID
-	 */
 	public PluginInfo(String pluginID, String host) {
 		if (pluginID == null)
 			throw new NullPointerException("The pluginID is null");
@@ -58,14 +52,6 @@ public class PluginInfo {
 		this.host = host;
 	}
 	
-	/**
-	 * @param pluginID
-	 * @param uid
-	 * @param name
-	 * @param version
-	 * @param needs
-	 * @param file
-	 */
 	public PluginInfo(String pluginID, String host, String uid, String name, String version,
 			String needs, String file, String md5) {
 		this(pluginID, host);
@@ -93,94 +79,47 @@ public class PluginInfo {
 		}
 	}
 
-	/**
-	 * @return the pluginID
-	 */
 	public final String getPluginID() {
 		return this.pluginID;
 	}
 	
-	/**
-	 * 
-	 * @return the host
-	 */
 	public final String getHost() {
 		return this.host;
 	}
 
-	/**
-	 * @return the uid
-	 */
 	public String getUID() {
 		return this.uid;
 	}
 
-	/**
-	 * @param uid the uid to set
-	 */
 	public void setUID(String uid) {
 		this.uid = uid;
 	}
 
-	/**
-	 * @return the name
-	 */
 	public String getName() {
 		return this.name;
 	}
 
-	/**
-	 * @param name the name to set
-	 */
 	public void setName(String name) {
 		this.name = name;
 	}
 
-	/**
-	 * @return the version
-	 */
 	public String getVersion() {
-//		try {
-//			this.pluginVersionLock.readLock().lock();
-			
-			return this.version;
-//		} finally {
-//			this.pluginVersionLock.readLock().unlock();
-//		}
+		return this.version;
 	}
 
-	/**
-	 * @param version the version to set
-	 */
 	public void setVersion(String version) {
-//		try {
-//			this.pluginVersionLock.writeLock().lock();
-
-			this.version = version;
-			this.pluginVersion = null;
-//		} finally {
-//			this.pluginVersionLock.writeLock().unlock();
-//		}
+		this.version = version;
+		this.pluginVersion = null;
 	}
 
-	/**
-	 * @return the needs
-	 */
 	public String getNeeds() {
 		return (this.needs==null)?"":this.needs;
 	}
 
-	/**
-	 * @param needs the needs to set
-	 */
 	public void setNeeds(String needs) {
 		this.needs = needs;
 	}
 	
-	/**
-	 * 
-	 * @return
-	 */
 	public List<DependencyInfo> getListNeeds() {
 		if (this.needs == null || this.needs.trim().length() == 0) 
 			return new ArrayList<DependencyInfo>(0);
@@ -197,40 +136,22 @@ public class PluginInfo {
 		return info;
 	}
 
-	/**
-	 * @return the file
-	 */
 	public String getFile() {
 		return this.file;
 	}
 
-	/**
-	 * @param file the file to set
-	 */
 	public void setFile(String file) {
 		this.file = file;
 	}
 
-	/**
-	 * @param md5
-	 */
 	public void setMd5(String md5) {
 		this.md5 = md5.trim();
 	}
 	
-	/**
-	 * 
-	 * @param md5
-	 * @return
-	 */
 	public String getMd5() {
 		return (this.md5 == null || this.md5.length() == 0)?null:this.md5;
 	}
 	
-	/**
-	 * 
-	 * @return
-	 */
 	public InstallInfo getInstallInfo() {
 		return new InstallInfo(
 			this.getFile(),
@@ -240,11 +161,6 @@ public class PluginInfo {
 		);
 	}
 	
-	/**
-	 * 
-	 * @param updatePlugin
-	 * @return
-	 */
 	public InstallInfo getInstallInfo(String updatePlugin) {
 		return new InstallInfo(
 			this.getFile(),
@@ -256,47 +172,30 @@ public class PluginInfo {
 	
 	private void createPluginVersion()
 	throws PluginEngineException {
-//		try {
-//			this.pluginVersionLock.writeLock().lock();
-//			
-			if (this.pluginVersion == null && this.version != null) {
-				this.pluginVersion = PluginVersion.createInstanceVersion(this.getVersion());
-			}
-//		} finally {
-//			this.pluginVersionLock.writeLock().unlock();
-//		}
+		if (this.pluginVersion == null && this.version != null) {
+			this.pluginVersion = PluginVersion.createInstanceVersion(this.getVersion());
+		}
 	}
 	
 	public PluginVersion getPluginVersion()
 	throws PluginEngineException {
-//		try {
-//			this.pluginVersionLock.readLock().lock();
-			if (this.pluginVersion == null) {
-//				this.pluginVersionLock.readLock().unlock();
-				this.createPluginVersion();
-//				this.pluginVersionLock.readLock().lock();
-			}
-			
-			return this.pluginVersion;
-//		} finally {
-//			this.pluginVersionLock.readLock().unlock();
-//		}
+		if (this.pluginVersion == null) {
+			this.createPluginVersion();
+		}
+		
+		return this.pluginVersion;
 	}
 	
-	
-	/* (non-Javadoc)
-	 * @see java.lang.Object#toString()
-	 */
 	@Override
 	public String toString() {
 		String lineFormat = String.format("%s.%%s=%%s\n", this.pluginID);
 		String toret = String.format(lineFormat, "uid", this.getUID());
 		toret += String.format(lineFormat, "host", this.getHost());
-		toret += String.format(lineFormat, "name", (this.getName()==null)?"":this.getVersion());
-		toret += String.format(lineFormat, "version", (this.getVersion()==null)?"":this.getVersion());
-		toret += String.format(lineFormat, "needs", (this.getNeeds()==null)?"":this.getNeeds());
-		toret += String.format(lineFormat, "file", (this.getFile()==null)?"":this.getFile());
-		toret += String.format("%s.%s=%s\n", this.pluginID, "md5", (this.getMd5() == null)?"":this.getMd5());
+		toret += String.format(lineFormat, "name", (this.getName() == null) ? "" : this.getVersion());
+		toret += String.format(lineFormat, "version", (this.getVersion() == null) ? "" : this.getVersion());
+		toret += String.format(lineFormat, "needs", (this.getNeeds() == null) ? "" : this.getNeeds());
+		toret += String.format(lineFormat, "file", (this.getFile() == null) ? "" : this.getFile());
+		toret += String.format("%s.%s=%s\n", this.pluginID, "md5", (this.getMd5() == null) ? "" : this.getMd5());
 		return toret;
 	}
 }

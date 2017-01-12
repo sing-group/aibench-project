@@ -61,38 +61,53 @@ package bsh;
  * constructing the parent and child relationships between nodes.
  */
 interface Node extends java.io.Serializable {
-        /**
-         * This method is called after the node has been made the current node.
-         * It indicates that child nodes can now be added to it.
-         */
-        public void jjtOpen();
+	/**
+	 * This method is called after the node has been made the current node. It
+	 * indicates that child nodes can now be added to it.
+	 */
+	public void jjtOpen();
 
-        /**
-         * This method is called after all the child nodes have been added.
-         */
-        public void jjtClose();
+	/**
+	 * This method is called after all the child nodes have been added.
+	 */
+	public void jjtClose();
 
-        /**
-         * This pair of methods are used to inform the node of its parent.
-         */
-        public void jjtSetParent(Node n);
+	/**
+	 * Sets the parent node.
+	 * 
+	 * @param n the parent node.
+	 */
+	public void jjtSetParent(Node n);
 
-        public Node jjtGetParent();
+	/**
+	 * Returns the parent node.
+	 * 
+	 * @return the parent node.
+	 */
+	public Node jjtGetParent();
 
-        /**
-         * This method tells the node to add its argument to the node's list of
-         * children.
-         */
-        public void jjtAddChild(Node n, int i);
+	/**
+	 * This method tells the node to add its argument to the node's list of
+	 * children.
+	 * 
+	 * @param n the node to be added as child.
+	 * @param i the indes of the child node.
+	 */
+	public void jjtAddChild(Node n, int i);
 
-        /**
-         * This method returns a child node. The children are numbered from
-         * zero, left to right.
-         */
-        public Node jjtGetChild(int i);
+	/**
+	 * This method returns a child node. The children are numbered from zero,
+	 * left to right.
+	 * 
+	 * @param i the index of the child node.
+	 * @return the node in the provided index position.
+	 */
+	public Node jjtGetChild(int i);
 
-        /**
-         * Return the number of children the node has.
-         */
-        public int jjtGetNumChildren();
+	/**
+	 * Returns the number of children the node has.
+	 * 
+	 * @return the number of children the node has.
+	 */
+	public int jjtGetNumChildren();
 }

@@ -23,6 +23,7 @@ package es.uvigo.ei.aibench.workbench.wizard;
 
 import java.awt.CardLayout;
 import java.awt.FlowLayout;
+import java.awt.Frame;
 import java.awt.Rectangle;
 
 import javax.swing.ImageIcon;
@@ -34,7 +35,7 @@ import javax.swing.JPanel;
 public class Wizard extends JDialog {
 	private static final long serialVersionUID = 1L;
 
-	private javax.swing.JPanel jContentPane = null;
+	private JPanel jContentPane = null;
 
 	private JPanel buttonsPanel = null;
 
@@ -46,8 +47,6 @@ public class Wizard extends JDialog {
 
 	private Object userObject;
 
-	/**
-	 */
 	private WizardStep[] steps;
 
 	private int currentStep = 0;
@@ -65,9 +64,13 @@ public class Wizard extends JDialog {
 	private boolean wasCancelled = false;
 
 	/**
-	 * This is the default constructor
+	 * This is the default constructor.
+	 * 
+	 * @param owner the frame owner of this dialog.
+	 * @param userObject the user object that will be configured.
+	 * @param steps the wizard steps.
 	 */
-	public Wizard(java.awt.Frame owner, Object userObject, WizardStep[] steps) {
+	public Wizard(Frame owner, Object userObject, WizardStep[] steps) {
 		super(owner);
 		this.steps = steps;
 		associateSteps();
@@ -77,7 +80,16 @@ public class Wizard extends JDialog {
 		this.centerOnOwner();
 	}
 
-	public Wizard(java.awt.Frame owner, Object userObject, WizardStep[] steps,
+	/**
+	 * Constructor that allows setting the width and height of the dialog.
+	 * 
+	 * @param owner the frame owner of this dialog.
+	 * @param userObject the user object that will be configured.
+	 * @param steps the wizard steps.
+	 * @param width the initial width of this dialog.
+	 * @param height the initial height of this dialog.
+	 */
+	public Wizard(Frame owner, Object userObject, WizardStep[] steps,
 			int width, int height) {
 		super(owner);
 		this.steps = steps;
@@ -91,24 +103,24 @@ public class Wizard extends JDialog {
 	}
 
 	/**
-	 * @return Returns the user-defined object.
+	 * @return the user-defined object.
 	 */
 	public Object getUserObject() {
 		return userObject;
 	}
 
 	/**
-	 * @return <code>true</code> if the user cancelled the operation,
-	 *         <code>false</code> otherwise.
+	 * @return {@code true} if the user cancelled the operation,
+	 *         {@code false} otherwise.
 	 */
 	public boolean wasCancelled() {
 		return wasCancelled;
 	}
 
 	/**
-	 * This method initializes jButton6
+	 * This method initializes jButton6.
 	 *
-	 * @return javax.swing.JButton
+	 * @return javax.swing.JButton.
 	 */
 	private JButton getBackButton() {
 		if (backButton == null) {

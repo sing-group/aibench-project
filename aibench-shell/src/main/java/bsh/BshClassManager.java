@@ -76,7 +76,7 @@ import java.util.Hashtable;
  * 
  * Bsh has a multi-tiered class loading architecture. No class loader is used
  * unless/until the classpath is modified or a class is reloaded.
- * <p>
+ * </p>
  */
 /*
  * Implementation notes:
@@ -139,11 +139,14 @@ public class BshClassManager {
         protected transient Hashtable definingClassesBaseNames = new Hashtable();
 
         /**
-         * Create a new instance of the class manager. Class manager instnaces
+         * Create a new instance of the class manager. Class manager instances
          * are now associated with the interpreter.
          * 
-         * @see bsh.Interpreter.getClassManager()
-         * @see bsh.Interpreter.setClassLoader( ClassLoader )
+         * @param interpreter the shell interpreter.
+         * @return a new instance of the class manager. Class manager instances
+         * are now associated with the interpreter. 
+         * @see bsh.Interpreter#getClassManager()
+         * @see bsh.Interpreter#setClassLoader(ClassLoader)
          */
         public static BshClassManager createClassManager(Interpreter interpreter) {
                 BshClassManager manager;
@@ -179,7 +182,8 @@ public class BshClassManager {
          * implementation. See bsh.classpath.ClassManagerImpl for the fully
          * functional class management package.
          * 
-         * @return the class or null
+         * @param name the name of the class.
+         * @return the class or {@code null}
          */
         public Class classForName(String name) {
                 if (isClassBeingDefined(name))
@@ -221,16 +225,22 @@ public class BshClassManager {
         }
 
         /**
+         * <p>
          * Perform a plain Class.forName() or call the externally provided
          * classloader. If a BshClassManager implementation is loaded the call
-         * will be delegated to it, to allow for additional hooks. <p/>
+         * will be delegated to it, to allow for additional hooks.
+         * </p>
          * 
+         * <p>
          * This simply wraps that bottom level class lookup call and provides a
          * central point for monitoring and handling certain Java version
          * dependent bugs, etc.
+         * </p>
          * 
+         * @param name the name of the class.
+         * @return the class.
+         * @throws ClassNotFoundException if the class name is not valid.
          * @see #classForName( String )
-         * @return the class
          */
         public Class plainClassForName(String name) throws ClassNotFoundException {
                 Class c = null;
@@ -263,10 +273,10 @@ public class BshClassManager {
         }
 
         /**
-         * Get a resource URL using the BeanShell classpath
+         * Get a resource URL using the BeanShell classpath.
          * 
-         * @param path
-         *                should be an absolute path
+         * @param path should be an absolute path.
+         * @return a resource URL using the BeanShell classpath.
          */
         public URL getResource(String path) {
                 URL url = null;
@@ -281,10 +291,10 @@ public class BshClassManager {
         }
 
         /**
-         * Get a resource stream using the BeanShell classpath
+         * Get a resource stream using the BeanShell classpath.
          * 
-         * @param path
-         *                should be an absolute path
+         * @param path should be an absolute path.
+         * @return a resource stream using the BeanShell classpath.
          */
         public InputStream getResourceAsStream(String path) {
                 InputStream in = null;
@@ -301,10 +311,9 @@ public class BshClassManager {
         /**
          * Cache info about whether name is a class or not.
          * 
-         * @param value
-         *                if value is non-null, cache the class if value is
-         *                null, set the flag that it is *not* a class to speed
-         *                later resolution
+         * @param name the name of a class.
+         * @param value if value is non-null, cache the class if value is {@code null},
+         * set the flag that it is *not* a class to speed later resolution.
          */
         public void cacheClassInfo(String name, Class value) {
                 if (value != null)
@@ -318,6 +327,10 @@ public class BshClassManager {
          * types used to invoke it, subject to classloader change. Static and
          * Object methods are cached separately to support fast lookup in the
          * general case where either will do.
+         * 
+         * @param clas the instance class.
+         * @param types the parameter types.
+         * @param method the method to invoke.
          */
         public void cacheResolvedMethod(Class clas, Class[] types, Method method) {
                 if (Interpreter.DEBUG)
@@ -333,9 +346,11 @@ public class BshClassManager {
         /**
          * Return a previously cached resolved method.
          * 
-         * @param onlyStatic
-         *                specifies that only a static method may be returned.
-         * @return the Method or null
+         * @param clas the instance class.
+         * @param methodName the name of the method to invoke.
+         * @param types the parameter types.
+         * @param onlyStatic specifies that only a static method may be returned.
+         * @return the Method or {@code null}.
          */
         protected Method getResolvedMethod(Class clas, String methodName, Class[] types, boolean onlyStatic) {
                 SignatureKey sk = new SignatureKey(clas, methodName, types);
@@ -358,7 +373,7 @@ public class BshClassManager {
         /**
          * Clear the caches in BshClassManager
          * 
-         * @see public void #reset() for external usage
+         * @see #reset()
          */
         protected void clearCaches() {
                 absoluteNonClasses = new Hashtable();
@@ -376,6 +391,8 @@ public class BshClassManager {
          * is done then BeanShell will perform that in addition to the supplied
          * external classloader. However BeanShell is not currently able to
          * reload classes supplied through the external classloader.
+         * 
+         * @param externalCL an external classloader.
          */
         public void setClassLoader(ClassLoader externalCL) {
                 externalClassLoader = externalCL;
@@ -395,6 +412,9 @@ public class BshClassManager {
         /**
          * Set a new base classpath and create a new base classloader. This
          * means all types change.
+         * 
+         * @param cp the base classpath URLs.
+         * @throws UtilEvalError if an error occurs during evaluation.
          */
         public void setClassPath(URL[] cp) throws UtilEvalError {
                 throw cmUnavailable();
@@ -404,7 +424,8 @@ public class BshClassManager {
          * Overlay the entire path with a new class loader. Set the base path to
          * the user path + base path.
          * 
-         * No point in including the boot class path (can't reload thos).
+         * No point in including the boot class path (can't reload those).
+         * @throws UtilEvalError if an error occurs during evaluation.
          */
         public void reloadAllClasses() throws UtilEvalError {
                 throw cmUnavailable();
@@ -414,6 +435,9 @@ public class BshClassManager {
          * Reloading classes means creating a new classloader and using it
          * whenever we are asked for classes in the appropriate space. For this
          * we use a DiscreteFilesClassLoader
+         * 
+         * @param classNames the name of the classes to reload.
+         * @throws UtilEvalError if an error occurs during evaluation.
          */
         public void reloadClasses(String[] classNames) throws UtilEvalError {
                 throw cmUnavailable();
@@ -422,14 +446,17 @@ public class BshClassManager {
         /**
          * Reload all classes in the specified package: e.g. "com.sun.tools"
          * 
-         * The special package name "<unpackaged>" can be used to refer to
+         * The special package name "&lt;unpackaged&gt;" can be used to refer to
          * unpackaged classes.
+         * 
+         * @param pack the package name.
+         * @throws UtilEvalError if an error occurs during evaluation.
          */
         public void reloadPackage(String pack) throws UtilEvalError {
                 throw cmUnavailable();
         }
 
-        /**
+        /*
          * This has been removed from the interface to shield the core from the
          * rest of the classpath package. If you need the classpath you will
          * have to cast the classmanager to its impl.
@@ -439,6 +466,8 @@ public class BshClassManager {
 
         /**
          * Support for "import *;" Hide details in here as opposed to NameSpace.
+         * 
+         * @throws UtilEvalError if an error occurs during evaluation.
          */
         protected void doSuperImport() throws UtilEvalError {
                 throw cmUnavailable();
@@ -446,17 +475,24 @@ public class BshClassManager {
 
         /**
          * A "super import" ("import *") operation has been performed.
+         * 
+         * @return whether a "super import" ("import *") operation has been performed or not.
          */
         protected boolean hasSuperImport() {
-                return false;
+        	return false;
         }
 
         /**
-         * Return the name or null if none is found, Throw an ClassPathException
-         * containing detail if name is ambigous.
+         * Return the name or {@code null} if none is found, Throw an ClassPathException
+         * containing detail if name is ambiguous.
+         * 
+         * @param name the unique name of a class.
+         * @return the name or {@code null} if none is found, Throw an ClassPathException
+         * containing detail if name is ambiguous.
+         * @throws UtilEvalError if an error occurs during evaluation. 
          */
         protected String getClassNameByUnqName(String name) throws UtilEvalError {
-                throw cmUnavailable();
+            throw cmUnavailable();
         }
 
         public void addListener(Listener l) {
@@ -472,6 +508,8 @@ public class BshClassManager {
         /**
          * Flag the class name as being in the process of being defined. The
          * class manager will not attempt to load it.
+         * 
+         * @param className the class name.
          */
         /*
          * Note: this implementation is temporary. We currently keep a flat
@@ -501,6 +539,9 @@ public class BshClassManager {
         /**
          * This method is a temporary workaround used with definingClass. It is
          * to be removed at some point.
+         * 
+         * @param className the class name.
+         * @return the class being defined.
          */
         protected String getClassBeingDefined(String className) {
                 String baseName = Name.suffix(className, 1);
@@ -510,6 +551,8 @@ public class BshClassManager {
         /**
          * Indicate that the specified class name has been defined and may be
          * loaded normally.
+         * 
+         * @param className the class name.
          */
         protected void doneDefiningClass(String className) {
                 String baseName = Name.suffix(className, 1);
@@ -547,17 +590,21 @@ public class BshClassManager {
         /**
          * Annotate the NoClassDefFoundError with some info about the class we
          * were trying to load.
+         * 
+         * @param className the class name.
+         * @param e the error produced.
+         * @return a {@link NoClassDefFoundError} error with the adequate message.
          */
         protected static Error noClassDefFound(String className, Error e) {
-                return new NoClassDefFoundError("A class required by class: " + className + " could not be loaded:\n" + e.toString());
+            return new NoClassDefFoundError("A class required by class: " + className + " could not be loaded:\n" + e.toString());
         }
 
         protected static UtilEvalError cmUnavailable() {
-                return new Capabilities.Unavailable("ClassLoading features unavailable.");
+            return new Capabilities.Unavailable("ClassLoading features unavailable.");
         }
 
         public static interface Listener {
-                public void classLoaderChanged();
+            public void classLoaderChanged();
         }
 
         /**

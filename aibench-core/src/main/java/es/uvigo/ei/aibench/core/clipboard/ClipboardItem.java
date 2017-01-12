@@ -29,38 +29,39 @@ import java.util.concurrent.locks.ReentrantReadWriteLock;
  */
 public interface ClipboardItem {
 	/**
-	 * @return an unique ID for this item in the clipboard
+	 * @return an unique ID for this item in the clipboard.
 	 */
 	public int getID();
+	
 	/**
-	 * @return the user's object. If this element was removed it will return null
+	 * @return the user's object. If this element was removed it will return {@code null}.
 	 */
 	public Object getUserData();
+	
 	/**
-	 * @return a symbolic name
+	 * @return a symbolic name.
 	 */
 	public String getName();
 	
 	
 	/**
-	 * Changes the name of this clipboard item
-	 * @param name
+	 * Changes the name of this clipboard item.
 	 * 
+	 * @param name the new name of the clipboard item.
 	 */
 	public void setName(String name);
 	
 	/**
-	 * @return The Class with the user object was registered in the clipboard
+	 * @return the Class with the user object was registered in the clipboard.
 	 */
 	public Class<?> getRegisteredUserClass();
 	
 	/**
-	 * Checks if this clipboard item was discarded
-	 * @return
+	 * Checks if this clipboard item was discarded.
+	 * 
+	 * @return {@code true} if this clipboard item was discarded. {@code false} otherwise. 
 	 */
 	public boolean wasRemoved();
 	
-	
 	public ReentrantReadWriteLock getLock();
-	
 }

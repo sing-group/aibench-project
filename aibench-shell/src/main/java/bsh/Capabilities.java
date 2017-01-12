@@ -67,89 +67,91 @@ import java.util.Hashtable;
  * it may require other optional class files to be loaded.
  */
 public class Capabilities {
-        private static boolean accessibility = false;
+	private static boolean accessibility = false;
 
-        public static boolean haveSwing() {
-                // classExists caches info for us
-                return classExists("javax.swing.JButton");
-        }
+	public static boolean haveSwing() {
+		// classExists caches info for us
+		return classExists("javax.swing.JButton");
+	}
 
-        public static boolean canGenerateInterfaces() {
-                // classExists caches info for us
-                return classExists("java.lang.reflect.Proxy");
-        }
+	public static boolean canGenerateInterfaces() {
+		// classExists caches info for us
+		return classExists("java.lang.reflect.Proxy");
+	}
 
-        /**
-         * If accessibility is enabled determine if the accessibility mechanism
-         * exists and if we have the optional bsh package to use it. Note that
-         * even if both are true it does not necessarily mean that we have
-         * runtime permission to access the fields... Java security has a say in
-         * it.
-         * 
-         * @see bsh.ReflectManager
-         */
-        public static boolean haveAccessibility() {
-                return accessibility;
-        }
+	/**
+	 * If accessibility is enabled determine if the accessibility mechanism
+	 * exists and if we have the optional bsh package to use it. Note that even
+	 * if both are true it does not necessarily mean that we have runtime
+	 * permission to access the fields... Java security has a say in it.
+	 * 
+	 * @return whether this capabilities have accessibility or not.
+	 * @see bsh.ReflectManager
+	 */
+	public static boolean haveAccessibility() {
+		return accessibility;
+	}
 
-        public static void setAccessibility(boolean b) throws Unavailable {
-                if (b == false) {
-                        accessibility = false;
-                        return;
-                }
+	public static void setAccessibility(boolean b) throws Unavailable {
+		if (b == false) {
+			accessibility = false;
+			return;
+		}
 
-                if (!classExists("java.lang.reflect.AccessibleObject") || !classExists("bsh.reflect.ReflectManagerImpl"))
-                        throw new Unavailable("Accessibility unavailable");
+		if (!classExists("java.lang.reflect.AccessibleObject") || !classExists("bsh.reflect.ReflectManagerImpl"))
+			throw new Unavailable("Accessibility unavailable");
 
-                // test basic access
-                try {
-                        String.class.getDeclaredMethods();
-                } catch (SecurityException e) {
-                        throw new Unavailable("Accessibility unavailable: " + e);
-                }
+		// test basic access
+		try {
+			String.class.getDeclaredMethods();
+		} catch (SecurityException e) {
+			throw new Unavailable("Accessibility unavailable: " + e);
+		}
 
-                accessibility = true;
-        }
+		accessibility = true;
+	}
 
-        private static Hashtable classes = new Hashtable();
+	private static Hashtable classes = new Hashtable();
 
-        /**
-         * Use direct Class.forName() to test for the existence of a class. We
-         * should not use BshClassManager here because: a) the systems using
-         * these tests would probably not load the classes through it anyway. b)
-         * bshclassmanager is heavy and touches other class files. this
-         * capabilities code must be light enough to be used by any system
-         * **including the remote applet**.
-         */
-        public static boolean classExists(String name) {
-                Object c = classes.get(name);
+	/**
+	 * Use direct Class.forName() to test for the existence of a class. We
+	 * should not use BshClassManager here because: a) the systems using these
+	 * tests would probably not load the classes through it anyway. b)
+	 * bshclassmanager is heavy and touches other class files. this capabilities
+	 * code must be light enough to be used by any system **including the remote
+	 * applet**.
+	 * 
+	 * @param name the name of a class.
+	 * @return whether the class exists or not.
+	 */
+	public static boolean classExists(String name) {
+		Object c = classes.get(name);
 
-                if (c == null) {
-                        try {
-                                /*
-                                 * Note: do *not* change this to BshClassManager
-                                 * plainClassForName() or equivalent. This class
-                                 * must not touch any other bsh classes.
-                                 */
-                                c = Class.forName(name);
-                        } catch (ClassNotFoundException e) {
-                        }
+		if (c == null) {
+			try {
+				/*
+				 * Note: do *not* change this to BshClassManager
+				 * plainClassForName() or equivalent. This class must not touch
+				 * any other bsh classes.
+				 */
+				c = Class.forName(name);
+			} catch (ClassNotFoundException e) {}
 
-                        if (c != null)
-                                classes.put(c, "unused");
-                }
+			if (c != null)
+				classes.put(c, "unused");
+		}
 
-                return c != null;
-        }
+		return c != null;
+	}
 
-        /**
-         * An attempt was made to use an unavailable capability supported by an
-         * optional package. The normal operation is to test before attempting
-         * to use these packages... so this is runtime exception.
-         */
-        public static class Unavailable extends UtilEvalError {
-                public Unavailable(String s) {
-                        super(s);
-                }
-        }
+	/**
+	 * An attempt was made to use an unavailable capability supported by an
+	 * optional package. The normal operation is to test before attempting to
+	 * use these packages... so this is runtime exception.
+	 */
+	public static class Unavailable extends UtilEvalError {
+		public Unavailable(String s) {
+			super(s);
+		}
+	}
 }

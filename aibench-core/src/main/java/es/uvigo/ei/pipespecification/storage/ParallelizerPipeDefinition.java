@@ -27,7 +27,7 @@ import java.util.List;
 import java.util.Map;
 
 import es.uvigo.ei.aibench.core.operation.execution.Executable;
-import es.uvigo.ei.aibench.core.operation.execution.IncompatibleContraintsException;
+import es.uvigo.ei.aibench.core.operation.execution.IncompatibleConstraintsException;
 import es.uvigo.ei.aibench.core.operation.execution.Parallelizer;
 
 public class ParallelizerPipeDefinition extends PipeDefinition {
@@ -97,7 +97,7 @@ public class ParallelizerPipeDefinition extends PipeDefinition {
 
 	@Override
 	public PipeDefinition join(PipeDefinition rightPart)
-			throws IncompatibleContraintsException {
+			throws IncompatibleConstraintsException {
 		return new CompositedPipeDefinition(this,rightPart);
 	}
 

@@ -97,44 +97,50 @@ public class Clipboard {
 	}
 	
 	/**
-	 * NOTE: added by paulo maia
-	 * @param id
-	 * @return
+	 * Returns the order of an item.
+	 * 
+	 * @param id the identifier of the item.
+	 * @return the order of the provided item.
+	 * @author paulo maia
 	 */
-	public int getOrder(int id){
+	public int getOrder(int id) {
 		Integer order = itemsOrdered.get(id);
 		
 		return (order!=null) ? order.intValue() : -1;
 	}
 	
 	/**
-	 * NOTE: added by paulo maia
-	 * @param id
-	 * @param order
+	 * Sets the order of an item.
+	 * 
+	 * @param id the identifier of an item.
+	 * @param order the order of the item.
+	 * @author paulo maia
 	 */
-	public void setOrder(int id,int order){
+	public void setOrder(int id, int order){
 		itemsOrdered.put(new Integer(id), new Integer(order));
 	}
 	
 	/**
-	 * NOTE: added by paulo maia
-	 * @param id
+	 * Removes the order of an item.
+	 * 
+	 * @param id the identifier of the order.
+	 * @author paulo maia
 	 */
 	public void removeOrder(int id){
 		itemsOrdered.remove(new Integer(id));
 	}
 
 	/**
-	 * Creates an empty clipboard
+	 * Creates an empty clipboard.
 	 */
 	public Clipboard() {
 	}
 
 	/**
-	 * Searches the clipboard for one clipboard item having a given object in its payload
+	 * Searches the clipboard for one clipboard item having a given object in its payload.
 	 * 
-	 * @param o The payload
-	 * @return The clipboard item
+	 * @param o the payload.
+	 * @return the clipboard item.
 	 */
 	public ClipboardItem getClipboardItem(Object o) {
 		for (ClipboardItem item : this.getItemsByClass(o.getClass())) {
@@ -144,7 +150,7 @@ public class Clipboard {
 		return null;
 	}
 	/**
-	 * @return A list with the clipboard items
+	 * @return a list with the clipboard items.
 	 */
 	public List<ClipboardItem> getAllItems() {
 		List<ClipboardItem> all = new Vector<ClipboardItem>();
@@ -156,8 +162,8 @@ public class Clipboard {
 
 	/**
 	 * @param type
-	 *            The class of the items to search in the clipboard
-	 * @return The list of matching clipboard elements
+	 *            the class of the items to search in the clipboard.
+	 * @return the list of matching clipboard elements.
 	 */
 	public synchronized List<ClipboardItem> getItemsByClass(Class<?> type) {
 		ArrayList<ClipboardItem> toret = new ArrayList<ClipboardItem>();
@@ -170,15 +176,21 @@ public class Clipboard {
 	}
 
 	/**
-	 * Adds a listener for clipboard-related events
+	 * Adds a listener for clipboard-related events.
 	 * 
+	 * @param listener the clipboard listener to add.
 	 * @see ClipboardListener
-	 * @param listener
 	 */
 	public void addClipboardListener(ClipboardListener listener) {
 		this.listeners.add(listener);
 	}
 
+	/**
+	 * Removes a listener for clipboard-related events.
+	 * 
+	 * @param listener the clipboard listener to remove.
+	 * @see ClipboardListener
+	 */
 	public void removeClipboardListener(ClipboardListener listener){
 		this.listeners.remove(listener);
 	}

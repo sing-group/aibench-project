@@ -166,6 +166,8 @@ public abstract class PluginVersion implements Comparable<PluginVersion> {
 
 	/**
 	 * Returns a String representation of this version, excluding the build version.
+	 * 
+	 * @return a String representation of this version, excluding the build version.
 	 */
 	public abstract String getFullVersion ();
 

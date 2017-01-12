@@ -90,7 +90,7 @@ public class ExtensionPoint {
 	}
 
 	/**
-	 * Returns the name of the class all extension classes are required to implement or null if they are not required to implement
+	 * @return the name of the class all extension classes are required to implement or null if they are not required to implement
 	 * a specific class.
 	 */
 	public String getInterfaceClassName () {
@@ -98,7 +98,7 @@ public class ExtensionPoint {
 	}
 
 	/**
-	 * Returns the class all extension classes are required to implement or null if they are not required to implement a specific
+	 * @return the class all extension classes are required to implement or null if they are not required to implement a specific
 	 * class.
 	 */
 	public Class<?> getInterfaceClass () {
@@ -114,32 +114,28 @@ public class ExtensionPoint {
 	}
 
 	/**
-	 * Returns the Plugin that this ExtensionPoint is defined in.
+	 * @return the Plugin that this ExtensionPoint is defined in.
 	 */
 	public Plugin getPlugin () {
 		return plugin;
 	}
 
 	/**
-	 * Returns the PluginEngine instance that this ExtensionPoint is associated with.
+	 * @return the PluginEngine instance that this ExtensionPoint is associated with.
 	 */
 	public PluginEngine getPluginEngine () {
 		return plugin.getPluginEngine();
 	}
 
 	/**
-	 * Returns the name of this ExtensionPoint. This is used to obtain a reference to this ExtensionPoint through the Plugin.
+	 * @return the name of this ExtensionPoint. This is used to obtain a reference to this ExtensionPoint through the Plugin.
 	 */
 	public String getName () {
 		return name;
 	}
 
-	public String toString () {
-		return getName();
-	}
-
 	/**
-	 * Returns a List of Extensions that have resolved to this ExtensionPoint.
+	 * @return a List of Extensions that have resolved to this ExtensionPoint.
 	 */
 	public List<Extension> getExtensions () {
 		return new ArrayList<Extension>(resolvedExtensions);
@@ -147,6 +143,7 @@ public class ExtensionPoint {
 
 	/**
 	 * Resolves an Extension to this ExtensionPoint.
+	 * @param extension the Extension to which this ExtensionPoint is resolved.
 	 */
 	void addResolvedExtension (Extension extension) {
 		if (resolvedExtensions.contains(extension))
@@ -164,7 +161,8 @@ public class ExtensionPoint {
 	}
 
 	/**
-	 * Returns true if the specified Extension is compatible with this ExtensionPoint. This method accesses the extension class,
+	 * @param extension the Extension whose compatibility will be checked.
+	 * @return {@code true} if the specified Extension is compatible with this ExtensionPoint. This method accesses the extension class,
 	 * which will cause the Extension's Plugin to be started if the Extension has an extension class.
 	 */
 	public boolean isExtensionCompatible (Extension extension) {
@@ -184,7 +182,8 @@ public class ExtensionPoint {
 	}
 
 	/**
-	 * Returns true if the specified extension class is compatible with this ExtensionPoint's interface class.
+	 * @param extension the class of a Extension whose compatibility will be checked.
+	 * @return {@code true} if the specified extension class is compatible with this ExtensionPoint's interface class.
 	 */
 	boolean isExtensionClassCompatible (Class<?> extensionClass) {
 		// If the extension point has an interface specified then the extension's
@@ -202,7 +201,7 @@ public class ExtensionPoint {
 	}
 
 	/**
-	 * Returns true if the specified Extension's XML is compatible with this ExtensionPoint's XML schema.
+	 * @return {@code true} if the specified Extension's XML is compatible with this ExtensionPoint's XML schema.
 	 */
 	boolean isExtensionXmlCompatible (Extension extension) {
 		if (schemaFilename != null) {
@@ -221,5 +220,10 @@ public class ExtensionPoint {
 			}
 		}
 		return true;
+	}
+	
+	@Override
+	public String toString () {
+		return getName();
 	}
 }

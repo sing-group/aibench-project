@@ -55,8 +55,9 @@ public class ShellFrame extends JFrame {
 	
 	
 	/**
-	 * This method initializes
+	 * This method initializes.
 	 *
+	 * @param interpreter the shell interpreter.
 	 */
 	public ShellFrame(AIBenchInterpreter interpreter) {
 		super();
@@ -69,7 +70,7 @@ public class ShellFrame extends JFrame {
 	}
 
 	/**
-	 * This method initializes this
+	 * This method initializes this.
 	 *
 	 */
 	private void initialize() {

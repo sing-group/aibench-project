@@ -50,6 +50,8 @@ public final class PluginEngineEvent {
 
 	/**
 	 * Returns any extra data associated to the event.
+	 * 
+	 * @return any extra data associated to the event.
 	 */
 	public Object getPayload () {
 		return payload;
@@ -57,6 +59,8 @@ public final class PluginEngineEvent {
 
 	/**
 	 * Sets any extra data associated to the event.
+	 * 
+	 * @param payload extra data associated to the event.
 	 */
 	public void setPayload (Object payload) {
 		this.payload = payload;

@@ -25,17 +25,17 @@ public interface ResultsCollector {
 	/**
 	 * Called when a new result have been calculated.
 	 *
-	 * @param index
+	 * @param index the index of the result.
 	 * @param result
-	 *            if <tt>result.getClass()</tt> <i>equals</i>
-	 *            <tt>Void.TYPE</tt> it's an empty result. Else the result
+	 *            if {@code result.getClass()} <em>equals</em>
+	 *            {@code Void.TYPE} it's an empty result. Else the result
 	 *            just been made.
 	 *
 	 */
 	public void newResult(int index, Object result);
+	
 	/**
 	 * Called when all the results have been provided
-	 *
 	 */
 	public void finish();
 

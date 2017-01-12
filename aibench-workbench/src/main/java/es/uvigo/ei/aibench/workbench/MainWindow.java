@@ -670,7 +670,7 @@ public class MainWindow extends JFrame {
 
 	public synchronized void bringToFront(ClipboardItem data) {
 		/*
-		 * Tenemos que comprobar si est� abierta o no, por si acaso.
+		 * Tenemos que comprobar si está abierta o no, por si acaso.
 		 */
 		if (this.tabIndexByData.containsKey(data)) {
 
@@ -712,11 +712,7 @@ public class MainWindow extends JFrame {
 		}
 	}
 	
-	public void closeData(ClipboardItem data){
-	//	this.hideData(data);
-	//	this.tabIndexByData.remove(data.getUserData());
-		//this.tabIndexByDat)
-	}
+	public void closeData(ClipboardItem data) {}
 
 	/*
 	 * =========================================================================================
@@ -729,29 +725,23 @@ public class MainWindow extends JFrame {
 
 	public void dataSelected(boolean flag) {}
 
-	public void dataChanged(Data data) {
-		//int dataPosition = this.tabIndexByData.get(data);
-		//this.getJTabbedPane().setSelectedIndex(dataPosition);
-		//this.getJTabbedPane().getComponent(dataPosition).setName(data.getName());
-
-	}
+	public void dataChanged(Data data) {}
 
 	public void dataUnloaded(Data data) {}
 
 	/**
-	 * CAUTION: This method should't be used. Use {@link Workbench#putItemInSlot(String, String, String, JComponent)} instead.
-	 * @param slotName
-	 * @param componentName
-	 * @param componentID
-	 * @param component
+	 * CAUTION: This method shouldn't be used. Use {@link Workbench#putItemInSlot(String, String, String, JComponent)} instead.
+	 * 
+	 * @param slotName name of the slot where the item should be placed.
+	 * @param componentName name of the component.
+	 * @param componentID identifier of the component.
+	 * @param component the component to be placed in the main window.
 	 */
 	public synchronized void putItemInSlot(String slotName, String componentName, String componentID, JComponent component){
-		
 		if (this.slotMappings.get(componentID)!=null){			
 			this.slotMappings.get(componentID).remove(this.componentMappings.get(componentID));
 			this.slotMappings.remove(componentID);
 		}
-		
 		
 		Slot slot = this.tableLayout.getSlotByID(slotName);
 		this.slotMappings.put(componentID, slot);
@@ -782,7 +772,8 @@ public class MainWindow extends JFrame {
 	
 	/**
 	 * CAUTION: This method should't be used. Use {@link Workbench#getAvailableSlotIDs()} instead.
-	 * @return
+	 * 
+	 * @return a list with the available slot ids.
 	 */
 	public List<String> getAvailableSlotIDs(){
 		return this.tableLayout.getAvailableSlots();
@@ -804,27 +795,11 @@ public class MainWindow extends JFrame {
 	}
 
 	/**
-	 * @return the statusBar
+	 * @return the statusBar.
 	 */
 	public JLabel getStatusBar() {
 		return this.statusBar;
 	}
-	
-//	class CloseDataAction extends AbstractAction {
-//		
-//		private static final long serialVersionUID = 7988317999355116890L;
-//		
-//		public CloseDataAction() {
-//			super();
-//			putValue(AbstractAction.NAME, "Close");
-//		}
-//		
-//		public void actionPerformed(ActionEvent arg0) {
-//			Workbench.getInstance().hideData(dataByTab.get(documentTabbedPane.getOverTabIndex()));
-//			
-//		}
-//		
-//	}
 
 	public final JToolBar getToolbar() {
 		return this.toolbar;

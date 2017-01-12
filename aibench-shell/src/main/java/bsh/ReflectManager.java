@@ -64,42 +64,46 @@ import bsh.Capabilities.Unavailable;
  * supported by JDK1.2 and greater.
  */
 public abstract class ReflectManager {
-        private static ReflectManager rfm;
+	private static ReflectManager rfm;
 
-        /**
-         * Return the singleton bsh ReflectManager.
-         * 
-         * @throws Unavailable
-         */
-        public static ReflectManager getReflectManager() throws Unavailable {
-                if (rfm == null) {
-                        Class clas;
-                        try {
-                                clas = Class.forName("bsh.reflect.ReflectManagerImpl");
-                                rfm = (ReflectManager) clas.newInstance();
-                        } catch (Exception e) {
-                                throw new Unavailable("Reflect Manager unavailable: " + e);
-                        }
-                }
+	/**
+	 * Return the singleton bsh ReflectManager.
+	 * 
+	 * @return the singleton bsh ReflectManager.
+	 * @throws Unavailable if the manager is unavailable.
+	 */
+	public static ReflectManager getReflectManager() throws Unavailable {
+		if (rfm == null) {
+			Class clas;
+			try {
+				clas = Class.forName("bsh.reflect.ReflectManagerImpl");
+				rfm = (ReflectManager) clas.newInstance();
+			} catch (Exception e) {
+				throw new Unavailable("Reflect Manager unavailable: " + e);
+			}
+		}
 
-                return rfm;
-        }
+		return rfm;
+	}
 
-        /**
-         * Reflect Manager Set Accessible. Convenience method to invoke the
-         * reflect manager.
-         * 
-         * @throws Unavailable
-         */
-        public static boolean RMSetAccessible(Object obj) throws Unavailable {
-                return getReflectManager().setAccessible(obj);
-        }
+	/**
+	 * Reflect Manager Set Accessible. Convenience method to invoke the reflect
+	 * manager.
+	 * 
+	 * @param obj the object to set accessible.
+	 * @return {@code true} if the object was accessible or {@code false} if it was not.
+	 * @throws Unavailable if the manager is unavailable.
+	 */
+	public static boolean RMSetAccessible(Object obj) throws Unavailable {
+		return getReflectManager().setAccessible(obj);
+	}
 
-        /**
-         * Set a java.lang.reflect Field, Method, Constructor, or Array of
-         * accessible objects to accessible mode.
-         * 
-         * @return true if the object was accessible or false if it was not.
-         */
-        public abstract boolean setAccessible(Object o);
+	/**
+	 * Set a java.lang.reflect Field, Method, Constructor, or Array of
+	 * accessible objects to accessible mode.
+	 * 
+	 * @param o the object to set accessible.
+	 * @return {@code true} if the object was accessible or {@code false} if it was not.
+	 */
+	public abstract boolean setAccessible(Object o);
 }

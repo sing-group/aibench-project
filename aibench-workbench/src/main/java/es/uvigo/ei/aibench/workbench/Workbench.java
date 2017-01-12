@@ -248,8 +248,9 @@ public class Workbench implements IGenericGUI, ClipboardListener {
 	}
 
 	/**
-	 * Gives access to the Workbench instance
-	 * @return
+	 * Gives access to the Workbench instance.
+	 * 
+	 * @return the Workbench instance.
 	 */
 	public static Workbench getInstance() {
 		if (_instance == null) {
@@ -707,17 +708,18 @@ public class Workbench implements IGenericGUI, ClipboardListener {
 	/**
 	 * Executes an operation. Requests the core to execute an operation, and monitors its progress. 
 	 * It also monitorizes the operation progress.
-	 * @param operation 
-	 * @param params The parameters to the operation
+	 * 
+	 * @param operation the operation to be executed. 
+	 * @param params the parameters to the operation.
 	 */
 	public void executeOperation(final OperationDefinition<?> operation, ParamSpec[] params) {
 		this.executeOperation(operation, null, params);
 	}
 	
 	/**
-	 * @param uid Operation id
-	 * @param userHandler A Progress handler
-	 * @param parameters A parameters given their real values. ParamSpec[] will be inferred
+	 * @param uid the operation identifier.
+	 * @param userHandler a progress handler.
+	 * @param parameters a parameters given their real values. ParamSpec[] will be inferred.
 	 */
 	public void executeOperation(String uid, ProgressHandler userHandler, List<?> parameters) {
 		executeOperation(Core.getInstance().getOperationById(uid), userHandler, CoreUtils.createParams(parameters));
@@ -725,9 +727,10 @@ public class Workbench implements IGenericGUI, ClipboardListener {
 	/**
 	 * Executes an operation. Requests the core to execute an operation, and monitors its progress. 
 	 * It also monitorizes the operation progress.
-	 * @param operation
-	 * @param userHandler A Progress handler
-	 * @param params The parameters to the operation
+	 * 
+	 * @param operation the operation to be executed.
+	 * @param userHandler a progress handler.
+	 * @param params the parameters to the operation.
 	 */
 	public void executeOperation(final OperationDefinition<?> operation, final ProgressHandler userHandler, ParamSpec[] params) {
 		class MyProgressHandler implements ProgressHandler {
@@ -824,7 +827,8 @@ public class Workbench implements IGenericGUI, ClipboardListener {
 	/**
 	 * Executes an operation. First retrieves the params from the user and then requests the core to execute it
 	 * It also monitorizes the operation progress.
-	 * @param operation 
+	 * 
+	 * @param operation the operation to be executed. 
 	 */
 	public void executeOperation(final OperationDefinition<?> operation) {
 		this.executeOperation(operation, (ProgressHandler)null);
@@ -833,8 +837,9 @@ public class Workbench implements IGenericGUI, ClipboardListener {
 	/**
 	 * Executes an operation. First retrieves the params from the user and then requests the core to execute it
 	 * It also monitorizes the operation progress.
-	 * @param operation
-	 * @param userHandler 
+	 * 
+	 * @param operation the operation to be executed.
+	 * @param userHandler a progress handler.
 	 */
 	public void executeOperation(final OperationDefinition<?> operation, final ProgressHandler userHandler) {
 		
@@ -964,18 +969,20 @@ public class Workbench implements IGenericGUI, ClipboardListener {
 
 	/**
 	 * Returns a list of Operation Wrappers (also Swing Actions) of each Operation connected to the core
-	 * @return the operations wrappers
+	 * 
+	 * @return the operations wrappers.
 	 */
 	public List<OperationWrapper> getInterceptedOperations() {
 		return this.interceptedOperations;
 	}
 	
 	/**
-	 * Put a custom component in a slot
-	 * @param slotID
-	 * @param componentName
-	 * @param componentID
-	 * @param component
+	 * Put a custom component in a slot.
+	 * 
+	 * @param slotID the identifier of the slot where the item should be placed.
+	 * @param componentName name of the component.
+	 * @param componentID identifier of the component.
+	 * @param component the component to be placed in the main window.
 	 */
 	public void putItemInSlot(final String slotID, final String componentName, final String componentID, final JComponent component) {
 		if (!SwingUtilities.isEventDispatchThread()) {
@@ -992,8 +999,9 @@ public class Workbench implements IGenericGUI, ClipboardListener {
 	}
 	
 	/**
-	 * Returns all the available slot IDs
-	 * @return The available slot IDs
+	 * Returns all the available slot IDs.
+	 * 
+	 * @return the available slot IDs.
 	 */
 	public List<String> getAvailableSlotIDs() {
 		return this.mainWindow.getAvailableSlotIDs();
@@ -1006,11 +1014,13 @@ public class Workbench implements IGenericGUI, ClipboardListener {
 	/**
 	 * 
 	 */
-	static final String AIBENCH_HELP_PROPERTY = "AIBench.help";	
+	static final String AIBENCH_HELP_PROPERTY = "AIBench.help";
+	
 	/**
-	 * Removes some item from its slot
+	 * Removes some item from its slot.
+	 * 
 	 * @param componentID The ID of the component
-	 * @return
+	 * @return the component removed.
 	 */
 	public JComponent removeComponentFromSlot(final String componentID) {
 		if (!SwingUtilities.isEventDispatchThread()) {
@@ -1035,8 +1045,9 @@ public class Workbench implements IGenericGUI, ClipboardListener {
 	}
 
 	/**
-	 * Returns the status text
-	 * @return The status text
+	 * Returns the status text.
+	 * 
+	 * @return The status text.
 	 */
 	public String getStatusText() {
 		return this.mainWindow.getStatusBar().getText();

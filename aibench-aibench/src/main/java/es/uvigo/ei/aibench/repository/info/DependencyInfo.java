@@ -52,10 +52,6 @@ public final class DependencyInfo {
 	
 	private final PluginVersion dependencyVersion;
 	
-	/**
-	 * @param uid
-	 * @param exactVersion
-	 */
 	public DependencyInfo(String plugin) throws IllegalArgumentException {
 		if (DependencyInfo.PLUGIN_PATTERN.matcher(plugin).matches()) {
 			this.plugin = plugin;
@@ -98,16 +94,10 @@ public final class DependencyInfo {
 		}
 	}
 	
-	/**
-	 * @return the plugin
-	 */
 	public String getPlugin() {
 		return this.plugin;
 	}
 
-	/**
-	 * @return the uid
-	 */
 	public String getUid() {
 		return this.uid;
 	}
@@ -132,9 +122,6 @@ public final class DependencyInfo {
 		return this.dependencyVersion;
 	}
 	
-	/* (non-Javadoc)
-	 * @see java.lang.Object#toString()
-	 */
 	@Override
 	public String toString() {
 		return this.plugin;

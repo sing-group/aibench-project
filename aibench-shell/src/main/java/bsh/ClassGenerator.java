@@ -26,38 +26,66 @@ import java.lang.reflect.InvocationTargetException;
 import bsh.Capabilities.Unavailable;
 
 public abstract class ClassGenerator {
-        private static ClassGenerator cg;
+	private static ClassGenerator cg;
 
-        public static ClassGenerator getClassGenerator() throws UtilEvalError {
-                if (cg == null) {
-                        try {
-                                Class clas = Class.forName("bsh.ClassGeneratorImpl");
-                                cg = (ClassGenerator) clas.newInstance();
-                        } catch (Exception e) {
-                                throw new Unavailable("ClassGenerator unavailable: " + e);
-                        }
-                }
+	public static ClassGenerator getClassGenerator() throws UtilEvalError {
+		if (cg == null) {
+			try {
+				Class<?> clas = Class.forName("bsh.ClassGeneratorImpl");
+				cg = (ClassGenerator) clas.newInstance();
+			} catch (Exception e) {
+				throw new Unavailable("ClassGenerator unavailable: " + e);
+			}
+		}
 
-                return cg;
-        }
+		return cg;
+	}
 
-        /**
-         * Parse the BSHBlock for the class definition and generate the class.
-         */
-        public abstract Class generateClass(String name, Modifiers modifiers, Class[] interfaces, Class superClass, BSHBlock block, boolean isInterface, CallStack callstack, Interpreter interpreter) throws EvalError;
+	/**
+	 * Parse the BSHBlock for the class definition and generate the class.
+	 * 
+	 * @param name the name of the class to be generated.
+	 * @param modifiers the class modifiers.
+	 * @param interfaces the interfaces implemented by the class.
+	 * @param superClass the super class of the generated class.
+	 * @param block the BeanShell code block related.
+	 * @param isInterface whether the class is an interface or not.
+	 * @param callstack the callstack related.
+	 * @param interpreter the interpreter.
+	 * @return a new generated class.
+	 * @throws EvalError if an error occurs while generating the class.
+	 */
+	public abstract Class<?> generateClass(
+		String name, Modifiers modifiers, Class<?>[] interfaces, Class<?> superClass,
+		BSHBlock block, boolean isInterface, CallStack callstack, Interpreter interpreter
+	) throws EvalError;
 
-        /**
-         * Invoke a super.method() style superclass method on an object
-         * instance. This is not a normal function of the Java reflection API
-         * and is provided by generated class accessor methods.
-         */
-        public abstract Object invokeSuperclassMethod(BshClassManager bcm, Object instance, String methodName, Object[] args) throws UtilEvalError, ReflectError, InvocationTargetException;
+	/**
+	 * Invoke a super.method() style superclass method on an object instance.
+	 * This is not a normal function of the Java reflection API and is provided
+	 * by generated class accessor methods.
+	 * 
+	 * @param bcm the BeanShell class manager.
+	 * @param instance the instance whose method will be invoked.
+	 * @param methodName the method name.
+	 * @param args the method arguments.
+	 * @return the result of the invocation.
+	 * @throws UtilEvalError if an error occurs during invocation.
+	 * @throws ReflectError if a reflection error occurs during invocation. 
+	 * @throws InvocationTargetException if an invocation error occurs.
+	 */
+	public abstract Object invokeSuperclassMethod(BshClassManager bcm, Object instance, String methodName, Object[] args)
+		throws UtilEvalError, ReflectError, InvocationTargetException;
 
-        /**
-         * Change the parent of the class instance namespace. This is currently
-         * used for inner class support. Note: This method will likely be
-         * removed in the future.
-         */
-        public abstract void setInstanceNameSpaceParent(Object instance, String className, NameSpace parent);
+	/**
+	 * Change the parent of the class instance namespace. This is currently used
+	 * for inner class support. Note: This method will likely be removed in the
+	 * future.
+	 * 
+	 * @param instance the instance whose parent will be changed.
+	 * @param className the class name.
+	 * @param parent the new parent.
+	 */
+	public abstract void setInstanceNameSpaceParent(Object instance, String className, NameSpace parent);
 
 }

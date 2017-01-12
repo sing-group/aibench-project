@@ -74,46 +74,53 @@ import bsh.This;
  * 
  */
 public class BshCanvas extends JComponent {
-        This ths;
+	private static final long serialVersionUID = 1L;
 
-        Image imageBuffer;
+	This ths;
 
-        public BshCanvas() {
-        }
+	Image imageBuffer;
 
-        public BshCanvas(This ths) {
-                this.ths = ths;
-        }
+	public BshCanvas() {}
 
-        public void paintComponent(Graphics g) {
-                // copy buffered image
-                if (imageBuffer != null)
-                        g.drawImage(imageBuffer, 0, 0, this);
+	public BshCanvas(This ths) {
+		this.ths = ths;
+	}
 
-                // Delegate call to scripted paint() method
-                if (ths != null) {
-                        try {
-                                ths.invokeMethod("paint", new Object[] { g });
-                        } catch (EvalError e) {
-                                if (Interpreter.DEBUG)
-                                        Interpreter.debug("BshCanvas: method invocation error:" + e);
-                        }
-                }
-        }
+	public void paintComponent(Graphics g) {
+		// copy buffered image
+		if (imageBuffer != null)
+			g.drawImage(imageBuffer, 0, 0, this);
 
-        /**
-         * Get a buffered (persistent) image for drawing on this component
-         */
-        public Graphics getBufferedGraphics() {
-                Dimension dim = getSize();
-                imageBuffer = createImage(dim.width, dim.height);
-                return imageBuffer.getGraphics();
-        }
+		// Delegate call to scripted paint() method
+		if (ths != null) {
+			try {
+				ths.invokeMethod(
+					"paint", new Object[] {
+						g
+					}
+				);
+			} catch (EvalError e) {
+				if (Interpreter.DEBUG)
+					Interpreter.debug("BshCanvas: method invocation error:" + e);
+			}
+		}
+	}
 
-        public void setBounds(int x, int y, int width, int height) {
-                setPreferredSize(new Dimension(width, height));
-                setMinimumSize(new Dimension(width, height));
-                super.setBounds(x, y, width, height);
-        }
+	/**
+	 * Returns a buffered (persistent) image for drawing on this component.
+	 * 
+	 * @return a buffered (persistent) image for drawing on this component.
+	 */
+	public Graphics getBufferedGraphics() {
+		Dimension dim = getSize();
+		imageBuffer = createImage(dim.width, dim.height);
+		return imageBuffer.getGraphics();
+	}
+
+	public void setBounds(int x, int y, int width, int height) {
+		setPreferredSize(new Dimension(width, height));
+		setMinimumSize(new Dimension(width, height));
+		super.setBounds(x, y, width, height);
+	}
 
 }

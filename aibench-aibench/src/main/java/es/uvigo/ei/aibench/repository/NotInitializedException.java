@@ -22,39 +22,25 @@
 package es.uvigo.ei.aibench.repository;
 
 /**
+ * Exception thrown when an instance that should have been initialized is not.
+ * 
  * @author Miguel Reboiro Jato
  *
  */
 public class NotInitializedException extends RuntimeException {
-	/**
-	 * 
-	 */
 	private static final long serialVersionUID = 1L;
 
-	/**
-	 * 
-	 */
 	public NotInitializedException() {
 	}
 
-	/**
-	 * @param message
-	 */
 	public NotInitializedException(String message) {
 		super(message);
 	}
 
-	/**
-	 * @param cause
-	 */
 	public NotInitializedException(Throwable cause) {
 		super(cause);
 	}
 
-	/**
-	 * @param message
-	 * @param cause
-	 */
 	public NotInitializedException(String message, Throwable cause) {
 		super(message, cause);
 	}

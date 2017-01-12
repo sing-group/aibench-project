@@ -24,6 +24,8 @@ package es.uvigo.ei.aibench.repository;
 import es.uvigo.ei.aibench.repository.info.PluginInfo;
 
 /**
+ * Event produced when downloading plugins.
+ * 
  * @author Miguel Reboiro Jato
  *
  */
@@ -37,47 +39,19 @@ public class PluginDownloadEvent {
 	private final int total;
 	private final Throwable error;
 	
-	/**
-	 * 
-	 * @param info
-	 * @param total
-	 * @param downloaded
-	 */
 	public PluginDownloadEvent(PluginDownloader source, int downloadId, PluginInfo info, int total, int downloaded) {
 		this(source, downloadId, info.getUID(), info.getHost(), info.getFile(), total, downloaded, null);		
 	}
 	
-	/**
-	 * 
-	 * @param info
-	 * @param total
-	 * @param downloaded
-	 * @param exception
-	 */
 	public PluginDownloadEvent(PluginDownloader source, int downloadId, PluginInfo info, int total, int downloaded, Throwable exception) {
 		this(source, downloadId, info.getUID(), info.getHost(), info.getFile(), total, downloaded, exception);
 	}
 	
-	/**
-	 * @param host
-	 * @param file
-	 * @param total
-	 * @param downloaded
-	 */
 	public PluginDownloadEvent(PluginDownloader source, int downloadId, String uid, String host, String file, int total,
 			int downloaded) {
 		this(source, downloadId, uid, host, file, total, downloaded, null);
 	}
 	
-	/**
-	 * 
-	 * @param source TODO
-	 * @param host
-	 * @param file
-	 * @param total
-	 * @param downloaded
-	 * @param error
-	 */
 	public PluginDownloadEvent(PluginDownloader source, int downloadId, String uid, String host, String file,
 			int total, int downloaded, Throwable error) {
 		this.source = source;
@@ -90,9 +64,6 @@ public class PluginDownloadEvent {
 		this.error = error;
 	}
 	
-	/**
-	 * @return the source
-	 */
 	public PluginDownloader getSource() {
 		return this.source;
 	}
@@ -101,48 +72,30 @@ public class PluginDownloadEvent {
 		return this.total <= this.downloaded;
 	}
 	
-	/**
-	 * @return the downloadId
-	 */
 	public final int getDownloadId() {
 		return this.downloadId;
 	}
 	
-	/**
-	 * @return the uid
-	 */
 	public final String getUid() {
 		return this.uid;
 	}
 	
-	/**
-	 * @return the host
-	 */
 	public final String getHost() {
 		return this.host;
 	}
-	/**
-	 * @return the file
-	 */
+
 	public final String getFile() {
 		return this.file;
 	}
-	/**
-	 * @return the downloaded
-	 */
+
 	public final int getDownloaded() {
 		return this.downloaded;
 	}
-	/**
-	 * @return the total
-	 */
+
 	public final int getTotal() {
 		return this.total;
 	}
 
-	/**
-	 * @return the error
-	 */
 	public final Throwable getError() {
 		return this.error;
 	}

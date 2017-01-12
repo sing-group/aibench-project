@@ -1,10 +1,13 @@
-/target
-/.settings
+# Maven
+target
+pom.xml.versionsBackup
+
+# Eclipse
+.settings
 .classpath
 .project
-*/target
-.settings
-**/pom.xml.versionsBackup
+
+# IntelliJ IDEA
 *.iml
 .idea
 

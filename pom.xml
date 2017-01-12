@@ -1,12 +1,18 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 	<modelVersion>4.0.0</modelVersion>
+	
 	<groupId>es.uvigo.ei.sing</groupId>
 	<artifactId>aibench-project</artifactId>
-	<version>2.7.0</version><!-- WARNING: change version using 
-			mvn versions:set -DnewVersion=[new_version] in order to
-			change the version in all modules at-once
-		-->
+	<version>2.7.1</version>
+	<!--
+		WARNING: change version using:
+			mvn versions:set -DnewVersion=[new_version]
+			mvn versions:commit
+		
+		This will change the version in all modules at-once
+	-->
+	
 	<name>The AIBench Project</name>
 	<inceptionYear>2006</inceptionYear>
 	<url>http://www.aibench.org</url>
@@ -19,36 +25,42 @@
 			<organizationUrl>http://sing.ei.uvigo.es/</organizationUrl>
 			<email>dgpena@uvigo.es</email>
 		</developer>
+		
 		<developer>
 			<name>Miguel Reboiro-Jato</name>
 			<organization>SING Group - University of Vigo</organization>
 			<organizationUrl>http://sing.ei.uvigo.es/</organizationUrl>
 			<email>mrjato@uvigo.es</email>
 		</developer>
+		
 		<developer>
 			<name>Hugo López-Fernández</name>
 			<organization>SING Group - University of Vigo</organization>
 			<organizationUrl>http://sing.ei.uvigo.es/</organizationUrl>
 			<email>hlfernandez@uvigo.es</email>
 		</developer>
+		
 		<developer>
 			<name>Paulo Maia</name>
 		</developer>
+		
 		<developer>
 			<name>Rubén Domínguez Carbajales</name>
 		</developer>
 	</developers>
+	
 	<contributors>
 		<contributor>
 			<name>Florentino Fdez-Riverola</name>
 			<organization>SING Group - University of Vigo</organization>
 			<organizationUrl>http://sing.ei.uvigo.es/</organizationUrl>
-			<email>riverola@cnio.es</email>
+			<email>riverola@uvigo.es</email>
 			<roles>
 				<role>Project Coordinator</role>
 			</roles>
 		</contributor>
 	</contributors>
+	
 	<licenses>
 		<license>
 			<name>GNU LESSER GENERAL PUBLIC LICENSE, Version 3</name>
@@ -58,8 +70,20 @@
 	</licenses>
 
 	<properties>
+		<!-- General -->
+		<maven.compiler.source>1.7</maven.compiler.source>
+		<maven.compiler.target>1.7</maven.compiler.target>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+		<project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
+		
+		<!-- Plugin versions -->
 		<license-maven-plugin.version>1.8</license-maven-plugin.version>
+		<maven-compiler-plugin.version>3.1</maven-compiler-plugin.version>
+		<maven-dependency-plugin.version>3.0.0</maven-dependency-plugin.version>
+		<maven-javadoc-plugin.version>2.10.4</maven-javadoc-plugin.version>
+		<maven-jar-plugin.version>3.0.2</maven-jar-plugin.version>
+		<maven-resources-plugin.version>3.0.2</maven-resources-plugin.version>
+		<maven-source-plugin.version>3.0.1</maven-source-plugin.version>
 
 		<!-- license-maven-plugin configuration -->
 		<license.licenseName>lgpl_v3</license.licenseName>
@@ -67,39 +91,190 @@
 		<license.organizationName>SING Group (University of Vigo)</license.organizationName>
 		<license.addJavaLicenseAfterPackage>false</license.addJavaLicenseAfterPackage>
 	</properties>
-	
+
 	<distributionManagement>
 		<repository>
-			<id>sing-maven2-repository</id>
-			<url>ftp://sing.ei.uvigo.es</url>
+			<id>sing-maven-releases</id>
+			<name>SING Maven Releases</name>
+			<url>http://maven.sing-group.org/repository/maven-releases/</url>
 		</repository>
+		
+		<snapshotRepository>
+			<id>sing-maven-releases</id>
+			<name>SING Maven Snapshots</name>
+			<url>http://maven.sing-group.org/repository/maven-snapshots/</url>
+		</snapshotRepository>
 	</distributionManagement>
 
 	<repositories>
 		<repository>
 			<id>sing-repository</id>
 			<name>SING repository</name>
-			<url>http://sing.ei.uvigo.es/maven2</url>
+			<url>http://maven.sing-group.org/repository/maven/</url>
 		</repository>
 	</repositories>
 
 	<modules>
-	  <module>aibench-aibench</module>
-	  <module>aibench-core</module>
-	  <module>aibench-workbench</module>
-	  <module>aibench-shell</module>
-	  <module>aibench-pluginmanager</module>
-	  <module>aibench-archetype</module>
-  </modules>
+		<module>aibench-aibench</module>
+		<module>aibench-core</module>
+		<module>aibench-workbench</module>
+		<module>aibench-shell</module>
+		<module>aibench-pluginmanager</module>
+		<module>aibench-archetype</module>
+	</modules>
+	
+	<dependencyManagement>
+		<dependencies>
+			<dependency>
+				<groupId>${project.groupId}</groupId>
+				<artifactId>aibench-aibench</artifactId>
+				<version>${project.version}</version>
+			</dependency>
+			
+			<dependency>
+				<groupId>${project.groupId}</groupId>
+				<artifactId>aibench-core</artifactId>
+				<version>${project.version}</version>
+			</dependency>
+			
+			<dependency>
+				<groupId>${project.groupId}</groupId>
+				<artifactId>aibench-workbench</artifactId>
+				<version>${project.version}</version>
+			</dependency>
+			
+			<dependency>
+				<groupId>${project.groupId}</groupId>
+				<artifactId>aibench-shell</artifactId>
+				<version>${project.version}</version>
+			</dependency>
+			
+			<dependency>
+				<groupId>${project.groupId}</groupId>
+				<artifactId>aibench-pluginmanager</artifactId>
+				<version>${project.version}</version>
+			</dependency>
+			
+			<dependency>
+				<groupId>${project.groupId}</groupId>
+				<artifactId>aibench-archetype</artifactId>
+				<version>${project.version}</version>
+			</dependency>
+		</dependencies>
+	</dependencyManagement>
 
 	<build>
+		<pluginManagement>
+			<plugins>
+				<plugin>
+					<groupId>org.apache.maven.plugins</groupId>
+					<artifactId>maven-jar-plugin</artifactId>
+					<version>${maven-jar-plugin.version}</version>
+				</plugin>
+				
+				<plugin>
+					<groupId>org.codehaus.mojo</groupId>
+					<artifactId>license-maven-plugin</artifactId>
+					<version>${license-maven-plugin.version}</version>
+				</plugin>
+				
+				<plugin>
+					<groupId>org.apache.maven.plugins</groupId>
+					<artifactId>maven-compiler-plugin</artifactId>
+					<version>${maven-compiler-plugin.version}</version>
+				</plugin>
+					
+				<plugin>
+					<groupId>org.apache.maven.plugins</groupId>
+					<artifactId>maven-dependency-plugin</artifactId>
+					<version>${maven-dependency-plugin.version}</version>
+				</plugin>
+				
+				<plugin>
+					<groupId>org.apache.maven.plugins</groupId>
+					<artifactId>maven-javadoc-plugin</artifactId>
+					<version>${maven-javadoc-plugin.version}</version>
+				</plugin>
+				
+				<plugin>
+					<groupId>org.apache.maven.plugins</groupId>
+					<artifactId>maven-resources-plugin</artifactId>
+					<version>${maven-resources-plugin.version}</version>
+				</plugin>
+				
+				<plugin>
+					<groupId>org.apache.maven.plugins</groupId>
+					<artifactId>maven-source-plugin</artifactId>
+					<version>${maven-source-plugin.version}</version>
+				</plugin>
+				
+				<!--This plugin's configuration is used to store Eclipse m2e settings only. It has no influence on the Maven build itself.-->
+				<plugin>
+					<groupId>org.eclipse.m2e</groupId>
+					<artifactId>lifecycle-mapping</artifactId>
+					<version>1.0.0</version>
+					<configuration>
+						<lifecycleMappingMetadata>
+							<pluginExecutions>
+								<pluginExecution>
+									<pluginExecutionFilter>
+										<groupId>
+											org.apache.maven.plugins
+										</groupId>
+										<artifactId>
+											maven-dependency-plugin
+										</artifactId>
+										<versionRange>
+											[2.1,)
+										</versionRange>
+										<goals>
+											<goal>
+												copy-dependencies
+											</goal>
+										</goals>
+									</pluginExecutionFilter>
+									<action>
+										<ignore></ignore>
+									</action>
+								</pluginExecution>
+							</pluginExecutions>
+						</lifecycleMappingMetadata>
+					</configuration>
+				</plugin>
+			</plugins>
+		</pluginManagement>
+	
 		<plugins>
 			<plugin>
 				<groupId>org.codehaus.mojo</groupId>
 				<artifactId>license-maven-plugin</artifactId>
-				<version>${license-maven-plugin.version}</version>
+			</plugin>
+
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-source-plugin</artifactId>
+				<executions>
+					<execution>
+						<id>attach-sources</id>
+						<goals>
+							<goal>jar</goal>
+						</goals>
+					</execution>
+				</executions>
+			</plugin>
+			
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-javadoc-plugin</artifactId>
+				<executions>
+					<execution>
+						<id>attach-javadocs</id>
+						<goals>
+							<goal>jar</goal>
+						</goals>
+					</execution>
+				</executions>
 			</plugin>
 		</plugins>
 	</build>
-	
 </project>

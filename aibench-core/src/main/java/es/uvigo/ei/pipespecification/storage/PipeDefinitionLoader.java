@@ -43,7 +43,7 @@ import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
 
-import es.uvigo.ei.aibench.core.operation.execution.IncompatibleContraintsException;
+import es.uvigo.ei.aibench.core.operation.execution.IncompatibleConstraintsException;
 
 abstract class PipeDefinitionLoader {
 
@@ -65,7 +65,7 @@ abstract class PipeDefinitionLoader {
 
 	static PipeDefinition load(Element element, File file,
 			Map<String, Class<?>> argumentsSpecificationContext)
-			throws IncompatibleContraintsException,
+			throws IncompatibleConstraintsException,
 			InvalidAnnotationsFormatException, ClassNotFoundException,
 			SAXException, IOException {
 		if (definitionLoadersMap.containsKey(element.getLocalName())) {
@@ -102,7 +102,7 @@ abstract class PipeDefinitionLoader {
 
 	abstract PipeDefinition loadFromElement(Element element, File file,
 			Map<String, Class<?>> argumentsSpecificationContext)
-			throws IncompatibleContraintsException,
+			throws IncompatibleConstraintsException,
 			InvalidAnnotationsFormatException, ClassNotFoundException,
 			SAXException, IOException;
 }
@@ -117,7 +117,7 @@ class Parallelizer extends PipeDefinitionLoader {
 	@Override
 	PipeDefinition loadFromElement(Element element, File file,
 			Map<String, Class<?>> argumentsSpecificationContext)
-			throws IncompatibleContraintsException,
+			throws IncompatibleConstraintsException,
 			InvalidAnnotationsFormatException, ClassNotFoundException,
 			SAXException, IOException {
 		assert element.getLocalName().equals(getElementName());
@@ -145,7 +145,7 @@ class CompositedPipeDefinitionLoader extends PipeDefinitionLoader {
 	@Override
 	PipeDefinition loadFromElement(Element parentElement, File file,
 			Map<String, Class<?>> argumentsSpecificationContext)
-			throws IncompatibleContraintsException,
+			throws IncompatibleConstraintsException,
 			InvalidAnnotationsFormatException, ClassNotFoundException,
 			SAXException, IOException {
 		assert parentElement.getLocalName().equals("composited-pipe");
@@ -188,7 +188,7 @@ class SimplePipeDefinitionLoader extends PipeDefinitionLoader {
 	@SuppressWarnings({ "unchecked", "rawtypes" })
 	PipeDefinition loadFromElement(final Element element, File file,
 			Map<String, Class<?>> argumentsSpecificationContext)
-			throws IncompatibleContraintsException,
+			throws IncompatibleConstraintsException,
 			InvalidAnnotationsFormatException, ClassNotFoundException {
 		assert element.getLocalName().equals("pipe");
 		NodeList args = element.getElementsByTagNameNS("*", "arg");
@@ -257,7 +257,7 @@ class TeeDefinitionLoader extends PipeDefinitionLoader {
 	@Override
 	PipeDefinition loadFromElement(Element element, File file,
 			Map<String, Class<?>> argumentsSpecificationContext)
-			throws IncompatibleContraintsException,
+			throws IncompatibleConstraintsException,
 			InvalidAnnotationsFormatException, ClassNotFoundException,
 			SAXException, IOException {
 		NodeList childNodes = element.getChildNodes();
@@ -282,7 +282,7 @@ class IncludeDefinitionLoader extends PipeDefinitionLoader {
 	@Override
 	PipeDefinition loadFromElement(Element element, File file,
 			Map<String, Class<?>> argumentsSpecificationContext)
-			throws IncompatibleContraintsException,
+			throws IncompatibleConstraintsException,
 			InvalidAnnotationsFormatException, ClassNotFoundException,
 			SAXException, IOException {
 		String fileToInclude = element.getAttribute("file");

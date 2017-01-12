@@ -40,9 +40,6 @@ import com.ice.tar.TarInputStream;
  *
  */
 public class Inflater {
-	/**
-	 * 
-	 */
 	private static final int BUFFER_SIZE = 8192;
 
 	public static boolean inflate(File source, File output) {
@@ -82,24 +79,15 @@ public class Inflater {
 
 	private static void copyFile(File source, File output)
 	throws IOException {
-		FileChannel sourceChannel = null, outputChannel = null;
-		try {
-			sourceChannel = new FileInputStream(source).getChannel();
-			outputChannel = new FileOutputStream(output).getChannel();
+		try (FileInputStream fis = new FileInputStream(source);
+			FileOutputStream fos = new FileOutputStream(output)
+		) {
+			final FileChannel sourceChannel = fis.getChannel();
+			final FileChannel outputChannel = fos.getChannel();
 			
 			sourceChannel.transferTo(0, sourceChannel.size(), outputChannel);
-		} catch (IOException e) {
-			throw e;
-		} finally {
-			try {
-				sourceChannel.close();
-			} catch (IOException e) {}
-			try {
-				outputChannel.close();
-			} catch (IOException e) {}
 		}
 	}
-	
 
 	private static boolean inflateZip(File source, File output)
 	throws IOException {

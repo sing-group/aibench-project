@@ -30,20 +30,10 @@ public class PluginDownloadInfoEvent {
 	private final String url;
 	private final Exception exception;
 	
-	/**
-	 * @param source
-	 * @param url
-	 * @param exception
-	 */
 	public PluginDownloadInfoEvent(PluginDownloader source, String url) {
 		this(source, url, null);
 	}	
 	
-	/**
-	 * @param source
-	 * @param url
-	 * @param exception
-	 */
 	public PluginDownloadInfoEvent(PluginDownloader source, String url,
 			Exception exception) {
 		super();
@@ -52,23 +42,14 @@ public class PluginDownloadInfoEvent {
 		this.exception = exception;
 	}
 
-	/**
-	 * @return the source
-	 */
 	public PluginDownloader getSource() {
 		return this.source;
 	}
 
-	/**
-	 * @return the url
-	 */
 	public String getUrl() {
 		return this.url;
 	}
 
-	/**
-	 * @return the exception
-	 */
 	public Exception getException() {
 		return this.exception;
 	}

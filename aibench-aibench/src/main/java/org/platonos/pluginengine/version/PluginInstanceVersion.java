@@ -56,44 +56,23 @@ package org.platonos.pluginengine.version;
 public final class PluginInstanceVersion extends PluginSingleVersion {
 	private final String buildVersion;
 	
-	/**
-	 * 
-	 */
 	public PluginInstanceVersion() {
 		this(0, 0, 0, "");
 	}
 
-	/**
-	 * @param releaseVersion
-	 */
 	public PluginInstanceVersion(int releaseVersion) {
 		this(releaseVersion, 0, 0, "");
 	}
 
-	/**
-	 * @param releaseVersion
-	 * @param updateVersion
-	 */
 	public PluginInstanceVersion(int releaseVersion, int updateVersion) {
 		this(releaseVersion, updateVersion, 0, "");
 	}
 
-	/**
-	 * @param releaseVersion
-	 * @param updateVersion
-	 * @param patchVersion
-	 */
 	public PluginInstanceVersion(int releaseVersion, int updateVersion,
 			int patchVersion) {
 		this(releaseVersion, updateVersion, patchVersion, "");
 	}
 
-	/**
-	 * @param releaseVersion
-	 * @param updateVersion
-	 * @param patchVersion
-	 * @param buildVersion
-	 */
 	public PluginInstanceVersion(int releaseVersion, int updateVersion,
 			int patchVersion, String buildVersion) {
 		super(releaseVersion, updateVersion, patchVersion);
@@ -106,6 +85,8 @@ public final class PluginInstanceVersion extends PluginSingleVersion {
 
 	/**
 	 * Returns a String representation of this version, excluding the build version.
+	 * 
+	 * @return a String representation of this version, excluding the build version.
 	 */
 	public String getFullVersion () {
 		return String.format("%d.%d.%d", this.getReleaseVersion(), this.getUpdateVersion(), this.getPatchVersion());
@@ -145,7 +126,10 @@ public final class PluginInstanceVersion extends PluginSingleVersion {
 	}
 
 	/**
-	 * Returns false if the specified Object is not a PluginVersion instance or it has release, update, patch, or build versions
+	 * Returns {@code false} if the specified Object is not a PluginVersion instance or it has release, update, patch, or build versions
+	 * that differ from this PluginVersion.
+	 * 
+	 * @return {@code false} if the specified Object is not a PluginVersion instance or it has release, update, patch, or build versions
 	 * that differ from this PluginVersion.
 	 */
 	@Override
@@ -161,9 +145,6 @@ public final class PluginInstanceVersion extends PluginSingleVersion {
 		}
 	}
 	
-	/* (non-Javadoc)
-	 * @see org.platonos.pluginengine.PluginVersion#toString()
-	 */
 	@Override
 	public String toString() {
 		String release = (this.getReleaseVersion() <= 0)?"0":Integer.toString(this.getReleaseVersion());

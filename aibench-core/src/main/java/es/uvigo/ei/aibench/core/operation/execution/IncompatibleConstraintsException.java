@@ -25,15 +25,15 @@ package es.uvigo.ei.aibench.core.operation.execution;
  * @author Daniel Glez-Peña 11-sep-2006
  *
  */
-public class IncompatibleContraintsException extends Exception {
-
-	
+public class IncompatibleConstraintsException extends Exception {
 	private static final long serialVersionUID = 1L;
 
 	/**
-	 * @param message
+	 * Constructs a new IncompatibleConstraintsException.
+	 * 
+	 * @param message the exception message.
 	 */
-	public IncompatibleContraintsException(String message) {
+	public IncompatibleConstraintsException(String message) {
 		super(message);
 	}
 

@@ -59,18 +59,18 @@ import java.awt.Color;
 import bsh.ConsoleInterface;
 
 /**
- * Additional capabilities of an interactive console for BeanShell. Althought
+ * Additional capabilities of an interactive console for BeanShell. Although
  * this is called "GUIConsoleInterface" it might just as well be used by a more
  * sophisticated text-only command line.
  * <p>
- * Note: we may want to express the command line history, editing, and cut &
+ * Note: we may want to express the command line history, editing, and cut &amp;
  * paste functionality here as well at some point.
  */
 public interface GUIConsoleInterface extends ConsoleInterface {
-        public void print(Object o, Color color);
+	public void print(Object o, Color color);
 
-        public void setNameCompletion(NameCompletion nc);
+	public void setNameCompletion(NameCompletion nc);
 
-        /** e.g. the wait cursor */
-        public void setWaitFeedback(boolean on);
+	/* e.g. the wait cursor */
+	public void setWaitFeedback(boolean on);
 }

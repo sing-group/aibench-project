@@ -306,12 +306,12 @@ public class  ParamsWindow extends JDialog implements InputGUI {
 	}
 
 	/**
-	 * Override this method to change the component used in one port
-	 * @param dialog
-	 * @param p
-	 * @param c
-	 * @param op
-	 * @return
+	 * Override this method to change the component used in one port.
+	 * 
+	 * @param p the port for which a ParamProvider will be returned.
+	 * @param c the class of the port.
+	 * @param op the operation object.
+	 * @return a ParamProvider for the provided port.
 	 */
 	protected ParamProvider getParamProvider(Port p, Class<?> c, Object op){ 
 		return ParamProviderFactory.createParamProvider(this.receiver, p , c, op);

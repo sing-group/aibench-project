@@ -28,7 +28,7 @@ import java.util.Set;
 import java.util.Map.Entry;
 
 import es.uvigo.ei.aibench.core.operation.execution.Executable;
-import es.uvigo.ei.aibench.core.operation.execution.IncompatibleContraintsException;
+import es.uvigo.ei.aibench.core.operation.execution.IncompatibleConstraintsException;
 
 class ArgsRenamerPipeDefinition extends PipeDefinition {
 	private final PipeDefinition pipeDef;
@@ -56,7 +56,7 @@ class ArgsRenamerPipeDefinition extends PipeDefinition {
 
 	@Override
 	public PipeDefinition join(PipeDefinition rightPart)
-			throws IncompatibleContraintsException {
+			throws IncompatibleConstraintsException {
 		return new CompositedPipeDefinition(this, rightPart);
 	}
 

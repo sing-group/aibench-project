@@ -199,8 +199,9 @@ public class Core {
 
 
 	/**
-	 * Returns the operations plugged
-	 * @return
+	 * Returns the operations plugged.
+	 * 
+	 * @return the operations plugged.
 	 */
 	public List<OperationDefinition<?>> getOperations(){
 		return this.operations;
@@ -208,9 +209,9 @@ public class Core {
 	
 	
 	/**
-	 * Returns an operation given its uid
-	 * @param uid the operation uid
-	 * @return
+	 * Returns an operation given its uid.
+	 * @param uid the operation uid.
+	 * @return an operation given its uid.
 	 */
 	public OperationDefinition<?> getOperationById(String uid) {
 		OperationDefinition<?> op = null;
@@ -225,10 +226,10 @@ public class Core {
 	
 	
 	/**
-	 * Returns an operation given its uid of some active session
-	 * @param key user session identifier
-	 * @param uid the operation uid
-	 * @return
+	 * Returns an operation given its uid of some active session.
+	 * @param key user session identifier.
+	 * @param uid the operation uid.
+	 * @return an operation given its uid of some active session.
 	 */
 	public OperationDefinition<?> getOperationById(Integer key, String uid) {
 		OperationDefinition<?> op = null;
@@ -244,8 +245,8 @@ public class Core {
 	/**
 	 * Returns all compatible transformers with a given source. That is, all transformers whose source type is
 	 * the given class or superclass.
-	 * @param sourceType The source type
-	 * @return The compatible transformers
+	 * @param sourceType the source type.
+	 * @return the compatible transformers.
 	 */
 	public List<Transformer> getTransformersBySource(Class<?> sourceType){
 		List<Transformer> result = new ArrayList<Transformer>();
@@ -260,8 +261,9 @@ public class Core {
 	/**
 	 * Returns all compatible transformers with a given destiny. That is, all transformers whose destiny type is
 	 * the given class or sublcass.
-	 * @param sourceType The destiny type
-	 * @return The compatible transformers
+	 * 
+	 * @param destinyType the destiny type.
+	 * @return the compatible transformers.
 	 */
 	public List<Transformer> getTransformersByDestiny(Class<?> destinyType){
 		List<Transformer> result = new ArrayList<Transformer>();
@@ -274,8 +276,9 @@ public class Core {
 	}
 	
 	/**
-	 * Returns all declared Transformers 
-	 * @return
+	 * Returns all declared Transformers.
+	 * 
+	 * @return all declared Transformers.
 	 */
 	public List<Transformer> getAllTransformers(){
 		List<Transformer> list = new ArrayList<Transformer>();
@@ -283,9 +286,10 @@ public class Core {
 		return list;
 	}
 	/**
-	 * Returns a transformer given its signature
-	 * @param signature
-	 * @return
+	 * Returns a Transformer given its signature.
+	 * 
+	 * @param signature the signature of the Transformer.
+	 * @return a Transformer given its signature.
 	 */
 	public Transformer getTransformerBySignature(String signature){
 		return this.transformersBySignature.get(signature);
@@ -293,7 +297,7 @@ public class Core {
 
 	/**
 	 * Creates the operations reading the operations plugins and parsing the annotations of the
-	 * indicated class in the plugin.xml
+	 * indicated class in the plugin.xml.
 	 */
 	private void createOperations(){
 		Plugin plugin = PluginEngine.getPlugin(this.getClass());
@@ -384,7 +388,7 @@ public class Core {
 	
 	/**
 	 * Creates the transformers reading the operations plugins and parsing the annotations of the
-	 * indicated class in the plugin.xml
+	 * indicated class in the plugin.xml.
 	 */
 	private void createTransformers(){
 		Plugin plugin = PluginEngine.getPlugin(this.getClass());
@@ -451,8 +455,9 @@ public class Core {
 	}
 
 	/**
-	 * Gets the GUI plugged
-	 * @return The GUI currently plugged
+	 * Returns the GUI currently plugged.
+	 * 
+	 * @return the GUI currently plugged.
 	 */
 	public IGenericGUI getGUI() {
 		if (gui == null) {
@@ -517,8 +522,9 @@ public class Core {
 	}
 
 	/**
-	 * Gives access to the AIBench's Clipboard
-	 * @return Returns the Clipboard
+	 * Gives access to the AIBench's Clipboard.
+	 * 
+	 * @return the AIBench's Clipboard.
 	 * @see es.uvigo.ei.aibench.core.clipboard.Clipboard
 	 */
 	public Clipboard getClipboard(){
@@ -526,22 +532,29 @@ public class Core {
 	}
 	
 	/**
-	 * Gives access to the AIBench's History
-	 * @return Returns the History
+	 * Gives access to the AIBench's History.
+	 * @return the AIBench's History.
 	 * @see es.uvigo.ei.aibench.core.history.History
 	 */
 	public History getHistory() {
 		return this.history;
 	}
-	public String getHelpPath(){
-		String path ="";
+	
+	/**
+	 * Returns the path to the helpset.hs file.
+	 * 
+	 * @return the path to the helpset.hs file.
+	 */
+	public String getHelpPath() {
+		String path = "";
 		if (this.helpBroker ==  null &&
-				Boolean.parseBoolean(Core.CONFIG.getProperty("help.enabled", "false"))) {
-				path = Core.CONFIG.getProperty("help.path");
-				if (path == null) path = Core.HELP_HS_PATH;
+			Boolean.parseBoolean(Core.CONFIG.getProperty("help.enabled", "false"))) {
+			path = Core.CONFIG.getProperty("help.path");
+			if (path == null) path = Core.HELP_HS_PATH;
 		}
 		return path;
 	}
+	
 	private synchronized void createHelpBroker() {
 		if (this.helpBroker ==  null &&
 			Boolean.parseBoolean(Core.CONFIG.getProperty("help.enabled", "false"))) {
@@ -566,7 +579,8 @@ public class Core {
 	/**
 	 * Creates and configures the JavaHelp help broker. The property "help.enabled" on the "core.conf" file must be true.
 	 * The default help set file location is "help/helpset.hs" and can be changed with the property "help.path".
-	 * @return the JavaHelp help broker or <code>null</code> if the help is not enabled or it couldn't be configured.
+	 * 
+	 * @return the JavaHelp help broker or {@code null} if the help is not enabled or it couldn't be configured.
 	 */
 	public HelpBroker getHelpBroker() {
 		if (this.helpBroker == null) {
@@ -577,16 +591,16 @@ public class Core {
 
 	/**
 	 * Validates the input data using the method defined in the
-	 * {@link Port#validateMethod()} annotation (if used)
+	 * {@link Port#validateMethod()} annotation (if used).
 	 * 
 	 * @param operationDefinition
-	 *            The operation
+	 *            the operation.
 	 * @param operationObject
-	 *            The operation class instance
+	 *            the operation class instance.
 	 * @param specs
-	 *            The params
+	 *            the params.
 	 * @throws Throwable
-	 *             if the data couldn't be validated
+	 *             if the data couldn't be validated.
 	 */
 	private void validate(OperationDefinition<?> operationDefinition, Object operationObject, ParamSpec[] specs) throws Throwable{
 		ArrayList<Port> incomingPorts = new ArrayList<Port>();
@@ -634,10 +648,6 @@ public class Core {
 		}
 	}
 	
-	
-	
-	
-	
 	class OperationKey{
 		Object operationInstance;
 		OperationDefinition<?> definition;
@@ -645,10 +655,12 @@ public class Core {
 	}
 	
 	/**
-	 * Executes an AIBench Operation
-	 * @param operation The operation
-	 * @param handler A (optional) progress handler to monitorize the start and finish of the operation. May be null
-	 * @param specs The params of the operation given in the form of {@link ParamSpec} object
+	 * Executes an AIBench Operation.
+	 * 
+	 * @param <T> the type of the operation.
+	 * @param operation the operation.
+	 * @param handler a (optional) progress handler to monitorize the start and finish of the operation. May be {@code null}.
+	 * @param specs the params of the operation given in the form of {@link ParamSpec} object.
 	 * @see ParamSpec
 	 * @see OperationDefinition
 	 */
@@ -935,9 +947,9 @@ public class Core {
 	 * Executes an AIBench Operation. This is a high-level method since the parameters can be given by its 'real' value.
 	 * Each param is smartly transformed into a ParamSpec, looking for suitable clipboard items in the case of complex objects.
 	 *
-	 * @param opName The operation uid
-	 * @param handler A (optional) progress handler to monitorize the start and finish of the operation. May be null
-	 * @param params The parameters given by its real values
+	 * @param opName the operation uid.
+	 * @param handler a (optional) progress handler to monitorize the start and finish of the operation. May be {@code null}.
+	 * @param params the parameters given by its real values.
 	 */
 	public void executeOperation(String opName, ProgressHandler handler, List<?> params) {
 		OperationDefinition<?> op = getOperationById(opName);
@@ -946,10 +958,12 @@ public class Core {
 		ParamSpec[] paramsSpecs = CoreUtils.createParams(params);
 		this.executeOperation(op, handler, paramsSpecs);
 	}
+	
 	private void increaseRunningCount(){
 		runningCount++;
 		getGUI().setStatusText("Core Running "+runningCount+" operations");
 	}
+	
 	private void decreaseRunningCount(){
 		runningCount--;
 		if (runningCount == 0){
@@ -958,9 +972,11 @@ public class Core {
 			getGUI().setStatusText("Core Running "+runningCount+" operations");
 		}
 	}
+	
 	/**
 	 * Request the finalization of the operations. The operations will receive a {@link Thread#interrupt()} call, so if they mask this signal or fails, they may never finish.
-	 * @param key the operation to cancel
+	 * 
+	 * @param key the operation to cancel.
 	 */
 	synchronized public void cancelOperation(Object key){
 		OperationKey _key = (OperationKey) key;
@@ -983,11 +999,20 @@ public class Core {
 		
 	}
 	
-	
-	
-	public void enableOperation(String uid){
+	/**
+	 * Enables an operation identified by its uid.
+	 * 
+	 * @param uid the uid of the operation to be enabled.
+	 */
+	public void enableOperation(String uid) {
 		this.enableOperation(this.getOperationById(uid));
 	}
+	
+	/**
+	 * Enables an operation identified by its OperationDefinition.
+	 * 
+	 * @param def the OperationDefinition of the operation to be enabled.
+	 */
 	public void enableOperation(OperationDefinition<?> def){
 		this.enabledOperations.add(def);
 		
@@ -995,10 +1020,21 @@ public class Core {
 			listener.operationEnabled(def);
 		}
 	}
-	
+
+	/**
+	 * Disables an operation identified by its uid.
+	 * 
+	 * @param uid the uid of the operation to be disabled.
+	 */
 	public void disableOperation(String uid){
 		this.disableOperation(this.getOperationById(uid));
 	}
+	
+	/**
+	 * Disables an operation identified by its OperationDefinition.
+	 * 
+	 * @param def the OperationDefinition of the operation to be disabled.
+	 */
 	public void disableOperation(OperationDefinition<?> def){
 		this.enabledOperations.remove(def);
 		for (CoreListener listener: this.coreListeners){
@@ -1006,13 +1042,20 @@ public class Core {
 		}
 	}
 	
+	/**
+	 * Checks if an operation is enabled by its OperationDefinition.
+	 * 
+	 * @param def the OperationDefinition of the operation to be checked.
+	 * @return {@code true} if the operation is enabled. {@code false} otherwise.
+	 */
 	public boolean isOperationEnabled(OperationDefinition<?> def){
 		return this.enabledOperations.contains(def);
 	}
+	
 	/**
 	 * Reads the config from <AIBench_directory>/conf/core.conf
 	 */
-	private static void readConfig(){
+	private static void readConfig() {
 		String path = System.getProperty("aibench.paths.core.conf", "conf/core.conf");
 		
 		URL url = Util.getGlobalResourceURL(path);
@@ -1022,9 +1065,5 @@ public class Core {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		
-		
 	}
-	
-	
 }

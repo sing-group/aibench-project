@@ -50,11 +50,6 @@ public class PluginManagerEvent {
 	private final PluginInstaller otherInstaller, currentInstaller;
 	private final Throwable exception;
 	
-	/**
-	 * @param type
-	 * @param otherDownloader
-	 * @param currentDownloader
-	 */
 	public PluginManagerEvent(
 		PluginDownloader otherDownloader,
 		PluginDownloader currentDownloader) {
@@ -66,10 +61,6 @@ public class PluginManagerEvent {
 		this.exception = null;
 	}
 
-	/**
-	 * @param otherInstaller
-	 * @param currentInstaller
-	 */
 	public PluginManagerEvent(PluginInstaller otherInstaller,
 			PluginInstaller currentInstaller) {
 		this.type = Type.INSTALLER_CHANGED;
@@ -80,11 +71,6 @@ public class PluginManagerEvent {
 		this.exception = null;
 	}
 	
-	/**
-	 * @param type
-	 * @param otherDownloader
-	 * @param currentDownloader
-	 */
 	public PluginManagerEvent(
 			PluginDownloader otherDownloader,
 			PluginDownloader currentDownloader,
@@ -97,10 +83,6 @@ public class PluginManagerEvent {
 		this.exception = exception;
 	}
 	
-	/**
-	 * @param otherInstaller
-	 * @param currentInstaller
-	 */
 	public PluginManagerEvent(PluginInstaller otherInstaller,
 			PluginInstaller currentInstaller,
 			Throwable exception) {
