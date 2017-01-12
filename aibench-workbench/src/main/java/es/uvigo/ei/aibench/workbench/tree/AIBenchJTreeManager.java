@@ -289,36 +289,39 @@ public class AIBenchJTreeManager implements HistoryListener, ClipboardListener, 
 							tree, value, sel, expanded, leaf, row, hasFocus);
 					DefaultMutableTreeNode node = (DefaultMutableTreeNode) value;
 
-					if (leaf == false
-							&& !(node.getUserObject() instanceof ClipboardItem)) {
+					if (!leaf && !(node.getUserObject() instanceof ClipboardItem)) {
 						final String iconDatatype = Workbench.CONFIG.getProperty("icon.datatype");
-						URL imageURL = Util.getGlobalResourceURL(iconDatatype);
-						c.setIcon(new ImageIcon(iconDatatype == null ? 
-							getClass().getResource("/images/datatype.png") : imageURL));
+						
+						c.setIcon(new ImageIcon(iconDatatype == null
+							? getClass().getResource("/images/datatype.png")
+							: Util.getGlobalResourceURL(iconDatatype)
+						));
 					}
+					
 					if (node.equals(tree.getModel().getRoot())) {
-						final String iconClipboard = Workbench.CONFIG
-								.getProperty("icon.clipboard");
-						URL imageURL = Launcher.class.getProtectionDomain()
-								.getCodeSource().getLocation();
-						try {
-							if (imageURL.getFile().endsWith(".jar")) {
-								imageURL = new URL(imageURL.toString()
-										.substring(
-												0,
-												imageURL.toString()
-														.lastIndexOf('/'))
-										+ "/../" + iconClipboard);
-							} else {
-								imageURL = new URL(imageURL + "../"
-										+ iconClipboard);
-							}
-						} catch (MalformedURLException e) {
-						}
-						c.setIcon(new ImageIcon(
-								iconClipboard == null ? getClass().getResource(
-										"/images/clipboard.gif") : imageURL));
+						final String iconClipboard = Workbench.CONFIG.getProperty("icon.clipboard");
+						
 						c.setText("");
+						if (iconClipboard == null) {
+							c.setIcon(new ImageIcon(getClass().getResource("/images/clipboard.gif")));
+						} else {
+							URL imageUrl = Launcher.class.getProtectionDomain()
+									.getCodeSource().getLocation();
+							try {
+								final String imageUrlString = imageUrl.toString();
+								String baseUrl;
+								
+								if (imageUrl.getFile().endsWith(".jar")) {
+									baseUrl = imageUrlString.substring(0, imageUrlString.lastIndexOf('/')) + "/";
+								} else {
+									baseUrl = imageUrlString;
+								}
+								
+								c.setIcon(new ImageIcon(new URL(baseUrl + "../" + iconClipboard)));
+							} catch (MalformedURLException e) {
+								e.printStackTrace();
+							}
+						}
 					}
 					
 					return c;
