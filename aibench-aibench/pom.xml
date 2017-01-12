@@ -5,15 +5,15 @@
 	<parent>
 		<groupId>es.uvigo.ei.sing</groupId>
 		<artifactId>aibench-project</artifactId>
-		<version>2.7.1</version>
+		<version>2.7.2</version>
 		<!--
 			WARNING: change version using (in the parent project):
 				mvn versions:set -DnewVersion=[new_version]
 				mvn versions:commit
-			
+
 			This will change the version in all modules at-once
 		-->
-		
+
 		<relativePath>../pom.xml</relativePath>
 	</parent>
 
@@ -28,14 +28,14 @@
 			<version>1.2.12</version>
 			<scope>compile</scope>
 		</dependency>
-		
+
 		<dependency>
 			<groupId>javatar</groupId>
 			<artifactId>javatar</artifactId>
 			<version>2.5</version>
 			<scope>compile</scope>
 		</dependency>
-		
+
 		<dependency>
 			<groupId>com.sun.woodstock.dependlibs</groupId>
 			<artifactId>jhall</artifactId>
@@ -43,7 +43,7 @@
 			<scope>compile</scope>
 		</dependency>
 	</dependencies>
-	
+
 	<build>
 		<plugins>
 			<plugin>

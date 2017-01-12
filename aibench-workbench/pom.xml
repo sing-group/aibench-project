@@ -5,14 +5,15 @@
 	<parent>
 		<groupId>es.uvigo.ei.sing</groupId>
 		<artifactId>aibench-project</artifactId>
-		<version>2.7.1</version>
+		<version>2.7.2</version>
 		<!--
-			WARNING: change version using (in the parent project):
+			WARNING: change version using:
 				mvn versions:set -DnewVersion=[new_version]
 				mvn versions:commit
-			
+
 			This will change the version in all modules at-once
 		-->
+
 		<relativePath>../pom.xml</relativePath>
 	</parent>
 
@@ -158,8 +159,8 @@
 			</plugin>
 		</plugins>
 
-		<!-- ignore /src/main/resources/scripts and /src/main/resources/conf, which 
-			will go to the root of the target directory, not inside the current aibench 
+		<!-- ignore /src/main/resources/scripts and /src/main/resources/conf, which
+			will go to the root of the target directory, not inside the current aibench
 			plugin -->
 		<resources>
 			<resource>
@@ -172,7 +173,7 @@
 					<exclude>scripts</exclude>
 				</excludes>
 			</resource>
-			
+
 			<resource>
 				<directory>src/main/resources</directory>
 				<filtering>true</filtering>
