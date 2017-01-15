@@ -11,6 +11,9 @@
 			mvn versions:commit
 
 		This will change the version in all modules at-once
+		
+		WARNING: Remember to also change the version manually
+		in the docs/source/conf.py file
 	-->
 	
 	<name>The AIBench Project</name>

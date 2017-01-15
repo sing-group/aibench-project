@@ -11,3 +11,6 @@ pom.xml.versionsBackup
 *.iml
 .idea
 
+# Sphinx docs
+build
+
