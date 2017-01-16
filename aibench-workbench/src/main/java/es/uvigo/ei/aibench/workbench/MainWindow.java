@@ -768,8 +768,6 @@ public class MainWindow extends JFrame {
 		}
 	}
 	
-	
-	
 	/**
 	 * CAUTION: This method should't be used. Use {@link Workbench#getAvailableSlotIDs()} instead.
 	 * 
@@ -777,6 +775,16 @@ public class MainWindow extends JFrame {
 	 */
 	public List<String> getAvailableSlotIDs(){
 		return this.tableLayout.getAvailableSlots();
+	}
+	
+	/**
+	 * Returns the component located at a given slot ID.
+	 * 
+	 * @param componentID The ID of the component.
+	 * @return the component located at componentID.
+	 */
+	public JComponent getComponentAtSlot(final String componentID) {
+		return this.componentMappings.get(componentID);
 	}
 	
 	public synchronized JComponent removeComponentFromSlot(String componentID){

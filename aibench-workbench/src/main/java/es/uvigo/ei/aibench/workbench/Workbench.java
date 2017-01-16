@@ -1043,6 +1043,16 @@ public class Workbench implements IGenericGUI, ClipboardListener {
 		this.fireComponentRemoved(componentID, removed);
 		return removed;
 	}
+	
+	/**
+	 * Returns the component located at a given slot ID.
+	 * 
+	 * @param componentID The ID of the component.
+	 * @return the component located at componentID.
+	 */
+	public JComponent getComponentAtSlot(final String componentID) {
+		return this.mainWindow.getComponentAtSlot(componentID);
+	}
 
 	/**
 	 * Returns the status text.
