@@ -1,33 +1,126 @@
 Customizing your AIBench application
 ************************************
 
+.. _configuration-files:
+
 The configuration files
 =======================
 
 AIBench comes with several configuration files in order to change its default
-behaviour.
+behaviour. They are all inside the ``src/main/global-resources/conf`` directory.
 
-- ``src/main/resources/conf/aibench.conf``. Basic configuration of the AIBench
-  runtime and bootstrap process.
-  - ``src/main/resources/conf/core.conf``. ``Core`` plugin configuration. It basically
-  configures the thread pool size, overrides names and menu-location of
-  :ref:`Operations <operation>`, and enables mutable *Datatypes* observation.
-- ``src/main/resources/conf/workbench.conf``. ``Workbench`` plugin configuration.
-- ``src/main/resources/conf/template.xml``. Configure the 
-  :ref:`Workbench layout <workbench-layout>`.
+- ``aibench.conf``. Basic configuration of the AIBench runtime and bootstrap
+  process.
+- ``core.conf``. ``Core`` plugin configuration.  It basically configures the
+  thread pool size, overrides names and menu-location of :ref:`Operations
+  <operation>`, and enables mutable *Datatypes* observation.
+- ``workbench.conf``. ``Workbench`` plugin configuration. Override components
+  visibility and placement, built-in icons, etc.
+- ``template.xml``. Configure the :ref:`Workbench layout <workbench-layout>`.
+  
 
+.. note:: 
+  
+  Each plugin has its own configuration files, so which ones are used in a
+  multi-plugin application? You have only :ref:`one plugin per project
+  <one-plugin-per-project>`, so the ``.conf`` files of *the plugin you run
+  AIBench with* (``./target/run.sh``) are the only configuration files that will
+  be considered. The configuration files in dependent plugins are ignored.
+
+.. note:: 
+  
+  Why ``plugin.xml`` and ``.conf`` files? As you have seen, we have a
+  :ref:`plugin.xml <the-plugin-xml-file>` file inside each plugin, as well as
+  configuration files. Moreover, some configurations can be done in ``.conf``,
+  as well as in ``plugin.xml`` (for example, the path defining the operations
+  place on the menu bar). You should keep in mind two things:
+    
+    - Configuration files override ``plugin.xml`` options. The ``plugin.xml`` is
+      focused on default behaviour, and configuration files are more focused on
+      final customization of the application. For example, we would like to
+      place a operation in *File/Import* menu when developing the plugin (we
+      should use ``plugin.xml``), but if we reuse this plugin in another
+      project, we may move this operation to *Dataset/Import* (here we should
+      use the configuration).
+    - It is a good idea to define options in the ``plugin.xml`` and, optionally
+      in the configuration files. If your plugin will be reused in another
+      AIBench project, remember that your configuration file will not be
+      *active* in that project.
+    
 Changing the Splash Screen
 ==========================
 
 You can use your own splash by changing the splashimage parameter in
 ``aibench.conf``.
-The parameter value should be relative to ``src/main/resources/``. For example:
+The parameter value should be relative to ``src/main/global-resources/``. For example:
 
 .. code-block:: jproperties
   
-  # You should create the file in: src/main/resources/conf/my-splash.png
-  splashimage = conf/my-splash.png
+  # You should create the file: src/main/global-resources/my-splash.png
+  splashimage = my-splash.png
 
+
+.. _adding-icons:
+
+Adding icons
+============
+
+Basic icons
+-----------
+
+You can add icons for Operations and for Datatypes. They are defined in
+``plugin.xml``:
+
+.. code-block:: xml
+
+  <extension uid="aibench.workbench" name="aibench.workbench.view" >
+    <icon-operation 
+      operation="sampleplugin.sumoperationid"
+      icon="icons/oneicon.png"/>
+    
+    <big-icon-operation	
+      operation="sampleplugin.sumoperationid" 
+      icon="icons/onebigicon.png"/>
+    
+    <icon-datatype 
+      datatype="sampleplugin.OneClass"
+      icon="icons/othericon.png"/> 
+  </extension>
+
+The ``icon`` attribute indicates the path to the icon file. This path is
+relative to ``src/main/resources`` of your plugin.
+
+Overriding Workbench built-in icons
+-----------------------------------
+
+If you want to replace the Workbench (the user interface) default icons, you
+have the following options in the ``workbench.conf`` configuration file.
+
+.. code-block:: jproperties
+
+  # Clipboard root icon
+  icon.clipboard = icons/clipboard.gif
+  icon.datatype = icon/datatype.png
+
+  # Custom help icon
+  paramswindow.helpicon = icons/dialog-help.png
+
+  #  Dialog buttons customization
+  #  Ok button label and text
+  paramswindow.buttonicon.ok = icons/ok.png
+
+  #  Cancel button label and text  
+  paramswindow.buttonicon.cancel = icons/cancel.png
+
+  #  Help button label and text  
+  paramswindow.buttonicon.help = icons/help.png
+
+.. note::
+  
+  Icon files are relative to the AIBench root directory, so you should place
+  them inside ``src/main/global-resources``. In the above configuration file,
+  you should create the ``icons`` subdirectory in ``src/main/global-resources``.
+  
 .. _workbench-layout:
 
 Configuring the Workbench Layout
@@ -39,7 +132,7 @@ components like log at the bottom.
 
 You can reconfigure this behaviour very easy without recompiling the application.
 The Workbench is implemented via a "table layout" configured in the
-``src/main/resources/template.xml`` file.
+``src/main/global-resources/conf/template.xml`` file.
 
 Here it is a possible configuration of the layout.
 
@@ -204,7 +297,8 @@ is forwarded to an Operation, could be:
   
   Create objects in this way is tedious. We provide you with a "smart" utility
   that creates ``ParamSpec`` instances for you, trying to guess the correct
-  ``ParamSource``. It is the ``CoreUtils.createParams(...)`` method set.
+  ``ParamSource``. It is the ``CoreUtils.createParams(...)`` method set. You will need to
+  depend on the Core plugin (see :ref:`creating-plugin-dependencies`).
 
 
 Creating your own dialog from scratch
@@ -381,8 +475,8 @@ To get the Toolbar working you have to:
 Adding Help to your Application
 ===============================
   
-1. Place your JavaHelp files in a specified folder, say "help" in the root of
-   the AIBench project.
+1. Place your JavaHelp files in a global folder (for example:
+   ``src/main/global-resources/help``).
 
 2. Associate JavaHelp topics or URLs to:
   

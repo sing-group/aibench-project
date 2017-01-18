@@ -21,7 +21,11 @@ MainWindow, for example. You can read the JavaDocs docs for more details.
   Workbench theWorkbench = Workbench.getInstance();
   MainWindow theMainWindow = Workbench.getInstance().getMainWindow();
   
-
+.. note::
+  
+  If you want to use the Core and/or Workbench objects, **you must depend on**
+  the Core or Workbench plugins (see :ref:`creating-plugin-dependencies`).
+  
 Hooks
 =====
 
@@ -37,7 +41,7 @@ in the :ref:`plugin.xml <the-plugin-xml-file>`.
   <plugin start="true">
     <uid>myplugin</uid>
     <name>MyPlugin</name>
-       <version>0.1</version>
+    <version>0.1</version>
     <lifecycleclass>myplugin.Lifecycle</lifecycleclass>
     
     <!-- rest of the plugin -->

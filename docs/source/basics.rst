@@ -1,6 +1,8 @@
 AIBench Basics
 **************
 
+.. _create-aibench-project:
+
 Create a new AIBench Project
 ============================
 
@@ -23,6 +25,64 @@ This command creates the new application under the folder
 
 Now you can use your favourite Java Editor or IDE to start
 :ref:`creating-operations`.
+
+.. _source-directories:
+
+Your project main directories
+=============================
+
+Once you have created your new project, this is the typical directory structure
+you will find.
+
+.. code-block:: console
+
+  .
+  ├── pom.xml
+  └── src
+      └── main
+          ├── global-resources
+          │   ├── conf
+          │   │   ├── aibench.conf
+          │   │   ├── core.conf
+          │   │   ├── log4jconfig
+          │   │   ├── pluginmanager.conf
+          │   │   ├── plugins.conf
+          │   │   ├── template.xml
+          │   │   └── workbench.conf
+          │   ├── run.bat
+          │   └── run.sh
+          ├── java
+          │   └── es
+          │       └── uvigo
+          │           └── ei
+          │               └── sing
+          │                   └── Sum.java
+          └── resources
+              └── plugin.xml
+
+The above directories include:
+
+- ``pom.xml`` file. The Maven file controlling the build lifecycle of your
+  application (see :doc:`maven` chapter). Here you will need to add your
+  third-party libraries dependencies as well as other AIBench plugins
+  dependencies.
+
+- ``src/main/resources/plugin.xml``. The :ref:`plugin.xml <the-plugin-xml-file>`
+  file. This file is a key file declaring all your AIBench artifacts and
+  configurations.
+    
+- ``src/main/java``. The Java source code of your plugin. Where you add Java
+  classes implementing AIBench :ref:`Operations <creating-operations>`,
+  :ref:`Datatypes <creating-datatypes>` and :ref:`Views <creating-views>`.
+
+- ``src/main/global-resources``. Resources that are application scoped, not
+  plugin scoped. For example, application configuration files, and run scripts.
+    
+- ``src/main/resources``. Resources needed by your plugin (non-Java files), such
+  as icons, text-files, etc.
+
+
+
 
 Building and Running
 ====================
@@ -326,7 +386,7 @@ to describe the *structure* of your datatypes.
 This additional Datatype meta-data is given via annotations. There are three
 types of Datatypes:
 
-1. **SIMPLE** (by default), no annotation needed
+1. **SIMPLE** (by default), no annotation needed.
 2. **LIST**. A datatype with a dynamic list of subelements. Note: Java arrays
    (with any extra information) are considered lists.
 3. **COMPLEX**. A datatype with a finite number of sub-parts.

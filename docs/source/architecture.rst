@@ -2,30 +2,36 @@ Architecture of AIBench
 ***********************
 
 The next figure shows an overview of the AIBench framework. The green zone
-indicates that the *Operations* programmer role (which is the regular user of
-the framework) has to develop his own *Operations*, *Datatypes* and *Views*.
-The red zone shows that the core programmer role maintains the Core and the
-Workbench (detailed later). Normally, you will program your application acting
-as an *Operations* programmer.
+indicates that the :ref:`Operations <creating-operations>` programmer role
+(which is the regular user of the framework) has to develop his own
+:ref:`Operations <creating-operations>`, :ref:`Datatypes <creating-operations>`
+and :ref:`Views <creating-views>`.  The red zone shows that the core programmer
+role maintains the Core and the Workbench (detailed later). Normally, you will
+program your application acting as an :ref:`Operations <creating-operations>`
+programmer.
 
 .. figure:: images/architecture.png
    :align:  center
 
-In summary, the *Operations* programmer builds this type of artefacts:
+In summary, the :ref:`Operations <creating-operations>` programmer builds this
+type of artefacts:
 
-- **Operations**. The units of logic.
+- **Operations**. The units of logic (see :ref:`creating-operations`).
 - **Datatypes**. Normal Java classes used as input and output of the
-  *Operations*.
+  Operations (see :ref:`creating-operations`).
 - **Views**. Classes that inherits from ``JComponent`` and are used to display
-  *the Datatypes* inside the Workbench.
+  the Datatypes inside the Workbench (see :ref:`creating-views`).
+
+.. _plugins-architecture:
 
 Plugin-based architecture
 =========================
 
-AIBench uses a *plugin engine* to provide advanced capabilities, such as dynamic
-discovering and loading of your *Operations* at the application startup.  You
-need to know the basics of this engine in order to develop applications with
-AIBench. Concretely, what you need about AIBench plugins is:
+AIBench uses a **plugin engine** to provide advanced capabilities, such as
+dynamic discovering and loading of your :ref:`Operations <creating-operations>`
+at the application startup.  You need to know the basics of this engine in order
+to develop applications with AIBench. Concretely, what you need about AIBench
+plugins is:
 
 - A plugin is a set of classes, isolated (by default) from the rest classes
   belonging to other plugins.
@@ -38,19 +44,19 @@ AIBench. Concretely, what you need about AIBench plugins is:
   the first to the second has been defined.
 
 AIBench is based on plugins. Not only AIBench-based applications are structured
-on plugins, but also the internals of the framework. There are two main built-in
-plugins:
+on plugins (see :doc:`multiplugin`), but also the internals of the framework.
+There are two main built-in plugins:
     
-- ``Core`` plugin. Registers your operations, executes them upon user
-  requests, and collects their results. Inside this plugin, the *Clipboard*
-  keeps track of all generated results, and the *History* saves all the
-  operations that have been executed in order to repeat all the session in the
-  future.
-- ``Workbench`` plugin. Implements User Interface for AIBench applications
-  using Java Swing. Its main responsibility is to display operations in menus,
-  retrieve user parameters via **automatically-generated** dialogs, displays
-  the *Clipboard* and *History* contents and brings-up *Views* of data when
-  user requests it.
+- ``Core`` plugin. Registers your operations, executes them upon user requests,
+  and collects their results. Inside this plugin, the :ref:`Clipboard
+  <clipboard>` keeps track of all generated results, and the *History* saves all
+  the operations that have been executed in order to repeat all the session in
+  the future.
+- ``Workbench`` plugin. Implements User Interface for AIBench applications using
+  Java Swing. Its main responsibility is to display operations in menus,
+  retrieve user parameters via **automatically-generated** dialogs, displays the
+  :ref:`Clipboard <clipboard>` and *History* contents and brings-up :ref:`Views
+  <creating-views>` of data when user requests it.
 
 These two plugins are communicated internally by an extension point (the top one
 in the last figure), but this is out of the scope of this document.
@@ -63,23 +69,16 @@ is not any required interface to implement.
 
 The ``Workbench`` plugin implements the Workbench user interface and also
 defines an extension point called ``AIBench.core.workbench.view``. To register a
-view component associated with a Data-type, you have to put your component in a
-plugin and connect it to this extension point. There is not any required
-interface to implement.  The user Data-types have to be placed inside a plugin,
-but this plugin doesn't need to be connected to any extension point. (Please
-note that if some of your Operations use these Data-types and reside in other
-plugins, they must depend on this plugin).
+view component associated with a :ref:`Datatype <creating-operations>`, you have
+to put your component in a plugin and connect it to this extension point. There
+is not any required interface to implement.  The user :ref:`Datatypes
+<creating-operations>` have to be placed inside a plugin, but this plugin
+doesn't need to be connected to any extension point. (Please note that if some
+of your Operations use these :ref:`Datatypes <creating-operations>` and reside
+in other plugins, they must depend on this plugin).
 
-You can put your *Operations*, *Views* and *Datatypes* in one, two or more
-separated plugins, based on your own design decision. The only rules that have
-to be followed are:
-
-- If there are *Operations* and/or *Views* in a plugin, this plugin must be
-  connected to the properly extension points as it was explained before.
-- If the *Views* and/or *Operations* in a plugin make use of the *Datatypes* located
-  in other plugin, this plugin must **depend** on the Datatypes plugin.
-- The connection and dependency between plugins is made through the ``plugin.xml``
-  file present in every plugin. Here is an example of that file.
+You can take advantage of this plugin architecture for your applications. See
+:doc:`multiplugin`.
 
 .. _the-plugin-xml-file:
 
@@ -87,7 +86,8 @@ The ``plugin.xml`` file
 =======================
 
 The connection and dependency between plugins is made through the ``plugin.xml``
-file present in every plugin. Here is an example of a ``plugin.xml`` file.
+file present in every plugin (located at ``src/main/resources``). Here is an
+example of a ``plugin.xml`` file.
 
 .. code-block:: xml
 
@@ -156,3 +156,59 @@ In the example, you can see that:
     
     Where is the ``plugin.xml`` file? It is located in ``src/main/resources``
     folder.
+    
+.. _aibench-application-directory:
+
+AIBench application directory
+=============================
+
+Once you :ref:`build your application <build-application>`, a directory
+structure is created inside ``target/dist``:
+
+.. code-block:: console
+
+  .
+  ├── conf
+  │   ├── aibench.conf
+  │   ├── core.conf
+  │   ├── log4jconfig
+  │   ├── pluginmanager.conf
+  │   ├── plugins.conf
+  │   ├── template.xml
+  │   └── workbench.conf
+  ├── lib
+  │   ├── aibench-aibench-2.8.0-SNAPSHOT.jar
+  │   ├── javatar-2.5.jar
+  │   ├── jhall-2.0.jar
+  │   └── log4j-1.2.12.jar
+  ├── plugins_bin
+  │   ├── aibench-core-[version].jar
+  │   ├── aibench-pluginmanager-[version].jar
+  │   ├── aibench-shell-[version].jar
+  │   ├── aibench-workbench-[version].jar
+  │   └── my-aibench-application
+  │       ├── es
+  │       │   └── uvigo
+  │       │       └── ei
+  │       │           └── sing
+  │       │               └── Sum.class
+  │       └── plugin.xml
+  ├── run.bat
+  └── run.sh
+
+This structure is composed of the following items:
+
+- ``conf`` directory. The :ref:`configuration files <configuration-files>`. The
+  come from the ``src/main/global-resources/conf`` :ref:`source directory
+  <source-directories>`.
+- ``lib`` directory. AIBench Core-libraries.
+- ``plugins_bin``. Plugins conforming the application. The plugins coming from
+  another project appear as ``.jar`` files.
+  
+    - The plugin of the current project appears as a directory (in the example
+      ``my-aibench-application``). Inside this plugin goes the compiled Java
+      code, as well as plugin resources, coming from the ``src/main/java`` and
+      ``src/main/resources`` :ref:`source directories <source-directories>`.
+    
+- Launch scripts (``run.bat`` and ``run.sh``), coming from the
+  ``src/main/global-resources`` :ref:`source directory <source-directories>`.

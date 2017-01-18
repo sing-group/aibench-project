@@ -19,6 +19,7 @@ Welcome to AIBench's documentation!
    
    architecture
    customizing
+   Creating multi-plugin apps <multiplugin>
    api
    maven
 
