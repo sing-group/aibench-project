@@ -23,6 +23,7 @@
 
 	<properties>
 		<aibench.lib.artifactIds>javatar,aibench-aibench,jhall,log4j</aibench.lib.artifactIds>
+		<globalResourcesDirectory>src/main/global-resources</globalResourcesDirectory>
 	</properties>
 
 	<dependencies>
@@ -35,43 +36,25 @@
 
 	<build>
 		<directory>${project.basedir}/target</directory>
-		<outputDirectory>${project.build.directory}/plugins_bin/${project.artifactId}</outputDirectory>
+		<outputDirectory>${project.build.directory}/dist/plugins_bin/${project.artifactId}</outputDirectory>
 		<plugins>
 			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-resources-plugin</artifactId>
 				<executions>
-					<!-- copy conf -->
+					<!-- copy resources -->
 					<execution>
-						<id>copy-resources-conf</id>
+						<id>copy-global-resources</id>
 						<!-- here the phase you need -->
 						<phase>validate</phase>
 						<goals>
 							<goal>copy-resources</goal>
 						</goals>
 						<configuration>
-							<outputDirectory>${project.build.directory}/conf</outputDirectory>
+							<outputDirectory>${project.build.directory}/dist</outputDirectory>
 							<resources>
 								<resource>
-									<directory>src/main/resources/conf</directory>
-									<filtering>true</filtering>
-								</resource>
-							</resources>
-						</configuration>
-					</execution>
-
-					<!-- copy scripts -->
-					<execution>
-						<id>copy-resources-scripts</id>
-						<!-- here the phase you need -->
-						<phase>validate</phase>
-						<goals>
-							<goal>copy-resources</goal>
-						</goals>
-						<configuration>
-							<outputDirectory>${project.build.directory}</outputDirectory>
-							<resources>
-								<resource>
-									<directory>src/main/resources/scripts</directory>
+									<directory>${globalResourcesDirectory}</directory>
 									<filtering>true</filtering>
 								</resource>
 							</resources>
@@ -92,7 +75,7 @@
 							<goal>copy-dependencies</goal>
 						</goals>
 						<configuration>
-							<outputDirectory>${project.build.directory}/lib</outputDirectory>
+							<outputDirectory>${project.build.directory}/dist/lib</outputDirectory>
 							<overWriteReleases>false</overWriteReleases>
 							<overWriteSnapshots>false</overWriteSnapshots>
 							<overWriteIfNewer>true</overWriteIfNewer>
@@ -109,7 +92,7 @@
 							<goal>copy-dependencies</goal>
 						</goals>
 						<configuration>
-							<outputDirectory>${project.build.directory}/plugins_bin</outputDirectory>
+							<outputDirectory>${project.build.directory}/dist/plugins_bin</outputDirectory>
 							<overWriteReleases>false</overWriteReleases>
 							<overWriteSnapshots>false</overWriteSnapshots>
 							<overWriteIfNewer>true</overWriteIfNewer>
@@ -138,27 +121,21 @@
 			</plugin>
 		</plugins>
 
-		<!-- ignore /src/main/resources/scripts and /src/main/resources/conf, which
-			will go to the root of the target directory, not inside the current aibench
-			plugin -->
+		<!-- filtering on plugin.xml -->
 		<resources>
-			<resource>
-				<directory>src/main/resources</directory>
-				<filtering>false</filtering>
-				<excludes>
-					<exclude>conf/**/*</exclude>
-					<exclude>conf</exclude>
-					<exclude>scripts/**/*</exclude>
-					<exclude>scripts</exclude>
-				</excludes>
-			</resource>
-
 			<resource>
 				<directory>src/main/resources</directory>
 				<filtering>true</filtering>
 				<includes>
 					<include>plugin.xml</include>
 				</includes>
+			</resource>
+			<resource>
+				<directory>src/main/resources</directory>
+				<filtering>false</filtering>
+				<excludes>
+					<exclude>plugin.xml</exclude>
+				</excludes>
 			</resource>
 		</resources>
 	</build>
