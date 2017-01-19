@@ -44,7 +44,7 @@ You have to run the following command:
   -DgroupId=es.uvigo.ei.sing \
   -DartifactId=my-aibench-application\
   -DinteractiveMode=false \
-  -DarchetypeCatalog=http://sing.ei.uvigo.es/maven2/archetype-catalog.xml
+  -DarchetypeRepository=http://sing.ei.uvigo.es/maven2
 
 This will create the new application under the folder
 ``my-aibench-application``. You can select the version of the archetype in
