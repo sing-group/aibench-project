@@ -14,7 +14,7 @@ programmer.
    :align:  center
 
 In summary, the :ref:`Operations <creating-operations>` programmer builds this
-type of artefacts:
+type of artifacts:
 
 - **Operations**. The units of logic (see :ref:`creating-operations`).
 - **Datatypes**. Normal Java classes used as input and output of the
@@ -61,7 +61,7 @@ There are two main built-in plugins:
 These two plugins are communicated internally by an extension point (the top one
 in the last figure), but this is out of the scope of this document.
 
-Also the ``Core`` plugin implements the extensible AIBench Operation Model by
+Also, the ``Core`` plugin implements the extensible AIBench Operation Model by
 the definition of an extension point called
 ``AIBench.core.operation-definition``.  In order to add Operations to AIBench,
 you have to put them in a plugin and connect it to this extension point. There

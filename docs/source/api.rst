@@ -2,7 +2,7 @@ AIBench API
 ***********
 
 Here you can find a brief summary of how to interact with AIBench API to add
-special behaviour or customizations to your application. Interacting with
+special behavior or customizations to your application. Interacting with
 a framework API is normally done via hooks, which allow you to run code at
 specific points, as well as calls to the framework's core objects.
 
@@ -32,7 +32,7 @@ Hooks
 Plugin lifecycle
 ----------------
 
-You can add a class to listen when AIBench starts and add custom behaviour. 
+You can add a class to listen when AIBench starts and add custom behavior. 
 You should implement a class extending ``PluginLifecycle`` class and put it
 in the :ref:`plugin.xml <the-plugin-xml-file>`.
 

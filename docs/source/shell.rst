@@ -16,14 +16,14 @@ On the right side, you can write shell code, or copy/paste code from the left
 side to repeat operations.
 
 In addition, you can save the script and load it afterwards. The execution of a
-script launches operations in a concurrent fashion, but by preserving the data
+script launches operations in a concurrent way, but by preserving the data
 dependencies. For example, if an operation takes as input the output of another
 operation, those operations are run in sequence, not in parallel.
 
 .. note::
   
-  You can edit your script, for example, to add loops in order to repeat your
-  a workflow you starting from an input file over several input files.
+  You can edit your script, for example, to add loops in order to repeat a 
+  workflow starting from an input file over several input files.
   
 Launching AIBench *headless* with a script
 ==========================================

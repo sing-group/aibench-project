@@ -211,7 +211,7 @@ attributes of this annotation are showed in the following table.
 |                  |            | indicate that the operation will |           |
 |                  |            | write on the input object, so no |           |
 |                  |            | other operations using this item |           |
-|                  |            | can run in paralell              |           |
+|                  |            | can run in parallel              |           |
 +------------------+------------+----------------------------------+-----------+
 | defaultValue     | String     | The default value of the         | <empty    |
 |                  |            | port (must be an INPUT or BOTH   | string>   |
@@ -226,7 +226,9 @@ attributes of this annotation are showed in the following table.
 | advanced         | boolean    | Hint indicating that this        | false     |
 |                  |            | parameter is not essential, so   |           |
 |                  |            | its default value should be valid|           |
-|                  |            | in almost all cases.             |           |
+|                  |            | in almost all cases. Moreover    |           |
+|                  |            | this parameters are displayed    |           |
+|                  |            | hidden initially.                |           |
 +------------------+------------+----------------------------------+-----------+
 
 @Progress Annotation
@@ -424,6 +426,10 @@ well as some other annotations inside those Datatypes.
 +----------------+-----------+---------------------------------------+----------+
 | removeMethod   | String    | The name of a method to rename the    | <empty   |
 |                |           | datatype.                             | string>  |
++----------------+-----------+---------------------------------------+----------+
+| autoOpen       | boolean   | If the datatype should be             | false    |
+|                |           | automatically opened when it is       |          |
+|                |           | added to the clipboard.               |          |
 +----------------+-----------+---------------------------------------+----------+
 
 @ListElements annotation

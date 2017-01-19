@@ -7,7 +7,7 @@ The configuration files
 =======================
 
 AIBench comes with several configuration files in order to change its default
-behaviour. They are all inside the ``src/main/global-resources/conf`` directory.
+behavior. They are all inside the ``src/main/global-resources/conf`` directory.
 
 - ``aibench.conf``. Basic configuration of the AIBench runtime and bootstrap
   process.
@@ -36,7 +36,7 @@ behaviour. They are all inside the ``src/main/global-resources/conf`` directory.
   place on the menu bar). You should keep in mind two things:
     
     - Configuration files override ``plugin.xml`` options. The ``plugin.xml`` is
-      focused on default behaviour, and configuration files are more focused on
+      focused on default behavior, and configuration files are more focused on
       final customization of the application. For example, we would like to
       place a operation in *File/Import* menu when developing the plugin (we
       should use ``plugin.xml``), but if we reuse this plugin in another
@@ -130,7 +130,7 @@ The Workbench main window shows (i) the Clipboard and the History trees at both
 sides (ii) the Views showing Clipboard data in de center and (iii) additional
 components like log at the bottom.
 
-You can reconfigure this behaviour very easy without recompiling the application.
+You can reconfigure this behavior very easy without recompiling the application.
 The Workbench is implemented via a "table layout" configured in the
 ``src/main/global-resources/conf/template.xml`` file.
 
@@ -177,7 +177,7 @@ Here is an example of the AIBench layout running:
 
 As you can see in the file, the layout is very similar to an HTML table layout,
 defined by rows (similar to tr) and cells (similar to td). Rows and cells can
-specify a default height and width, respectively. In addition there are two
+specify a default height and width, respectively. In addition, there are two
 additional tags:
 
   - ``document_viewer``. This tag is where the views of the Views are shown (to
@@ -352,7 +352,7 @@ use ``removeAfterTermination`` before calling ``paramsIntroduced``.
 
 Once ``paramsIntroduced`` is called, the Core will try to run the operation.
 However, it will first validate the parameter values (see
-:ref:`validating-input`). It the parameters where not validated, your
+:ref:`validating-input`). If the parameters were not validated, your
 ``onValidationError(Throwable t)`` method will be invoked. If the parameters are
 ok and the operation can run, the ``finish()`` method will be called instead.
 
@@ -378,7 +378,7 @@ Let's see the example:
       protected ParamProvider getParamProvider(
            final Port port, final Class<?> arg1, final Object arg2) {
 
-        // change the default behaviour for the port named "PortName"
+        // change the default behavior for the port named "PortName"
         if (port.name().equals("PortName")) {
            
             return new AbstractParamProvider() {
@@ -402,7 +402,7 @@ Let's see the example:
             };
          }
 
-         // use the default behaviour for the other ports
+         // use the default behavior for the other ports
          return super.getParamProvider(port, arg1, arg2);
      }
   }

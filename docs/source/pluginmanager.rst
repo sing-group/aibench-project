@@ -1,8 +1,8 @@
 Managing plugins at runtime
 ***************************
 
-AIBench allows you to enable/disable plugins, as well as to to give updates to
-your application remotelly via the ``Plugin Manager`` plugin. Basically, you
+AIBench allows you to enable/disable plugins, as well as to give updates to
+your application remotely via the ``Plugin Manager`` plugin. Basically, you
 have to provide HTTP access to updated versions of the plugins your application
 is composed of.
 
@@ -21,7 +21,7 @@ This plugin adds a new panel in the Workbench's bottom zone to bring an Plugin
 Information Panel which:
 
 - Shows the current available plugins, their version, and their state
-  (diabled/enabled).
+  (disabled/enabled).
 - Allows the user to enable/disable current installed plugins, by changing their
   option in the ``plugins.conf``. Changes only will take effect after AIBench
   restarts.
@@ -52,7 +52,7 @@ Information Panel which:
 Setting up and configure your remote plugin repository
 ======================================================
 
-Your will be able to create a web server with new or updated plugins
+You will be able to create a web server with new or updated plugins
 (repository). A repository should:
 
 - Be available via HTTP. The URL of the store and the repository metadata file

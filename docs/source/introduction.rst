@@ -121,7 +121,7 @@ The main features of the Workbench are:
 - **Dynamic generation of input dialogs**. When the user requests the execution
   of a given :ref:`Operation <operation>`, the Workbench generates an input
   dialog reflecting the input ports defined in that :ref:`Operation
-  <operation>`. Depending of the data-type of each port, the control showed may
+  <operation>`. Depending on the data-type of each port, the control showed may
   change (see Dynamic generation of input dialogs).
 - **User's input validation**. It uses the validating method provided in the
   :ref:`Operation <operation>` (if there is one) to stop the user if the
@@ -162,7 +162,7 @@ following the policy of the following table.
 | (primitive wrapper, String...)             |                                  |
 +--------------------------------------------+----------------------------------+
 | java.io.File                               | Text field with a "Find..."      | 
-|                                            | button that brings an file       |
+|                                            | button that brings a file        |
 |                                            | chooser dialog                   |
 +--------------------------------------------+----------------------------------+
 | Other class (only can take the value       | Combo box with the instances     | 
@@ -210,12 +210,12 @@ Users interact with the applications following this workflow:
 1. Request an operation.
 2. Give parameters in the (automatically generated) dialog.
 3. Run the operation.
-4. Results goes to the clipboard.
+4. Results go to the clipboard.
 5. The user explores the results, where Views come to play.
 6. The user requests more operation that may use data in the Clipboard as input,
    so this cycle starts again.
 
-The following figures shows an example with two operations invoked by the user,
+The following figures show an example with two operations invoked by the user,
 where the output of the first operation ("Load CSV") is used as one of the
 inputs in the second operation ("Classifier Train").
 
