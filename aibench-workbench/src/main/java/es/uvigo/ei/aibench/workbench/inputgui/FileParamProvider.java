@@ -58,31 +58,36 @@ public class FileParamProvider extends AbstractParamProvider {
 	public static final String FILTERS_EXTRAS_ALLOWALL_FILTER= "allowAll";
 	public static final String FILTERS_EXTRAS_SELECTION_MODE = "selectionMode";
 	
+	private static final String SELECTION_MODE_FILES_AND_DIRECTORIES = "filesAndDirectories";
+	private static final String SELECTION_MODE_DIRECTORIES = "directories";
+	private static final String SELECTION_MODE_FILES = "files";
+	
 	private JComponent component = null;
 	
+	@Override
 	public void actionPerformed(ActionEvent e) {
 		if (e.getSource() == this.findButton) {
 			this.showFileChooser();
 		}
 		
 		super.actionPerformed(e);
-	};
+	}
 	
 	private void showFileChooser() {
 		this.fcConfiguration.configureFileChooser(Common.SINGLE_FILE_CHOOSER);
 		
-		int option = Common.SINGLE_FILE_CHOOSER.showDialog(Workbench.getInstance().getMainFrame(), "Select");
+		final int option = Common.SINGLE_FILE_CHOOSER.showDialog(Workbench.getInstance().getMainFrame(), "Select");
 		if (option == JFileChooser.APPROVE_OPTION) {
-			File selected = Common.SINGLE_FILE_CHOOSER.getSelectedFile();
+			final File selected = Common.SINGLE_FILE_CHOOSER.getSelectedFile();
 			if (selected != null)
 				FileParamProvider.this.field.setText(selected.getPath());
 		}
 		
 		this.fcConfiguration.clearFileChooser(Common.SINGLE_FILE_CHOOSER);
-	};
+	}
 	
 	public FileParamProvider(ParamsReceiver receiver, Port p, Class<?> clazz, Object operationObject) {
-		super(receiver, p,clazz,operationObject);
+		super(receiver, p, clazz, operationObject);
 		this.field.setEditable(false);
 		
 		if (p.defaultValue().length() > 0) {
@@ -92,27 +97,27 @@ public class FileParamProvider extends AbstractParamProvider {
 	}
 	
 	public static void configureFileChooser(Port p, JFileChooser fc) {
-		final FileChooserConfiguration configuration = 
-			new FileChooserConfiguration(p.extras());
-		
+		final FileChooserConfiguration configuration = new FileChooserConfiguration(p.extras());
+
 		configuration.configureFileChooser(fc);
 	}
 	
-	static class ExtensionFileFilter extends FileFilter{
+	static class ExtensionFileFilter extends FileFilter {
 		String nameregexp;
 		String description;
+
 		public ExtensionFileFilter(String nameregexp, String desc) {
 			this.nameregexp = nameregexp;
 			this.description = desc;
 		}
-	
+
 		@Override
 		public boolean accept(File pathname) {
 			return (pathname.isDirectory() || pathname.getName().matches(this.nameregexp));
 		}
 		
 		@Override
-		public String getDescription() {		
+		public String getDescription() {
 			return this.description;
 		}
 	}
@@ -137,49 +142,50 @@ public class FileParamProvider extends AbstractParamProvider {
 			if (configurationString == null || configurationString.trim().isEmpty())
 				return;
 			
-			String[] props = configurationString.split(",");
+			final String[] props = configurationString.split(",");
 			for (String prop : props) {
-				String[] propValue = prop.split("=");
+				final String[] propValue = prop.split("=");
+				
 				if (propValue.length == 2) {
-					propValue[0] = propValue[0].trim();
-					propValue[1] = propValue[1].trim();
-					if (propValue[0].equalsIgnoreCase(FILTERS_EXTRAS_PROPERTY)) {
+					final String property = propValue[0].trim();
+					final String value = propValue[1].trim();
+
+					if (FILTERS_EXTRAS_PROPERTY.equalsIgnoreCase(property)) {
 						this.setAllowAll(false);
 
-						String[] filters = propValue[1].split(";");
+						final String[] filters = value.split(";");
 						for (String filter : filters) {
-							String[] nameExpAndDesc = filter.split(":");
+							final String[] nameExpAndDesc = filter.split(":");
+							
 							if (nameExpAndDesc.length == 2) {
-								nameExpAndDesc[0] = nameExpAndDesc[0].trim();
-								nameExpAndDesc[1] = nameExpAndDesc[1].trim();
-								
-								this.getFilters().add(new ExtensionFileFilter(nameExpAndDesc[0], nameExpAndDesc[1]));
+								final String nameExtension = nameExpAndDesc[0].trim();
+								final String description = nameExpAndDesc[1].trim();
+
+								this.getFilters().add(new ExtensionFileFilter(nameExtension, description));
 							} else if (nameExpAndDesc.length == 1) {
-								nameExpAndDesc[0] = nameExpAndDesc[0].trim();
-								if (nameExpAndDesc[0]
-										.equalsIgnoreCase(FILTERS_EXTRAS_ALLOWALL_FILTER)) {
+								final String nameExtension = nameExpAndDesc[0].trim();
+								
+								if (FILTERS_EXTRAS_ALLOWALL_FILTER.equalsIgnoreCase(nameExtension)) {
 									this.setAllowAll(true);
-								} else
-									LOG.warn("unable to parse a filter in extras: "	+ filter);
+								} else {
+									LOG.warn("unable to parse a filter in extras: " + filter);
+								}
 							}
 						}
-					} else if (propValue[0]
-							.equalsIgnoreCase(FILTERS_EXTRAS_SELECTION_MODE)) {
-						if (propValue[1].equalsIgnoreCase("files")) {
+					} else if (FILTERS_EXTRAS_SELECTION_MODE.equalsIgnoreCase(property)) {
+						if (SELECTION_MODE_FILES.equalsIgnoreCase(value)) {
 							this.setSelectionMode(JFileChooser.FILES_ONLY);
-						} else if (propValue[1].equalsIgnoreCase("directories")) {
+						} else if (SELECTION_MODE_DIRECTORIES.equalsIgnoreCase(value)) {
 							this.setSelectionMode(JFileChooser.DIRECTORIES_ONLY);
-						} else if (propValue[2]
-								.equalsIgnoreCase("filesAndDirectories")) {
+						} else if (SELECTION_MODE_FILES_AND_DIRECTORIES.equalsIgnoreCase(value)) {
 							this.setSelectionMode(JFileChooser.FILES_AND_DIRECTORIES);
 						} else {
-							LOG.warn("unknown value for "
-									+ FILTERS_EXTRAS_ALLOWALL_FILTER
-									+ " filter: " + propValue[1]);
+							LOG.warn("unknown value for " + FILTERS_EXTRAS_ALLOWALL_FILTER + " filter: " + value);
+
 							this.setSelectionMode(JFileChooser.FILES_AND_DIRECTORIES);
 						}
 					} else {
-						LOG.warn("unknown filter: " + propValue[0]);
+						LOG.warn("unknown filter: " + property);
 					}
 				} else {
 					LOG.warn("unable to parse a property in extras: " + prop);
@@ -216,83 +222,77 @@ public class FileParamProvider extends AbstractParamProvider {
 		public void configureFileChooser(JFileChooser fc) {
 			fc.setAcceptAllFileFilterUsed(this.isAllowAll());
 			fc.setFileSelectionMode(this.getSelectionMode());
-			
-			for (ExtensionFileFilter filter : this.getFilters()){
-				fc.addChoosableFileFilter(filter);			
+
+			fc.resetChoosableFileFilters();
+			for (ExtensionFileFilter filter : this.getFilters()) {
+				fc.addChoosableFileFilter(filter);
 			}
 		}
-		
+
 		public void clearFileChooser(JFileChooser fc) {
 			fc.setFileSelectionMode(JFileChooser.FILES_AND_DIRECTORIES);
 			fc.setAcceptAllFileFilterUsed(true);
-			for (ExtensionFileFilter filter : this.getFilters()) {
-				fc.removeChoosableFileFilter(filter);
-			}
+			fc.resetChoosableFileFilters();
 		}
 	}
-	
-	/**
-	 * @param p
-	 */
+
 	private void createFilters(Port p) {
 		this.fcConfiguration.reset();
 		this.fcConfiguration.configure(p.extras());
 	}
 
+	public JTextField getField() {
+		return this.field;
+	}
+
+	@Override
 	public JComponent getComponent() {
-                if (this.component == null) {
-                  this.component = new JPanel();
-                  this.component.setLayout(new BorderLayout());
-                  
-                  this.field.setPreferredSize(new Dimension(150, field.getPreferredSize().height));
-                  this.findButton.setToolTipText("Browse the local filesystem to select a file");
-                  
-                  this.component.add(this.field, BorderLayout.CENTER);
-                  this.component.add(this.findButton, BorderLayout.EAST);
-                  new  FileDrop( this.field, new FileDrop.Listener(){
-                    public void  filesDropped( java.io.File[] files ){   
-                      if (files.length > 0){
-                        FileParamProvider.this.field.setText(files[0].getPath());
-                        FileParamProvider.this.setChanged();
-                        FileParamProvider.this.notifyObservers();
-                      }
-                    }
-                  });
-                  
-                  this.field.addMouseListener(new MouseAdapter() {
-                          /* (non-Javadoc)
-                          * @see java.awt.event.MouseAdapter#mouseClicked(java.awt.event.MouseEvent)
-                          */
-                          @Override
-                          public void mouseClicked(MouseEvent e) {
-                                  FileParamProvider.this.showFileChooser();
-                                  FileParamProvider.this.setChanged();
-                                  FileParamProvider.this.notifyObservers();
-                          }
-                  });
-                  this.findButton.addActionListener(this);
+		if (this.component == null) {
+			this.component = new JPanel();
+			this.component.setLayout(new BorderLayout());
+
+			this.field.setPreferredSize(new Dimension(150, field.getPreferredSize().height));
+			this.findButton.setToolTipText("Browse the local filesystem to select a file");
+
+			this.component.add(this.field, BorderLayout.CENTER);
+			this.component.add(this.findButton, BorderLayout.EAST);
+			new FileDrop(
+				this.field, new FileDrop.Listener() {
+					public void filesDropped(File[] files) {
+						if (files.length > 0) {
+							FileParamProvider.this.field.setText(files[0].getPath());
+							FileParamProvider.this.setChanged();
+							FileParamProvider.this.notifyObservers();
+						}
+					}
+				}
+			);
+
+			this.field.addMouseListener(
+				new MouseAdapter() {
+					@Override
+					public void mouseClicked(MouseEvent e) {
+						FileParamProvider.this.showFileChooser();
+						FileParamProvider.this.setChanged();
+						FileParamProvider.this.notifyObservers();
+					}
+				}
+			);
+			this.findButton.addActionListener(this);
 		}
-		
+
 		return this.component;
 	}
-        
+
+	@Override
 	public ParamSpec getParamSpec() {
-		if (field.getText().equals("")){
+		if (field.getText().equals("")) {
 			return new ParamSpec(this.port.name(), clazz, null, ParamSource.CLIPBOARD);
 		}
 		return new ParamSpec(this.port.name(), this.clazz, field.getText(), ParamSource.STRING_CONSTRUCTOR);
 	}
 
-	/**
-	 * @return the field
-	 */
-	public JTextField getField() {
-		return this.field;
-	}
-	
-	/* (non-Javadoc)
-	 * @see es.uvigo.ei.aibench.workbench.inputgui.ParamProvider#isValidValue()
-	 */
+	@Override
 	public boolean isValidValue() {
 		if (!this.port.allowNull()) {
 			return this.field.getText().trim().length() > 0;

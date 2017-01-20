@@ -45,40 +45,37 @@ public abstract class  AbstractParamProvider extends Observable implements Param
 		this.receiver = receiver;
 		this.clazz = clazz;
 		this.operationObject=operationObject;
-	/*	this.paramName = name;*/
 		this.port = p;
+	}
 
-	}
-	
-	public Port getPort(){
-		return this.port;
-	}
-	
 	protected ParamsReceiver getReceiver() {
 		return this.receiver;
 	}
-	
+
+	@Override
+	public Port getPort(){
+		return this.port;
+	}
+
+	@Override
 	public void init() {}
-	public void finish() {}
 	
+	@Override
+	public void finish() {}
+
+	@Override
 	public void actionPerformed(ActionEvent e) {
 		this.setChanged();
 		this.notifyObservers();
 	}
 	
-	/* (non-Javadoc)
-	 * @see java.awt.event.KeyListener#keyTyped(java.awt.event.KeyEvent)
-	 */
+	@Override
 	public void keyTyped(KeyEvent e) {}
-	
-	/* (non-Javadoc)
-	 * @see java.awt.event.KeyListener#keyPressed(java.awt.event.KeyEvent)
-	 */
+
+	@Override
 	public void keyPressed(KeyEvent e) {}
-	
-	/* (non-Javadoc)
-	 * @see java.awt.event.KeyListener#keyReleased(java.awt.event.KeyEvent)
-	 */
+
+	@Override
 	public void keyReleased(KeyEvent e) {
 		this.setChanged();
 		this.notifyObservers();
