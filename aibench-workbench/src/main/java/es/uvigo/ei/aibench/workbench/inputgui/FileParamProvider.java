@@ -52,7 +52,7 @@ public class FileParamProvider extends AbstractParamProvider {
 	private final JTextField field = new JTextField();
 	private final JButton findButton = new JButton(Common.ICON_FILE_OPEN);
 	
-	private FileChooserConfiguration fcConfiguration = new FileChooserConfiguration();
+	private final FileChooserConfiguration fcConfiguration;
 	
 	public static final String FILTERS_EXTRAS_PROPERTY = "filters";
 	public static final String FILTERS_EXTRAS_ALLOWALL_FILTER= "allowAll";
@@ -63,6 +63,21 @@ public class FileParamProvider extends AbstractParamProvider {
 	private static final String SELECTION_MODE_FILES = "files";
 	
 	private JComponent component = null;
+	
+	public FileParamProvider(ParamsReceiver receiver, Port p, Class<?> clazz, Object operationObject) {
+		super(receiver, p, clazz, operationObject);
+		this.field.setEditable(false);
+		
+		this.fcConfiguration = new FileChooserConfiguration(p.extras());
+		
+		if (p.defaultValue().length() > 0) {
+			this.field.setText(p.defaultValue());
+		}
+	}
+	
+	public static void configureFileChooser(Port p, JFileChooser fc) {
+		FileChooserConfiguration.configure(p.extras(), fc);
+	}
 	
 	@Override
 	public void actionPerformed(ActionEvent e) {
@@ -76,35 +91,19 @@ public class FileParamProvider extends AbstractParamProvider {
 	private void showFileChooser() {
 		this.fcConfiguration.configureFileChooser(Common.SINGLE_FILE_CHOOSER);
 		
+		final File selectedFile = this.getSelectedFile();
+		if (selectedFile != null)
+			Common.SINGLE_FILE_CHOOSER.setSelectedFile(selectedFile);
+		
 		final int option = Common.SINGLE_FILE_CHOOSER.showDialog(Workbench.getInstance().getMainFrame(), "Select");
 		if (option == JFileChooser.APPROVE_OPTION) {
-			final File selected = Common.SINGLE_FILE_CHOOSER.getSelectedFile();
-			if (selected != null)
-				FileParamProvider.this.field.setText(selected.getPath());
+			setSelectedFile(Common.SINGLE_FILE_CHOOSER.getSelectedFile());
 		}
-		
-		this.fcConfiguration.clearFileChooser(Common.SINGLE_FILE_CHOOSER);
 	}
 	
-	public FileParamProvider(ParamsReceiver receiver, Port p, Class<?> clazz, Object operationObject) {
-		super(receiver, p, clazz, operationObject);
-		this.field.setEditable(false);
-		
-		if (p.defaultValue().length() > 0) {
-			this.field.setText(p.defaultValue());
-		}
-		createFilters(p);
-	}
-	
-	public static void configureFileChooser(Port p, JFileChooser fc) {
-		final FileChooserConfiguration configuration = new FileChooserConfiguration(p.extras());
-
-		configuration.configureFileChooser(fc);
-	}
-	
-	static class ExtensionFileFilter extends FileFilter {
-		String nameregexp;
-		String description;
+	private static class ExtensionFileFilter extends FileFilter {
+		private final String nameregexp;
+		private final String description;
 
 		public ExtensionFileFilter(String nameregexp, String desc) {
 			this.nameregexp = nameregexp;
@@ -122,123 +121,106 @@ public class FileParamProvider extends AbstractParamProvider {
 		}
 	}
 	
-	static class FileChooserConfiguration {
+	private static class FileChooserConfiguration {
 		private final List<ExtensionFileFilter> filters;
 		private int selectionMode;
 		private boolean allowAll;
 		
-		public FileChooserConfiguration() {
-			this("");
+		public static void configure(String configuration, JFileChooser fc) {
+			new FileChooserConfiguration(configuration).configureFileChooser(fc);
 		}
 		
 		public FileChooserConfiguration(String configuration) {
-			this.filters = new ArrayList<FileParamProvider.ExtensionFileFilter>();
-			
-			this.reset();
-			this.configure(configuration);
-		}
-		
-		public void configure(String configurationString) {
-			if (configurationString == null || configurationString.trim().isEmpty())
-				return;
-			
-			final String[] props = configurationString.split(",");
-			for (String prop : props) {
-				final String[] propValue = prop.split("=");
+			this.filters = new ArrayList<>();
+			this.selectionMode = JFileChooser.FILES_AND_DIRECTORIES;
+			this.allowAll = true;
+
+			if (configuration != null && !configuration.trim().isEmpty()) {
+				final String[] props = configuration.split(",");
 				
-				if (propValue.length == 2) {
-					final String property = propValue[0].trim();
-					final String value = propValue[1].trim();
-
-					if (FILTERS_EXTRAS_PROPERTY.equalsIgnoreCase(property)) {
-						this.setAllowAll(false);
-
-						final String[] filters = value.split(";");
-						for (String filter : filters) {
-							final String[] nameExpAndDesc = filter.split(":");
-							
-							if (nameExpAndDesc.length == 2) {
-								final String nameExtension = nameExpAndDesc[0].trim();
-								final String description = nameExpAndDesc[1].trim();
-
-								this.getFilters().add(new ExtensionFileFilter(nameExtension, description));
-							} else if (nameExpAndDesc.length == 1) {
-								final String nameExtension = nameExpAndDesc[0].trim();
+				for (String prop : props) {
+					final String[] propValue = prop.split("=");
+					
+					if (propValue.length == 2) {
+						final String property = propValue[0].trim();
+						final String value = propValue[1].trim();
+	
+						if (FILTERS_EXTRAS_PROPERTY.equalsIgnoreCase(property)) {
+							this.allowAll = false;
+	
+							final String[] filters = value.split(";");
+							for (String filter : filters) {
+								final String[] nameExpAndDesc = filter.split(":");
 								
-								if (FILTERS_EXTRAS_ALLOWALL_FILTER.equalsIgnoreCase(nameExtension)) {
-									this.setAllowAll(true);
-								} else {
-									LOG.warn("unable to parse a filter in extras: " + filter);
+								if (nameExpAndDesc.length == 2) {
+									final String nameExtension = nameExpAndDesc[0].trim();
+									final String description = nameExpAndDesc[1].trim();
+	
+									this.filters.add(new ExtensionFileFilter(nameExtension, description));
+								} else if (nameExpAndDesc.length == 1) {
+									final String nameExtension = nameExpAndDesc[0].trim();
+									
+									if (FILTERS_EXTRAS_ALLOWALL_FILTER.equalsIgnoreCase(nameExtension)) {
+										this.allowAll = true;
+									} else {
+										LOG.warn("unable to parse a filter in extras: " + filter);
+									}
 								}
 							}
-						}
-					} else if (FILTERS_EXTRAS_SELECTION_MODE.equalsIgnoreCase(property)) {
-						if (SELECTION_MODE_FILES.equalsIgnoreCase(value)) {
-							this.setSelectionMode(JFileChooser.FILES_ONLY);
-						} else if (SELECTION_MODE_DIRECTORIES.equalsIgnoreCase(value)) {
-							this.setSelectionMode(JFileChooser.DIRECTORIES_ONLY);
-						} else if (SELECTION_MODE_FILES_AND_DIRECTORIES.equalsIgnoreCase(value)) {
-							this.setSelectionMode(JFileChooser.FILES_AND_DIRECTORIES);
+						} else if (FILTERS_EXTRAS_SELECTION_MODE.equalsIgnoreCase(property)) {
+							if (SELECTION_MODE_FILES.equalsIgnoreCase(value)) {
+								this.selectionMode = JFileChooser.FILES_ONLY;
+							} else if (SELECTION_MODE_DIRECTORIES.equalsIgnoreCase(value)) {
+								this.selectionMode = JFileChooser.DIRECTORIES_ONLY;
+							} else if (SELECTION_MODE_FILES_AND_DIRECTORIES.equalsIgnoreCase(value)) {
+								this.selectionMode = JFileChooser.FILES_AND_DIRECTORIES;
+							} else {
+								LOG.warn("unknown value for " + FILTERS_EXTRAS_ALLOWALL_FILTER + " filter: " + value);
+	
+								this.selectionMode = JFileChooser.FILES_AND_DIRECTORIES;
+							}
 						} else {
-							LOG.warn("unknown value for " + FILTERS_EXTRAS_ALLOWALL_FILTER + " filter: " + value);
-
-							this.setSelectionMode(JFileChooser.FILES_AND_DIRECTORIES);
+							LOG.warn("unknown filter: " + property);
 						}
 					} else {
-						LOG.warn("unknown filter: " + property);
+						LOG.warn("unable to parse a property in extras: " + prop);
 					}
-				} else {
-					LOG.warn("unable to parse a property in extras: " + prop);
 				}
 			}
 		}
 		
-		public void reset() {
-			this.filters.clear();
-			this.selectionMode = JFileChooser.FILES_AND_DIRECTORIES;
-			this.allowAll = true;
-		}
-		
-		public List<ExtensionFileFilter> getFilters() {
-			return this.filters;
-		}
-		
-		public int getSelectionMode() {
-			return this.selectionMode;
-		}
-		
-		public void setSelectionMode(int selectionMode) {
-			this.selectionMode = selectionMode;
-		}
-
-		public boolean isAllowAll() {
-			return this.allowAll;
-		}
-
-		public void setAllowAll(boolean allowAll) {
-			this.allowAll = allowAll;
-		}
-		
 		public void configureFileChooser(JFileChooser fc) {
-			fc.setAcceptAllFileFilterUsed(this.isAllowAll());
-			fc.setFileSelectionMode(this.getSelectionMode());
+			final File selectedFile = fc.getSelectedFile();
+			fc.setSelectedFile(null);
+			
+			fc.setAcceptAllFileFilterUsed(this.allowAll);
+			fc.setFileSelectionMode(this.selectionMode);
 
 			fc.resetChoosableFileFilters();
-			for (ExtensionFileFilter filter : this.getFilters()) {
+			for (ExtensionFileFilter filter : this.filters) {
 				fc.addChoosableFileFilter(filter);
 			}
-		}
 
-		public void clearFileChooser(JFileChooser fc) {
-			fc.setFileSelectionMode(JFileChooser.FILES_AND_DIRECTORIES);
-			fc.setAcceptAllFileFilterUsed(true);
-			fc.resetChoosableFileFilters();
+			// Solves a bug on the JFileChooser that makes the dialog to lose
+			// the selected file when the file selection mode is changed,
+			// even when the selected file is still compatible with the
+			// selection mode.
+			fc.setSelectedFile(selectedFile);
 		}
 	}
-
-	private void createFilters(Port p) {
-		this.fcConfiguration.reset();
-		this.fcConfiguration.configure(p.extras());
+	
+	private File getSelectedFile() {
+		final String text = this.field.getText().trim();
+		
+		return text.isEmpty() ? null : new File(text);
+	}
+	
+	private void setSelectedFile(File file) {
+		if (file == null) {
+			this.field.setText("");
+		} else {
+			this.field.setText(file.getAbsolutePath());
+		}
 	}
 
 	public JTextField getField() {
@@ -260,7 +242,7 @@ public class FileParamProvider extends AbstractParamProvider {
 				this.field, new FileDrop.Listener() {
 					public void filesDropped(File[] files) {
 						if (files.length > 0) {
-							FileParamProvider.this.field.setText(files[0].getPath());
+							FileParamProvider.this.setSelectedFile(files[0]);
 							FileParamProvider.this.setChanged();
 							FileParamProvider.this.notifyObservers();
 						}
@@ -286,17 +268,17 @@ public class FileParamProvider extends AbstractParamProvider {
 
 	@Override
 	public ParamSpec getParamSpec() {
-		if (field.getText().equals("")) {
+		final File selectedFile = this.getSelectedFile();
+		
+		if (selectedFile == null) {
 			return new ParamSpec(this.port.name(), clazz, null, ParamSource.CLIPBOARD);
+		} else {
+			return new ParamSpec(this.port.name(), this.clazz, selectedFile.getAbsolutePath(), ParamSource.STRING_CONSTRUCTOR);
 		}
-		return new ParamSpec(this.port.name(), this.clazz, field.getText(), ParamSource.STRING_CONSTRUCTOR);
 	}
 
 	@Override
 	public boolean isValidValue() {
-		if (!this.port.allowNull()) {
-			return this.field.getText().trim().length() > 0;
-		}
-		return true;
+		return this.port.allowNull() || this.getSelectedFile() != null;
 	}
 }
