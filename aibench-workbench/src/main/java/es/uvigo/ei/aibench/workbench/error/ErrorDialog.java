@@ -19,7 +19,7 @@
  * <http://www.gnu.org/licenses/lgpl-3.0.html>.
  * #L%
  */
-package es.uvigo.ei.aibench.workbench;
+package es.uvigo.ei.aibench.workbench.error;
 
 import java.awt.BorderLayout;
 import java.awt.Dimension;
@@ -46,8 +46,6 @@ import es.uvigo.ei.aibench.workbench.utilities.Utilities;
  *
  */
 public class ErrorDialog extends JDialog{
-	
-	
 	private static final long serialVersionUID = 1L;
 
 	private final static int WIDTH = 500;
@@ -55,8 +53,6 @@ public class ErrorDialog extends JDialog{
 	private final String message;
 	private final Throwable error;
 
-	
-	
 	// components
 	private JPanel buttonsPanel;
 	private JPanel infoPanel;

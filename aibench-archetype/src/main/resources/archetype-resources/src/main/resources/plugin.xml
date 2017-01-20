@@ -123,5 +123,9 @@
 		</extension>
 		-->
 
+		<!-- Custom error notifier. This extension allows replacing the default error dialog shown when an exception is thrown during the execution of an operation -->
+		<!--
+		<extension uid="aibench.workbench" name="aibench.workbench.error.notifier" class="full.class.name.of.your.CustomErrorNotifier" />
+		-->
 	</extensions>
 </plugin>

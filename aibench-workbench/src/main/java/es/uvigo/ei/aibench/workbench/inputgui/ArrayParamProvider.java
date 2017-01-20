@@ -184,11 +184,7 @@ public class ArrayParamProvider extends AbstractParamProvider implements Observe
 			JButton selectMultipleFiles = new JButton("select files...", Common.ICON_FILE_OPEN);
 			selectMultipleFiles.setToolTipText("Browse the local filesystem to select multiple files");
 			selectMultipleFiles.addActionListener(new ActionListener() {
-				/*
-				 * (non-Javadoc)
-				 * 
-				 * @see java.awt.event.ActionListener#actionPerformed(java.awt.event.ActionEvent)
-				 */
+				@Override
 				public void actionPerformed(ActionEvent e) {
 					FileParamProvider.configureFileChooser(port, Common.MULTIPLE_FILE_CHOOSER);
 					

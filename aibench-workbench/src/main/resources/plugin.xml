@@ -38,5 +38,6 @@
 	<extensionpoints>
 		<!-- Explain the definition of the GUI -->
 		<extensionpoint name="aibench.workbench.view"/>
+		<extensionpoint name="aibench.workbench.error.notifier" interface="es.uvigo.ei.aibench.workbench.error.ErrorNotifier" />
 	</extensionpoints>
 </plugin>

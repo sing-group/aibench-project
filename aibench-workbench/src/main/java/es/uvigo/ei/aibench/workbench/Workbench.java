@@ -40,7 +40,6 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
@@ -52,7 +51,6 @@ import javax.help.HelpBroker;
 import javax.swing.AbstractAction;
 import javax.swing.ImageIcon;
 import javax.swing.JComponent;
-import javax.swing.JDialog;
 import javax.swing.JFrame;
 import javax.swing.JMenuBar;
 import javax.swing.JOptionPane;
@@ -66,9 +64,6 @@ import javax.swing.event.AncestorListener;
 import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
 import org.platonos.pluginengine.Extension;
-import org.platonos.pluginengine.ExtensionPoint;
-import org.platonos.pluginengine.Plugin;
-import org.platonos.pluginengine.PluginEngine;
 import org.platonos.pluginengine.PluginXmlNode;
 
 import es.uvigo.ei.aibench.TextAreaAppender;
@@ -83,6 +78,9 @@ import es.uvigo.ei.aibench.core.clipboard.ClipboardItem;
 import es.uvigo.ei.aibench.core.clipboard.ClipboardListener;
 import es.uvigo.ei.aibench.core.datatypes.annotation.Datatype;
 import es.uvigo.ei.aibench.core.operation.OperationDefinition;
+import es.uvigo.ei.aibench.workbench.error.ComposedErrorNotifierProvider;
+import es.uvigo.ei.aibench.workbench.error.ErrorNotifier;
+import es.uvigo.ei.aibench.workbench.error.ErrorNotifierProvider;
 import es.uvigo.ei.aibench.workbench.inputgui.ParamsWindow;
 import es.uvigo.ei.aibench.workbench.interfaces.AbstractViewFactory;
 import es.uvigo.ei.aibench.workbench.interfaces.IViewFactory;
@@ -191,6 +189,11 @@ public class Workbench implements IGenericGUI, ClipboardListener {
 	 * The current showing item
 	 */
 	private ClipboardItem activeItem = null;
+	
+	/**
+	 * Creates the error notification classes.
+	 */
+	private ErrorNotifierProvider errorNotifierProvider = new ComposedErrorNotifierProvider();
 	
 	/**
 	 * Configuration
@@ -1131,19 +1134,23 @@ public class Workbench implements IGenericGUI, ClipboardListener {
 	
 	public void error(final Throwable exception) {
 		logger.error(exception.toString());
-		JDialog errorDialog = new ErrorDialog(this.mainWindow, exception);
-		errorDialog.setVisible(true);
+
+		final ErrorNotifier notifier = this.errorNotifierProvider.createErrorNotifier();
+		
+		notifier.showError(mainWindow, exception);
 	}
 	
 	public void error(final Throwable exception, final String message) {
 		logger.error(message, exception);
+
+		final ErrorNotifier notifier = this.errorNotifierProvider.createErrorNotifier();
 		
-		JDialog errorDialog = new ErrorDialog(this.mainWindow, exception, message);
-		errorDialog.setVisible(true);
+		notifier.showError(this.mainWindow, exception, message);
 	}
 
 	public void setStatusText(final String text) {
-		if(System.getProperty("aibench.nogui")!=null) return;
+		if (System.getProperty("aibench.nogui") != null)
+			return;
 		SwingUtilities.invokeLater(new Runnable() {
 			public void run() {
 				mainWindow.getStatusBar().setText(text);
@@ -1406,15 +1413,8 @@ public class Workbench implements IGenericGUI, ClipboardListener {
 	}
 	
 	private void createIconMappings() {
-		Plugin plugin = PluginEngine.getPlugin(this.getClass());
-		ExtensionPoint point = plugin.getExtensionPoint("aibench.workbench.view");
-		List<?> extensions = point.getExtensions();
-		Iterator<?> it = extensions.iterator();
-		while (it.hasNext()) {
-			Extension extension = (Extension) it.next();
-			List<?> children = extension.getExtensionXmlNode().getChildren();
-			for (int i = 0; i < children.size(); i++) {
-				PluginXmlNode node = (PluginXmlNode) children.get(i);
+		for (Extension extension : WorkbenchExtensionTools.getWorkbenchViewExtensions()) {
+			for (PluginXmlNode node : extension.getExtensionXmlNode().getChildren()) {
 				if (node.getName().equals("icon-operation")) {
 					String operationID = node.getAttribute("operation");
 
@@ -1427,6 +1427,7 @@ public class Workbench implements IGenericGUI, ClipboardListener {
 						}
 					}
 				}
+				
 				//NOTE: added by paulo maia
 				if (node.getName().equals("big-icon-operation")) {
 					String operationID = node.getAttribute("operation");
@@ -1441,6 +1442,7 @@ public class Workbench implements IGenericGUI, ClipboardListener {
 					}
 				}
 				//end added by paulo maia
+				
 				if (node.getName().equals("icon-datatype")) {
 					String dataType= node.getAttribute("datatype");
 					ImageIcon icon = new ImageIcon(extension.getPlugin().getPluginClassLoader().getResource(node.getAttribute("icon")));
@@ -1457,92 +1459,57 @@ public class Workbench implements IGenericGUI, ClipboardListener {
 	}
 	
 	private void createOperationVisibility() {
-		Plugin plugin = PluginEngine.getPlugin(this.getClass());
-		ExtensionPoint point = plugin.getExtensionPoint("aibench.workbench.view");
-		List<?> extensions = point.getExtensions();
-		Iterator<?> it = extensions.iterator();
-		while (it.hasNext()) {
-			Extension extension = (Extension) it.next();
-			List<?> children = extension.getExtensionXmlNode().getChildren();
-			for (int i = 0; i < children.size(); i++) {
-				PluginXmlNode node = (PluginXmlNode) children.get(i);
-				if (node.getName().equals("operation-visibility")) {
-					String operationID = node.getAttribute("operation");
+		for (PluginXmlNode node : WorkbenchExtensionTools.getWorkbenchViewExtensionsChildren()) {
+			if (node.getName().equals("operation-visibility")) {
+				final String operationID = node.getAttribute("operation");
 
-					String visibility = node.getAttribute("visibility");
-					//Search for the operation
-					for (OperationWrapper wrapper : this.interceptedOperations) {
-						if (wrapper.getOperationDefinition().getID().equals(operationID)) {
-							Vector<String> visibilityV = new Vector<String>();
-							StringTokenizer tk = new StringTokenizer(visibility);
-							while (tk.hasMoreTokens()) {
-								visibilityV.addElement(tk.nextToken());
-							}
-							this.operationVisibility.put(wrapper.getOperationDefinition(),visibilityV);
+				final String visibility = node.getAttribute("visibility");
+				//Search for the operation
+				for (OperationWrapper wrapper : this.interceptedOperations) {
+					if (wrapper.getOperationDefinition().getID().equals(operationID)) {
+						Vector<String> visibilityV = new Vector<String>();
+						StringTokenizer tk = new StringTokenizer(visibility);
+						while (tk.hasMoreTokens()) {
+							visibilityV.addElement(tk.nextToken());
 						}
+						this.operationVisibility.put(wrapper.getOperationDefinition(),visibilityV);
 					}
 				}
 			}
 		}
-		
 	}
 	
 	private void createComponents() {
-		Plugin plugin = PluginEngine.getPlugin(this.getClass());
-		ExtensionPoint point = plugin.getExtensionPoint("aibench.workbench.view");
-		List<?> extensions = point.getExtensions();
-		Iterator<?> it = extensions.iterator();
-		while (it.hasNext()) {
-			Extension extension = (Extension) it.next();
-			List<?> children = extension.getExtensionXmlNode().getChildren();
-			for (int i = 0; i < children.size(); i++) {
-				PluginXmlNode node = (PluginXmlNode) children.get(i);
+		for (Extension extension : WorkbenchExtensionTools.getWorkbenchViewExtensions()) {
+			for (PluginXmlNode node : extension.getExtensionXmlNode().getChildren()) {
 				if (node.getName().equals("component")) {
 					String slotID = node.getAttribute("slotid");
 					String className = node.getAttribute("class");
 					String name = node.getAttribute("name");
 					String componentID = node.getAttribute("componentID");
 					String staticMethod = node.getAttribute("singletonMethod");
-					
+
 					// Instantiation
-					
 					try {
 						Class<?> c = extension.getPlugin().getPluginClassLoader().loadClass(className);
-						
-						JComponent component=null;
-						if(staticMethod == null) {
+
+						JComponent component = null;
+						if (staticMethod == null) {
 							component = (JComponent) c.newInstance();
-						}else{
-							Method m = c.getMethod(staticMethod, new Class[]{});
+						} else {
+							Method m = c.getMethod(staticMethod, new Class[] {});
 							component = (JComponent) m.invoke(null);
 						}
-						
+
 						putItemInSlot(slotID, name, componentID, component);
-					} catch (InstantiationException e) {
-						
-						e.printStackTrace();
-					} catch (IllegalAccessException e) {
-						
-						e.printStackTrace();
-					} catch (ClassNotFoundException e) {
-						
-						e.printStackTrace();
-						
-					}catch(NoSuchMethodException e) {
-						e.printStackTrace();
-					} catch (IllegalArgumentException e) {
-						// TODO Auto-generated catch block
-						e.printStackTrace();
-					} catch (InvocationTargetException e) {
-						// TODO Auto-generated catch block
-						e.printStackTrace();
+					} catch (Exception e) {
+						logger.error("Error creating component", e);
 					}
 				}
 			}
 		}
-		
 	}
-	
+
 	private void putCoreComponents() {
 		// Session Tree
 		String sessionTreeVisible = CONFIG.getProperty("sessiontree.visible");
@@ -1609,10 +1576,7 @@ public class Workbench implements IGenericGUI, ClipboardListener {
 	}
 	
 	private void createInputGUIMappings() {
-		final Plugin plugin = PluginEngine.getPlugin(this.getClass());
-		final ExtensionPoint point = plugin.getExtensionPoint("aibench.workbench.view");
-
-		for (Extension extension:point.getExtensions()) {
+		for (Extension extension : WorkbenchExtensionTools.getWorkbenchViewExtensions()) {
 			for (PluginXmlNode node:extension.getExtensionXmlNode().getChildren()) {
 				if (node.getName().equals("gui-operation")) {
 					final String operationID = node.getAttribute("operation");
@@ -1639,10 +1603,7 @@ public class Workbench implements IGenericGUI, ClipboardListener {
 	}
 	
 	private void createWelcomeScreen() {
-		final Plugin plugin = PluginEngine.getPlugin(this.getClass());
-		final ExtensionPoint point = plugin.getExtensionPoint("aibench.workbench.view");
-
-		for (Extension extension : point.getExtensions()) {
+		for (Extension extension : WorkbenchExtensionTools.getWorkbenchViewExtensions()) {
 			for (PluginXmlNode node : extension.getExtensionXmlNode().getChildren()) {
 				if (node.getName().equals("welcomescreen")) {
 					String className = node.getAttribute("class");
@@ -1683,10 +1644,7 @@ public class Workbench implements IGenericGUI, ClipboardListener {
 	}
 	
 	private void createViewFactories() {
-		final Plugin plugin = PluginEngine.getPlugin(this.getClass());
-		final ExtensionPoint point = plugin.getExtensionPoint("aibench.workbench.view");
-
-		for (Extension extension : point.getExtensions()) {
+		for (Extension extension : WorkbenchExtensionTools.getWorkbenchViewExtensions()) {
 			for (PluginXmlNode node : extension.getExtensionXmlNode().getChildren()) {
 				if (node.getName().equals("view")) {
 					String className = node.getAttribute("class");

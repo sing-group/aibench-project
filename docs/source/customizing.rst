@@ -17,24 +17,24 @@ behavior. They are all inside the ``src/main/global-resources/conf`` directory.
 - ``workbench.conf``. ``Workbench`` plugin configuration. Override components
   visibility and placement, built-in icons, etc.
 - ``template.xml``. Configure the :ref:`Workbench layout <workbench-layout>`.
-  
 
-.. note:: 
-  
+
+.. note::
+
   Each plugin has its own configuration files, so which ones are used in a
   multi-plugin application? You have only :ref:`one plugin per project
   <one-plugin-per-project>`, so the ``.conf`` files of *the plugin you run
   AIBench with* (``./target/run.sh``) are the only configuration files that will
   be considered. The configuration files in dependent plugins are ignored.
 
-.. note:: 
-  
+.. note::
+
   Why ``plugin.xml`` and ``.conf`` files? As you have seen, we have a
   :ref:`plugin.xml <the-plugin-xml-file>` file inside each plugin, as well as
   configuration files. Moreover, some configurations can be done in ``.conf``,
   as well as in ``plugin.xml`` (for example, the path defining the operations
   place on the menu bar). You should keep in mind two things:
-    
+
     - Configuration files override ``plugin.xml`` options. The ``plugin.xml`` is
       focused on default behavior, and configuration files are more focused on
       final customization of the application. For example, we would like to
@@ -46,7 +46,7 @@ behavior. They are all inside the ``src/main/global-resources/conf`` directory.
       in the configuration files. If your plugin will be reused in another
       AIBench project, remember that your configuration file will not be
       *active* in that project.
-    
+
 Changing the Splash Screen
 ==========================
 
@@ -55,7 +55,7 @@ You can use your own splash by changing the splashimage parameter in
 The parameter value should be relative to ``src/main/global-resources/``. For example:
 
 .. code-block:: jproperties
-  
+
   # You should create the file: src/main/global-resources/my-splash.png
   splashimage = my-splash.png
 
@@ -74,17 +74,17 @@ You can add icons for Operations and for Datatypes. They are defined in
 .. code-block:: xml
 
   <extension uid="aibench.workbench" name="aibench.workbench.view" >
-    <icon-operation 
+    <icon-operation
       operation="sampleplugin.sumoperationid"
       icon="icons/oneicon.png"/>
-    
-    <big-icon-operation	
-      operation="sampleplugin.sumoperationid" 
+
+    <big-icon-operation
+      operation="sampleplugin.sumoperationid"
       icon="icons/onebigicon.png"/>
-    
-    <icon-datatype 
+
+    <icon-datatype
       datatype="sampleplugin.OneClass"
-      icon="icons/othericon.png"/> 
+      icon="icons/othericon.png"/>
   </extension>
 
 The ``icon`` attribute indicates the path to the icon file. This path is
@@ -109,18 +109,18 @@ have the following options in the ``workbench.conf`` configuration file.
   #  Ok button label and text
   paramswindow.buttonicon.ok = icons/ok.png
 
-  #  Cancel button label and text  
+  #  Cancel button label and text
   paramswindow.buttonicon.cancel = icons/cancel.png
 
-  #  Help button label and text  
+  #  Help button label and text
   paramswindow.buttonicon.help = icons/help.png
 
 .. note::
-  
+
   Icon files are relative to the AIBench root directory, so you should place
   them inside ``src/main/global-resources``. In the above configuration file,
   you should create the ``icons`` subdirectory in ``src/main/global-resources``.
-  
+
 .. _workbench-layout:
 
 Configuring the Workbench Layout
@@ -145,7 +145,7 @@ Here it is a possible configuration of the layout.
           <row>
             <cell>
               <components id='left' />
-            </cell>	
+            </cell>
           </row>
         </table>
       </cell>
@@ -185,7 +185,7 @@ additional tags:
   - ``components``. This tag defines a "slot" where one or more components could
     be placed. This slot has an ``id``, so you can place custom components at
     these slot ids (see :ref:`adding-custom-components`).
-    
+
 There are built-in components, such as the Clipboard tree or the Session (or
 History) tree, among others. You can configure where they are placed or if they
 are visible in the ``workbench.conf`` file:
@@ -224,7 +224,7 @@ Specifying operation parameter values in AIBench
 ------------------------------------------------
 
 .. note::
-  
+
   Why do we not give simple values and use ``ParamSpec``? AIBench is
   intended to make reproducible experiments, so each value should come from a
   known place, in order to be recreated in, for example, an automated
@@ -238,20 +238,20 @@ recreate the value in the future (specially in the case of complex objects).
 .. code-block:: java
 
   public ParamSpec(
-    String name, 
-    Class<?> type, 
+    String name,
+    Class<?> type,
     Object value,
     ParamSource source) throws IllegalArgumentException {
       ...
   }
 
   public ParamSpec(
-    String name, 
+    String name,
     Class<?> type,
     ParamSpec[] values) throws IllegalArgumentException{
       ...
   }
-  
+
 The first constructor is used to specify non-array values, and the second
 constructor is to give array values. The ``ParamSource`` defines where the
 ``value`` comes from:
@@ -271,10 +271,10 @@ Here you can see, where the values can be. Basically, in AIBench, a value which
 is forwarded to an Operation, could be:
 
 - A kind of "primitive" value:
-  
+
   - ``STRING``. A simple string value.
   - ``STRING_CONSTRUCTOR`` which is a value
-    of a class that can receive a String in the constructor to create it (for example: 
+    of a class that can receive a String in the constructor to create it (for example:
     Integer, Float, Double, ... and its primitive counterparts: int, float, double).
   - ``ENUM``. An user-defined enum constant.
 
@@ -287,14 +287,14 @@ is forwarded to an Operation, could be:
     .. code-block:: java
 
       Core.getInstance().getClipboard().getAllItems();
-      
+
   - ``SERIALIZED``. A String with a Base64-encoded serialized Java Object.
 
 - A recursive structure, that is, an array of ``ParamSpec``. Here we use
   ``MIXED``.
 
 .. note::
-  
+
   Create objects in this way is tedious. We provide you with a "smart" utility
   that creates ``ParamSpec`` instances for you, trying to guess the correct
   ``ParamSource``. It is the ``CoreUtils.createParams(...)`` method set. You will need to
@@ -380,22 +380,22 @@ Let's see the example:
 
         // change the default behavior for the port named "PortName"
         if (port.name().equals("PortName")) {
-           
+
             return new AbstractParamProvider() {
               public JComponent getComponent() {
                 return txt;
               }
-              
-              public ParamSpec getParamSpec() 
+
+              public ParamSpec getParamSpec()
                throws IllegalArgumentException {
-               
+
                 return new ParamSpec(
-                 port.name(), arg1, txt.getText(), 
+                 port.name(), arg1, txt.getText(),
                  ParamSource.STRING_CONSTRUCTOR);
                  // more easy:
                  // return CoreUtils.createParam(arg1);
               }
-              
+
               public Port getPort() {
                 return port;
               }
@@ -406,6 +406,87 @@ Let's see the example:
          return super.getParamProvider(port, arg1, arg2);
      }
   }
+
+
+Customizing error notifier
+==========================
+AIBench includes a default error dialog that is shown when an operation throw an
+uncontrolled exception during execution.
+
+.. figure:: images/defaulterrordialog.png
+   :align:  center
+
+As can be seen, this dialog will show the message and the stack trace of the
+exception thrown. Although this is very useful during operation development, you
+may want to change it for final applications or in special cases where you want
+to show some specific information.
+
+AIBench provides a way to change this dialog by just implementing an extension
+point of the Workbench plugin.
+
+
+Creating your own error dialog from scratch
+-------------------------------------------
+
+The first step to create a custom error dialog is to create a class that
+implements the ``es.uvigo.ei.aibench.workbench.error.ErrorNotifier`` interface.
+
+.. code-block:: java
+
+    public interface ErrorNotifier {
+
+        public void showError(MainWindow mainWindow, Throwable exception);
+
+        public void showError(
+            MainWindow mainWindow, Throwable exception, String message);
+
+    }
+
+Once you have your own ``ErrorNotifier``, you must declare it as an extension of
+the extension point ``aibench.workbench.error.notifier`` of the
+``aibench.workbench`` plugin. Go to the ``plugin.xml`` file of your plugin and
+add the following configuration to the ``<extensions>`` block.
+
+.. code-block:: xml
+
+    <extensions>
+        <extension uid="aibench.workbench"
+                   name="aibench.workbench.error.notifier"
+                   class="name.of.your.custom.ErrorNotifier"
+        />
+    </extensions>
+
+Where the ``name.of.your.custom.ErrorNotifier`` should be the complete class
+name of your custom error notifier.
+
+Once this configuration is added your AIBench will start using your custom error
+notifier.
+
+Dealing with multiple error notifiers
+-------------------------------------
+
+In some cases you may have several error notifiers configured in your plugin or
+in several plugins. When this happens, AIBench will use the first error notifier
+that it can find in the plugins.
+
+When this happens, it is recommended to specify which error notifier should be
+used. To do so, you should add the ``error.notifier.class`` property to the
+``workbench.conf`` file with the name of your custom error notifier class. For
+example:
+
+.. code-block:: jproperties
+
+    # Custom error notifier (use "default" value for default error dialog
+    error.notifier.class = my.aibench.project.CustomErrorNotifier
+
+In addition, in case you want to use the default error notifier instead of any
+custom error notifier, you can assign the ``default`` value to this property.
+
+.. code-block:: jproperties
+
+    # Custom error notifier (use "default" value for default error dialog
+    error.notifier.class = default
+
 
 Adding a Toolbar
 ================
@@ -424,13 +505,13 @@ To get the Toolbar working you have to:
       uid="aibench.core"
       name="aibench.core.operation-definition"
       class="sampleplugin.Sum">
-      
+
       <operation-description
         name="Sum Operation"
         path="10@Sample/1@SubmenuExample"
         uid= "sampleplugin.sumoperationid"
         shortcut="3"/>
-        
+
     </extension>
 
 - You can also add an extra icon to show in the toolbar, for instance a larger
@@ -441,49 +522,49 @@ To get the Toolbar working you have to:
     <extension
       uid="aibench.workbench"
       name="aibench.workbench.view" >
-      
-         <icon-operation 
+
+         <icon-operation
           operation="sampleplugin.sumoperationid"
           icon="icons/oneicon.png"/>
          <big-icon-operation
           operation="sampleplugin.sumoperationid"
           icon="icons/onebigicon.png"/>
-         <icon-datatype 
+         <icon-datatype
           datatype="sampleplugin.OneClass"
           icon="icons/othericon.png"/>
-          
+
     </extension>
 
-- To configure the toolbar in the ``workench.conf`` you have four new options: 
+- To configure the toolbar in the ``workench.conf`` you have four new options:
 
   .. code-block:: jproperties
 
     # default false
     toolbar.visible=true
-    
+
     # a comma-separated list of positions where a separator should
     # be placed after
-    toolbar.separators=1,5,6 
-    
+    toolbar.separators=1,5,6
+
     # default true
     toolbar.showOperationNames=true
-    
+
     # toolbar position: default NORTH
     toolbar.position=NORTH
 
 
 Adding Help to your Application
 ===============================
-  
+
 1. Place your JavaHelp files in a global folder (for example:
    ``src/main/global-resources/help``).
 
 2. Associate JavaHelp topics or URLs to:
-  
+
   1. Operations. Use the ``help`` attribute in the ``operation-description``
   tag in your :ref:`plugin.xml <the-plugin-xml-file>`. The Workbench will
   display a help button in the input dialogs of this operations.
-  
+
   2. Datatype Views. Use the help attribute in the ``view`` tag in your
   :ref:`plugin.xml <the-plugin-xml-file>`
 
@@ -500,12 +581,12 @@ Example:
   </extension>
 
   <extension uid="aibench.workbench" name="aibench.workbench.view" >
-    <view name="Sample Datatype View" 
+    <view name="Sample Datatype View"
       datatype="sampleplugin.OneClass"
       class="sampleplugin.OneViewComponent"
       help="http://myapp.com/help/topic1.html"/> <!-- your help could be online -->
   </extension>
-  
+
 .. _adding-custom-components:
 
 Adding custom components
@@ -517,8 +598,8 @@ by plugging them in your plugin.xml
 .. code-block:: xml
 
   <extension uid="aibench.workbench" name="aibench.workbench.view" >
-    <component 
-      slotid="bottom" 
+    <component
+      slotid="bottom"
       componentid="aibench.shell.shellWindow"
       name="AIBench Shell"
       class="es.uvigo.ei.sing.aibench.shell.ShellComponent"/>

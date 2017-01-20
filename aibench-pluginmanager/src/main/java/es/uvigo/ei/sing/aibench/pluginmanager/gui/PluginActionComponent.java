@@ -57,9 +57,6 @@ import es.uvigo.ei.sing.aibench.pluginmanager.PluginManager;
  *
  */
 public class PluginActionComponent extends JPanel implements RolloverRenderer, PluginDownloadListener {
-	/**
-	 * 
-	 */
 	private static final long serialVersionUID = 1L;
 
 	public static enum State { EMPTY, DOWNLOADABLE, DOWNLOADING, FINISHED, ERROR };
@@ -120,9 +117,7 @@ public class PluginActionComponent extends JPanel implements RolloverRenderer, P
 		return this.state;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.jdesktop.swingx.rollover.RolloverRenderer#doClick()
-	 */
+	@Override
 	public void doClick() {
 		switch(this.state) {
 		case DOWNLOADABLE:
@@ -134,12 +129,11 @@ public class PluginActionComponent extends JPanel implements RolloverRenderer, P
 		case ERROR:
 			this.linkError.doClick();
 			break;
+		default:
 		}
 	}
 
-	/* (non-Javadoc)
-	 * @see org.jdesktop.swingx.rollover.RolloverRenderer#isEnabled()
-	 */
+	@Override
 	public boolean isEnabled() {
 		return this.state != State.EMPTY;
 	}
