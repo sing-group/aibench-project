@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="UTF-8"?>
 <!--
   #%L
   The AIBench Maven Archetype for plugins/apps
@@ -22,25 +23,25 @@
 <plugin start="true">
 	<uid>${artifactId}</uid>
 	<name>${artifactId}</name>
-	   <version>${version}</version>
+	<version>${version}</version>
 	
-	   <!-- lifecycle class. Used to detect when the plugin is started. The class should inherit from org.platonos.pluginengine.PluginLifecycle-->
-	   <!-- <lifecycleclass>mylifecycleclass</lifecycleclass> -->
+	<!-- lifecycle class. Used to detect when the plugin is started. The class should inherit from org.platonos.pluginengine.PluginLifecycle-->
+	<!-- <lifecycleclass>mylifecycleclass</lifecycleclass> -->
 
 	<!-- DEPENCENCIES: If you need classes from other plugins, you need a dependency! NOTE: If you need classes from plugins that you extend (for example, the core) you don't need to put the dependency. NOTE: This dependency is a sample. If you uncomment the following lines the plugin will fail! -->
 
-	<!--<dependencies>
-		
+	<!--
+	<dependencies>	
 		<dependency uid="aibench.workbench"/>
 		<dependency uid="aibench.core"/>
 		
    		<dependency uid="sing.datatypes"/>
-	</dependencies> -->
+	</dependencies>
+	-->
 
 
 	<!-- EXTENSIONS: The extensions that this plugin is connected to -->
 	<extensions>
-
 
 		<!-- EXTENSION 1: A sample operation, extending the core. Please note: you can put as many operations as you wish: one extension per operation -->
 
@@ -49,7 +50,7 @@
 		</extension>
 
 
-	<!-- ========================= EXAMPLES ======================================= -->
+		<!-- ========================= EXAMPLES ======================================= -->
 		
 		<!-- CORE EXTENSION SAMPLES: Operations, Datatypes... -->
 
@@ -123,5 +124,4 @@
 		-->
 
 	</extensions>
-
 </plugin>

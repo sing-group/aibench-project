@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="UTF-8"?>
 <!--
   #%L
   The AIBench Core Plugin
@@ -19,36 +20,16 @@
   <http://www.gnu.org/licenses/lgpl-3.0.html>.
   #L%
   -->
-<!--
-Copyright 2007 Daniel Gonzalez Peña, Florentino Fernandez Riverola
-
-
-This file is part the AIBench Project. 
-
-AIBench Project is free software: you can redistribute it and/or modify
-it under the terms of the GNU Lesser Public License as published by
-the Free Software Foundation, either version 3 of the License, or
-(at your option) any later version.
-
-AIBench Project is distributed in the hope that it will be useful,
-but WITHOUT ANY WARRANTY; without even the implied warranty of
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-GNU Lesser Public License for more details.
-
-You should have received a copy of the GNU Lesser Public License
-along with AIBench Project.  If not, see <http://www.gnu.org/licenses/>.
--->
-
 <plugin start="true" startOrder="0">
-   <uid>aibench.core</uid>
-   <name>AIBench Core</name>
-   <version>${version}</version>
-   <lifecycleclass>es.uvigo.ei.aibench.core.CoreLifecycle</lifecycleclass>
-   <extensionpoints>
-		<extensionpoint name="aibench.core.gui" interface="es.uvigo.ei.aibench.core.IGenericGUI"/>
-		<extensionpoint name="aibench.core.operation-definition"/>
-	<!-- THIS SUCKS	<extensionpoint name="aibench.core.sub-operation-definition" interface="es.uvigo.ei.aibench.core.ISubOperationDefinition"/> -->
-		<extensionpoint name="aibench.core.technique" interface="es.uvigo.ei.aibench.core.ITechnique"/>
-		<extensionpoint name="aibench.core.transformer-definition"/>
-   </extensionpoints>
+	<uid>aibench.core</uid>
+	<name>AIBench Core</name>
+	<version>${version}</version>
+	
+	<lifecycleclass>es.uvigo.ei.aibench.core.CoreLifecycle</lifecycleclass>
+	
+	<extensionpoints>
+		<extensionpoint name="aibench.core.gui" interface="es.uvigo.ei.aibench.core.IGenericGUI" />
+		<extensionpoint name="aibench.core.operation-definition" />
+		<extensionpoint name="aibench.core.transformer-definition" />
+	</extensionpoints>
 </plugin>
