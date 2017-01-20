@@ -43,21 +43,19 @@ along with AIBench Project.  If not, see <http://www.gnu.org/licenses/>.
    <uid>aibench.workbench</uid>
    <name>AIBench Workbench</name>
    <version>${version}</version>
+   
    <lifecycleclass>es.uvigo.ei.aibench.workbench.Lifecycle</lifecycleclass>
+   
    <dependencies>
       <dependency uid="aibench.core"/>
    </dependencies>
+   
    <extensions>
       <extension uid="aibench.core" name="aibench.core.gui" class="es.uvigo.ei.aibench.workbench.Workbench"/>
    </extensions>
    
    <extensionpoints>
-		<extensionpoint name="aibench.workbench.plugin-gui" interface="es.uvigo.ei.aibench.workbench.IGenericPluginGUI"/>
-
-
-		<!--
-			Explain the definition of the gui
-		-->
+		<!-- Explain the definition of the GUI -->
 		<extensionpoint name="aibench.workbench.view"/>
    </extensionpoints>
 </plugin>
