@@ -5,7 +5,7 @@ The AIBench Project is a Java application development framework focused on GUI-b
 
 AIBench Team
 ----
-This project is an idea and is developed by the following members of the [SING Group](http://sing.ei.uvigo.es):
+This project is an idea and is developed by the following members of the [SING Group](http://www.sing-group.org):
 
 * Daniel Glez-Peña
 * Florentino Fdez-Riverola
@@ -14,23 +14,23 @@ Other current/past contributors to the project are:
 
 * Paulo Maia [University of Minho (Portugal)](http://www.uminho.pt).
 * Miguel Rocha [University of Minho (Portugal)](http://www.uminho.pt).
-* Miguel Reboiro Jato [SING Group](http://sing.ei.uvigo.es).
-* Hugo López Fernández [SING Group](http://sing.ei.uvigo.es).
+* Miguel Reboiro-Jato [SING Group](http://www.sing-group.org).
+* Hugo López Fernández [SING Group](http://www.sing-group.org).
 
 Examples
 ----
 The following are examples of scientific applications developed on top of the AIBench framework:
 * [LA-iMageS](http://www.la-images.net/).
-* [Mass-Up](http://sing.ei.uvigo.es/mass-up/).
+* [Mass-Up](http://www.sing-group.org/mass-up/).
 * [OptFlux](http://www.optflux.org/).
 * [OptFerm](http://darwin.di.uminho.pt/optferm/).
 * [Biofilms Experiment Workbench](http://sing.ei.uvigo.es/bew/).
-* [ADOPS](http://sing.ei.uvigo.es/ADOPS/).
+* [ADOPS](http://www.sing-group.org/ADOPS/).
 * [Decision Peptide-Driven](http://sing.ei.uvigo.es/DPD/).
-* [MLibrary](http://sing.ei.uvigo.es/MLibrary/).
-* [PileLineGUI](http://sing.ei.uvigo.es/pileline/index.php/Main_Page).
-* [BioAnnote](http://sing.ei.uvigo.es/bioannote/).
-* [BioClass](http://sing.ei.uvigo.es/bioclass/).
+* [MLibrary](http://www.sing-group.org/MLibrary/).
+* [PileLineGUI](http://www.sing-group.org/pileline/index.php/Main_Page).
+* [BioAnnote](http://www.sing-group.org/bioannote/).
+* [BioClass](http://www.sing-group.org/bioclass/).
 * [@Note](http://sysbio.di.uminho.pt/anote/wiki/index.php/Main_Page).
 
 Citing
@@ -42,6 +42,6 @@ Creating an AIBench application using the archetype
 ----
 Simply run the following command to create a new AIBench application using the Maven archetype:
 ```bash
-mvn archetype:generate -DarchetypeGroupId=es.uvigo.ei.sing -DarchetypeArtifactId=aibench-archetype -DarchetypeVersion=2.7.3  -DgroupId=es.uvigo.ei.sing -DartifactId=my-aibench-application -DinteractiveMode=false -DarchetypeRepository=http://sing.ei.uvigo.es/maven2
+mvn archetype:generate -DarchetypeGroupId=es.uvigo.ei.sing -DarchetypeArtifactId=aibench-archetype -DarchetypeVersion=2.7.3  -DgroupId=es.uvigo.ei.sing -DartifactId=my-aibench-application -DinteractiveMode=false -DarchetypeRepository=https://maven.sing-group.org/repository/maven/
 ```
 This command creates the new application under the folder `my-aibench-application`. You can select the version of the archetype (corresponding to the AIBench version) in `-DarchetypeVersion`.
