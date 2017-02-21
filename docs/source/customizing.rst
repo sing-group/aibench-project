@@ -607,3 +607,18 @@ by plugging them in your plugin.xml
 
 The ``slotid`` should exist in your ``template.xml`` file as the ``id`` of a
 ``components`` tag (see :ref:`workbench-layout`).
+
+.. _adding-welcome-screen:
+
+Adding a welcome screen
+========================
+
+You can set any component extending ``JComponent`` as welcome screen by plugging 
+it in your plugin.xml. This component will be added as initial tab in the views
+area when the application starts.
+
+.. code-block:: xml
+
+  <extension uid="aibench.workbench" name="aibench.workbench.view" >
+    <welcomescreen class="org.myorg.MyComponent" title="Welcome screen"/>
+  </extension>
