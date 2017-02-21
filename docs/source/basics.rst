@@ -230,6 +230,41 @@ attributes of this annotation are showed in the following table.
 |                  |            | this parameters are displayed    |           |
 |                  |            | hidden initially.                |           |
 +------------------+------------+----------------------------------+-----------+
+| extras           | String     | Additional parameters can be     | <empty    |
+|                  |            | passed here.                     | string>   |
++------------------+------------+----------------------------------+-----------+
+
+@Port ``extras``
+...................
+Additional parameters can be passed here. Parameters are delimited by ``,`` and 
+values are assigned with ``parameter=value``.
+
+Ports of type ``File`` can use the following two parameters to configure the file 
+chooser showed to the user:
+
+- ``selectionMode``: which can be ``files``, ``directories`` or ``filesAndDirectories``.
+- ``filters``: which must follow the format ``regex:description``. A predefined filter is ``allowAll``, which allows user to select all files. For example, the filter ``.*\\.csv|: Comma-separated values (CSV) files`` allows only selection of files with csv extension. Note that adding one filter disables the "All files" selection filter and it must be explicitly added.
+
+For example, the following example shows the creation of an ``extras`` string to 
+configure a file chooser that only accepts files and has three filters: one for 
+CSV files, one for plain text files and the "All files" filter.
+
+.. code-block:: java
+  
+   @Port(
+      direction = Direction.INPUT, 
+      name = "File", 
+      order = 1, 
+      extras = "selectionMode=files, " +
+               "filters=" +
+                  ".*\\.csv|:Comma-separated values (CSV) files; " +
+                  ".*\\.txt|:Plain text files;" +
+                  "allowAll"
+   )
+   public void setFile(File f) {
+      this.file = f;
+   }
+
 
 @Progress Annotation
 ++++++++++++++++++++
