@@ -587,6 +587,14 @@ Example:
       help="http://myapp.com/help/topic1.html"/> <!-- your help could be online -->
   </extension>
 
+Moreover, the ``Workbench`` plugin offers you a configured button 
+(``es.uvigo.ei.aibench.workbench.utilities.HelpButton``) that opens this JavaHelp. For example, this 
+button can be be easily added to the toolbar with:
+
+.. code-block:: java
+
+  Workbench.getInstance().getToolBar().add(new HelpButton());
+
 .. _adding-custom-components:
 
 Adding custom components
