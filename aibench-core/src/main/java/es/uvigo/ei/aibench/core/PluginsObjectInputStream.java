@@ -32,10 +32,35 @@ import org.platonos.pluginengine.Plugin;
 import es.uvigo.ei.aibench.Launcher;
 
 /**
+ * An extension of {@code ObjectInputStream} to help in the deserialization of
+ * objects, looking for its classes in one or more plugins.
+ * 
  * @author Daniel Gonzalez Peña
  * 
  */
-class PluginsObjectInputStream extends ObjectInputStream {
+public class PluginsObjectInputStream extends ObjectInputStream {
+	private Plugin plugin;
+
+	/**
+	 * Creates a new {@code PluginsObjectInputStream} that attempts to load
+	 * classes looking for them in the specified {@code plugin}.
+	 * 
+	 * @param in input stream to read from
+	 * @param plugin the {@code Plugin} where classes must be find.
+	 * @throws IOException if an I/O error occurs while reading stream header
+	 */
+	public PluginsObjectInputStream(InputStream in, Plugin plugin) throws IOException {
+		super(in);
+		this.plugin = plugin;
+	}
+
+	/**
+	 * Creates a new {@code PluginsObjectInputStream} that attempts to load
+	 * classes looking for them in all available plugins obtained using {@code Launcher.pluginEngine.getPlugins()}
+	 * 
+	 * @param in input stream to read from
+	 * @throws IOException if an I/O error occurs while reading stream header
+	 */
 	public PluginsObjectInputStream(InputStream in) throws IOException {
 		super(in);
 	}
@@ -59,19 +84,18 @@ class PluginsObjectInputStream extends ObjectInputStream {
 		return c;
 	}
 
-	/**
-	 * @param c
-	 * @param descName
-	 * @return
-	 */
 	private Class<?> loadClass(final String descName) {
-		for (Object o : Launcher.pluginEngine.getPlugins()) {
-			final Plugin p = (Plugin) o;
-			try {
-				return p.getPluginClassLoader().loadClass(descName);
-			} catch (ClassNotFoundException e) {}
+		try {
+			if (this.plugin != null) {
+				return plugin.getPluginClassLoader().loadClass(descName);
+			} else {
+				for (Object o : Launcher.pluginEngine.getPlugins()) {
+					final Plugin p = (Plugin) o;
+					return p.getPluginClassLoader().loadClass(descName);
+				}
+			}
+		} catch (ClassNotFoundException e) {
 		}
-		
 		return null;
 	}
 }
