@@ -147,7 +147,7 @@ public class MainWindow extends JFrame {
 	
 	public MainWindow(List<OperationWrapper> operaciones) {
 		super();
-		LOGGER.info("MainWindow creation");
+
 		this.interceptedOperations = operaciones;
 		
 		// locate the template.xml
