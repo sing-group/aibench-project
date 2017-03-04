@@ -304,7 +304,16 @@ final class PluginXmlParser {
 				try {
 					plugin.setVersion(PluginVersion.createInstanceVersion(value));
 				} catch (PluginEngineException ex) {
-					pluginEngine.getLogger().log(LoggerLevel.SEVERE, "Error setting PluginVersion for Plugin: " + plugin, ex);
+					if(isPreReleaseVersion(value)) {
+						String preReleaseValue = parsePreReleaseValue(value);
+						try {
+							plugin.setVersion(PluginVersion.createInstanceVersion(preReleaseValue));
+						} catch (PluginEngineException e) {
+							pluginEngine.getLogger().log(LoggerLevel.SEVERE, "Error setting PluginVersion for Plugin: " + plugin, ex);
+						}
+					} else {
+						pluginEngine.getLogger().log(LoggerLevel.SEVERE, "Error setting PluginVersion for Plugin: " + plugin, ex);
+					}
 				}
 
 			} else if (qname.equals(UID)) {
@@ -315,13 +324,24 @@ final class PluginXmlParser {
 			}
 		}
 
-		private PluginXmlNode createNode (String name, Attributes attributes) {
+		private PluginXmlNode createNode(String name, Attributes attributes) {
 			PluginXmlNode node = new PluginXmlNode();
 			node.setName(name);
 			for (int i = 0, n = attributes.getLength(); i < n; i++) {
 				node.setAttribute(attributes.getQName(i), attributes.getValue(i));
 			}
 			return node;
+		}
+
+		private String parsePreReleaseValue(String value) {
+			if (isPreReleaseVersion(value)) {
+				return value.substring(0, value.indexOf('-'));
+			}
+			return value;
+		}
+
+		private boolean isPreReleaseVersion(String version) {
+			return version.contains("-");
 		}
 	}
 
