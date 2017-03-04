@@ -33,5 +33,7 @@ import java.lang.annotation.Target;
 @Documented
 @Inherited
 public @interface Cancel {
+	String DEFAULT_CANCEL_BUTTON_LABEL = "STOP";
 
+	String cancelButtonLabel() default DEFAULT_CANCEL_BUTTON_LABEL;
 }

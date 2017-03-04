@@ -213,8 +213,8 @@ to the Workbench in the :ref:`plugin.xml
 
 Here, ``samplePlugin.ClassName`` is your class implementing ``InputGUI``.
 
-To implement this interface, you can start from scrach (more complex, more
-flexible), or you can extend an existing class (more easy, less flexible). But
+To implement this interface, you can start from scratch (more complex, more
+flexible), or you can extend an existing class (easier, less flexible). But
 before continuing, you have to learn how to specify parameter values for
 operations in AIBench programmatically.
 

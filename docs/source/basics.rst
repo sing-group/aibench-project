@@ -243,7 +243,12 @@ Ports of type ``File`` can use the following two parameters to configure the fil
 chooser showed to the user:
 
 - ``selectionMode``: which can be ``files``, ``directories`` or ``filesAndDirectories``.
-- ``filters``: which must follow the format ``regex:description``. A predefined filter is ``allowAll``, which allows user to select all files. For example, the filter ``.*\\.csv|: Comma-separated values (CSV) files`` allows only selection of files with csv extension. Note that adding one filter disables the "All files" selection filter and it must be explicitly added.
+
+- ``filters``: which must follow the format ``regex:description``. A predefined filter 
+  is ``allowAll``, which allows user to select all files. For example, the 
+  filter ``.*\\.csv|: Comma-separated values (CSV) files`` allows only selection of 
+  files with csv extension. Note that adding one filter disables the "All files" 
+  selection filter and it must be explicitly added.
 
 For example, the following example shows the creation of an ``extras`` string to 
 configure a file chooser that only accepts files and has three filters: one for 
@@ -269,13 +274,42 @@ CSV files, one for plain text files and the "All files" filter.
 @Progress Annotation
 ++++++++++++++++++++
 
-This optional annotation can be used to give a Java bean that keeps in its
+This optional annotation can be used to provide a Java bean that keeps in its
 properties the information related with the actual progress of the
 :ref:`Operation <operation>`.  The :ref:`Operation <operation>` should call the
-setter methods of the bean during its process, and the Workbench, reads them in
-"real-time" showing them to the user. The annotation has no attributes, it
-should be used with the method that returns that bean. An example of this
-annotation can be found in Providing progress information.
+setter methods of the bean during its process while the Workbench monitors then 
+in real-time showing them to the user in the progress monitor dialog. Please, refer 
+to section :ref:`Providing progress information<providing-progress>` for a deeper 
+explanation and examples.
+
+@Cancel annotation
++++++++++++++++++++++
+
+This optional annotation can be used to provide de possibility of canceling the 
+operation when it is being executed. When a method is annotated with ``@Cancel``, a 
+button is added to the operation's progress dialog. If the user clicks this button, 
+two things happen: 
+
+- AIBench ignores the value(s) returned by the operation. This means that output 
+  ports results will not be added to the clipboard.
+
+- The annotated method in your operation is called so that you can properly pause the
+  operation. Please, note that the responsibility of stopping the execution of your 
+  operation is on you
+ 
+Moreover, this annotation accepts one parameter called ``cancelButtonLabel`` that sets 
+the label of the cancel button in the operation's progress dialog. Bellow if an example
+of a cancel method:
+
+.. code-block:: java
+
+   private final boolean canceled = false;
+
+   @Cancel(cancelButtonLabel = "Cancel operation")
+   public void cancel() { 
+	this.canceled = true;
+   }
+
 
 Plugging operations to the AIBench's CORE
 -----------------------------------------
@@ -363,43 +397,153 @@ example:
 .. code-block:: java
 
   @Progress
-  public DFPStatus getStatus(){
+  public ProgressBean getStatus(){
   	return this.status;
   }
+
   @Port(direction=Direction.OUTPUT)
   public void process(){
   	//in the process we make changes in the progress bean
   	this.status.setSubtask("doing this");
+  	this.status.setTotal(0.25f);
   	//...
   	this.status.setSubtask("doing that");
+  	this.status.setTotal(0.50f);
   }
 
 
-DFPOperation is an user-defined Java bean which its code could look like this:
+``ProgressBean`` is an user-defined Java bean such as:
 
 .. code-block:: java
 
-  public class DFPStatus {
+  public class ProgressBean {
   	private String subtask;
   	private float total=0.0f;
 
-  	public String getSubtask() { return this.subtask; }
-  	public void setSubtask(String subtask) { this.subtask = subtask; }
+  	public String getSubtask() { 
+  	  return this.subtask; 
+  	}
+  	
+  	public void setSubtask(String subtask) { 
+  	  this.subtask = subtask; 
+  	}
 
-  	public float getTotal() { return this.total; }
-  	public void setTotal(float total) { this.total = total; }
+  	public float getTotal() { 
+  	  return this.total; 
+  	}
+  	
+  	public void setTotal(float total) { 
+  	  this.total = total; 
+  	}
   }
 
 
-The Workbench GUI will show in the progress monitor all the properties of the
-bean with text labels. Please note, that the float properties will be managed in
-a special manner: they will be displayed as progress bars where their position
-is empty if the float value is 0.0 or less, and full if the float value is 1.0
-or greater.  Figure 7 shows a progress monitor that displays a bean with two
-properties: one String called “subtask” and one float called “total”.
+By default, the Workbench GUI will show in the progress monitor all the properties 
+of the bean, using text labels for String properties and progress bar for float 
+properties. The name of the property is the name of the getter method, althought
+this can be customized using the @ProgressProperty annotation (see the following 
+subsection for details).
+
+Regarding float properties, they are displayed as progress bars where 
+their position is empty if the float value is 0.0 or less, and full if the float 
+value is 1.0 or greater. The figure bellow shows a progress monitor that displays a 
+bean with two properties: one String called “subtask” and one float called “total”.
 
 .. figure:: images/progress.png
    :align:  center
+   
+Customizing the monitor progress dialog
+.......................................
+The monitor progress dialog can be customized in several ways. Firs, the default gif 
+image can be changed in the ``workbench.conf`` configuration file by establishing the
+value of the property ``progress.workingicon`` to the path of your custom image.
+
+Then, the @Progress annotation has several parameters to customize the appearance of
+the monitor progress dialog. The attributes of this annotation are showed in the 
+following table.
+
++---------------------+---------+---------------------------------------+-------------------+
+| Attribute name      | Type    | Description                           | Default           |
++=====================+=========+=======================================+===================+
+| progressDialogTitle | String  | The title of the progress monitor     | <Progress...>     |
+|                     |         | dialog.                               |                   |
++---------------------+---------+---------------------------------------+-------------------+
+| modal               | boolean | Wether the progress monitor dialog    | false             |
+|                     |         | is modal or not.                      |                   |
++---------------------+---------+---------------------------------------+-------------------+
+| workingLabel        | String  | The label of the progress monitor     | <Working>         |
+|                     |         | dialog label.                         |                   |
++---------------------+---------+---------------------------------------+-------------------+
+| preferredWidth      | int     | The preferred width of the progress   | Integer.MIN_VALUE |
+|                     |         | monitor dialog.                       |                   |
++---------------------+---------+---------------------------------------+-------------------+
+| preferredHeight     | int     | The preferred height of the progress  | Integer.MIN_VALUE |
+|                     |         | monitor dialog.                       |                   |
++---------------------+---------+---------------------------------------+-------------------+
+
+Please, note that using default values for properties ``preferredWidth`` and 
+``preferredHeight`` means that no preferred size should be established for the progress monitor
+dialog.
+
+Finally, bean properties can be customized using the @ProgressProperty annotation, which allows
+to specify the name and the order of each property. Moreover, this annotation allows you to 
+exclude a getter by specifying ``ignore = true``.
+
+Here you can see an example of a customized progress monitor dialog and a customized Java bean:
+
+.. code-block:: java
+
+  @Progress(
+      progressDialogTitle = "Operation progress",
+      modal = true,
+      workingLabel = "Operation in progress..."
+  )
+  public ProgressBean getStatus(){
+  	return this.status;
+  }
+
+  public class ProgressBean {
+  	private String subtask;
+  	private float total=0.0f;
+  	private String ignored;
+
+  	@ProgressProperty(order = 1, label = "Subtask: ")
+  	public String getSubtask() { 
+  	  return this.subtask; 
+  	}
+  	
+  	public void setSubtask(String subtask) { 
+  	  this.subtask = subtask; 
+  	}
+
+  	@ProgressProperty(order = 2, label = "Total progress: ")
+  	public float getTotal() { 
+  	  return this.total; 
+  	}
+  	
+  	public void setTotal(float total) { 
+  	  this.total = total; 
+  	}
+  	
+  	@ProgressProperty(ignore = true)
+  	public String getIgnored() { 
+  	  return this.ignored; 
+  	}
+  	
+  	public void setIgnored(String ignored) { 
+  	  this.ignored = ignored; 
+  	}
+  }
+  
+.. figure:: images/progress-custom.png
+   :align:  center  
+  
+Regarding the order property, please note that:
+
+- Properties with no order specified will appear before those with a specific order.
+- Properties with the same order value will be displayed in the specified position but
+  in a random order.
+
 
 .. _creating-datatypes:
 

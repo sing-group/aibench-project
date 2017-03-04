@@ -28,29 +28,23 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 /**
- * This annotation defines a method whose return parameter is a POJO that
- * monitors a progress
+ * This annotation defines a method that returns information about each property
+ * in the POJO monitored obtained by {@code Progress}.
  * 
- * @author Daniel Glez-Peña
  * @author Hugo López-Fernández
- *
+ * @see Progress
  */
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.METHOD)
 @Documented
-public @interface Progress {
-	public static final String DEFAULT_DIALOG_TITLE = "Progress...";
-	public static final boolean DEFAULT_DIALOG_MODAL = false;
-	public static final String DEFAULT_WORKING_LABEL = "Working";
-	public static final int DEFAULT_PREFERRED_SIZE = Integer.MIN_VALUE;
+public @interface ProgressProperty {
+	public static final String DEFAULT_LABEL = "";
+	public static final int DEFAULT_ORDER = 0;
+	public static final boolean DEFAULT_IGNORE = false;
 
-	String progressDialogTitle() default DEFAULT_DIALOG_TITLE;
+	String label() default DEFAULT_LABEL;
 
-	boolean modal() default DEFAULT_DIALOG_MODAL;
+	int order() default DEFAULT_ORDER;
 
-	String workingLabel() default DEFAULT_WORKING_LABEL;
-
-	int preferredWidth() default DEFAULT_PREFERRED_SIZE;
-
-	int preferredHeight() default DEFAULT_PREFERRED_SIZE;
+	boolean ignore() default DEFAULT_IGNORE;
 }
