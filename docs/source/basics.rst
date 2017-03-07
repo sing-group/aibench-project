@@ -14,7 +14,7 @@ Maven archetype:
 .. code-block:: console
 
    mvn archetype:generate -DarchetypeGroupId=es.uvigo.ei.sing \
-   -DarchetypeArtifactId=aibench-archetype -DarchetypeVersion=2.6.0 \
+   -DarchetypeArtifactId=aibench-archetype -DarchetypeVersion=2.8.1 \
    -DgroupId=es.uvigo.ei.sing -DartifactId=my-aibench-application \
    -DinteractiveMode=false \
    -DarchetypeRepository=http://sing.ei.uvigo.es/maven2
@@ -97,7 +97,7 @@ An finally, to run your application:
 
 .. code-block:: console
 
-  cd target
+  cd target/dist
   sh run.sh
 
 .. _creating-operations:
