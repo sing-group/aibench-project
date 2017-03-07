@@ -267,27 +267,23 @@ public class OperationDefinition<T> {
 				Port o2Port = o2.getAnnotation(Port.class);
 
 				if (o1Port == null)
-					return 1;
-				if (o2Port == null)
 					return -1;
+				if (o2Port == null)
+					return 1;
 
-				int toret = new Integer(o1Port.order()).compareTo(o2Port
-						.order());
+				int toret = new Integer(o1Port.order()).compareTo(o2Port.order());
 
 				if (toret == 0) {
-					if (o1Port.direction() == Direction.INPUT)
-						return -1;
-					else
-						return 1;
+					if (o1Port.direction() == o2Port.direction())
+						return 0;
+					else 
+						return o1Port.direction() == Direction.INPUT ? -1 : 1;
 
 				} else {
 					return toret;
 				}
-
 			}
-
 		});
-
 	}
 
 	public static <T> OperationDefinition<T> createOperationDefinition(

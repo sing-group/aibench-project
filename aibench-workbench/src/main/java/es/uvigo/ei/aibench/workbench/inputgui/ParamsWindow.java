@@ -88,7 +88,9 @@ import es.uvigo.ei.aibench.workbench.Workbench;
  * @author Daniel Glez-Peña
  *
  */
-public class  ParamsWindow extends JDialog implements InputGUI {
+public class ParamsWindow extends JDialog implements InputGUI {
+	private static final ImageIcon DEFAULT_HELP_ICON = new ImageIcon(ParamsWindow.class.getResource("images/dialog-help.png"));
+
 	private static final long serialVersionUID = 1L;
 	
 	private static final String BUTTONICON_CANCEL = "paramswindow.buttonicon.cancel";
@@ -267,25 +269,32 @@ public class  ParamsWindow extends JDialog implements InputGUI {
 					
 					// Description label
 					JComponent descriptionComponent = null;
-					String showHelp = Workbench.CONFIG
-							.getProperty("paramswindow.showhelpicon");
-					if (	showHelp != null && 
-							showHelp.equalsIgnoreCase("true") && 
-							incomingPort.description()!=null && 
-                             incomingPort.description().length()>0
-					) {
-						JLabel iconLabel = new JLabel();
+					
+					boolean showHelp = Boolean.parseBoolean(Workbench.CONFIG.getProperty("paramswindow.showhelpicon", "false"));
+					final String description = incomingPort.description();
+					if (showHelp && description != null && description.length() > 0) {
 						String iconFile = Workbench.CONFIG.getProperty("paramswindow.helpicon");
-						URL imageURL = Util.getGlobalResourceURL(iconFile);
+
+						ImageIcon icon;
+						if (iconFile == null) {
+							logger.info(String.format("Help icon for ParamsWindow not found: %s. Using default help icon.", iconFile));
+							
+							icon = DEFAULT_HELP_ICON;
+						} else {
+							try {
+								icon = new ImageIcon(Util.getGlobalResourceURL(iconFile));
+								
+							} catch (RuntimeException re) {
+								logger.error(String.format("Error retrieving help icon for ParamsWindow not found: %s. Using default help icon.", iconFile));
+								
+								icon = DEFAULT_HELP_ICON;
+							}
+						}
 						
-						iconLabel.setIcon(new ImageIcon(iconFile == null ? 
-							getClass().getResource("dialog-help.png") : imageURL));
-						iconLabel.setToolTipText(
-								incomingPort.description());
-						
-						descriptionComponent = iconLabel;
+						descriptionComponent = new JLabel(icon);
+						descriptionComponent.setToolTipText(description);
 					} else {
-						descriptionComponent = new JLabel(incomingPort.description());
+						descriptionComponent = new JLabel(description);
 					}
 					
 					c.gridx = 2;

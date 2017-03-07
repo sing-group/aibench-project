@@ -42,6 +42,6 @@ Creating an AIBench application using the archetype
 ----
 Simply run the following command to create a new AIBench application using the Maven archetype:
 ```bash
-mvn archetype:generate -DarchetypeGroupId=es.uvigo.ei.sing -DarchetypeArtifactId=aibench-archetype -DarchetypeVersion=2.8.1  -DgroupId=es.uvigo.ei.sing -DartifactId=my-aibench-application -DinteractiveMode=false -DarchetypeRepository=https://maven.sing-group.org/repository/maven/
+mvn archetype:generate -DarchetypeGroupId=es.uvigo.ei.sing -DarchetypeArtifactId=aibench-archetype -DarchetypeVersion=2.8.2 -DgroupId=es.uvigo.ei.sing -DartifactId=my-aibench-application -DinteractiveMode=false -DarchetypeRepository=https://maven.sing-group.org/repository/maven/
 ```
 This command creates the new application under the folder `my-aibench-application`. You can select the version of the archetype (corresponding to the AIBench version) in `-DarchetypeVersion`.

@@ -14,7 +14,7 @@ Maven archetype:
 .. code-block:: console
 
    mvn archetype:generate -DarchetypeGroupId=es.uvigo.ei.sing \
-   -DarchetypeArtifactId=aibench-archetype -DarchetypeVersion=2.8.1 \
+   -DarchetypeArtifactId=aibench-archetype -DarchetypeVersion=2.8.2 \
    -DgroupId=es.uvigo.ei.sing -DartifactId=my-aibench-application \
    -DinteractiveMode=false \
    -DarchetypeRepository=http://sing.ei.uvigo.es/maven2
