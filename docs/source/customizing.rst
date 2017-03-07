@@ -121,6 +121,21 @@ have the following options in the ``workbench.conf`` configuration file.
   them inside ``src/main/global-resources``. In the above configuration file,
   you should create the ``icons`` subdirectory in ``src/main/global-resources``.
 
+Menu bar icons
+--------------
+
+Menu bar icons for Operations are established using the ``icon-operation`` definitions
+shown previously. However, sometimes you may also want to set icons for menu paths that
+show submenus. These icons can be defined in the ``extensions`` section of the ``plugin.xml``:
+
+.. code-block:: xml
+
+  <extension uid="aibench.workbench" name="aibench.workbench.view" >
+    <menu-icon menu="Sample" icon="conf/icons/menu/sample.png"/>
+    <menu-icon menu="Sample/SubmenuExample" icon="conf/icons/menu/subsample.png"/>
+  </extension>
+
+
 .. _workbench-layout:
 
 Configuring the Workbench Layout

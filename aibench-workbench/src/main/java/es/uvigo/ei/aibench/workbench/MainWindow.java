@@ -49,7 +49,9 @@ import javax.swing.JComponent;
 import javax.swing.JDialog;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
+import javax.swing.JMenu;
 import javax.swing.JMenuBar;
+import javax.swing.JMenuItem;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTabbedPane;
@@ -62,6 +64,8 @@ import javax.swing.event.ChangeListener;
 
 import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
+import org.platonos.pluginengine.Extension;
+import org.platonos.pluginengine.PluginXmlNode;
 
 import es.uvigo.ei.aibench.Launcher;
 import es.uvigo.ei.aibench.Util;
@@ -77,11 +81,11 @@ import es.uvigo.ei.aibench.workbench.utilities.TabCloseAdapter;
 import es.uvigo.ei.aibench.workbench.utilities.TabCloseEvent;
 import es.uvigo.ei.aibench.workbench.utilities.Utilities;
 
-
 /**
  * This class is the main frame of the AIBench's Workbench.
  * 
  * @author Ruben Dominguez Carbajales
+ * @author Hugo López-Fernández
  * @see Workbench
  */
 public class MainWindow extends JFrame {
@@ -141,8 +145,7 @@ public class MainWindow extends JFrame {
 		"</row>"+
 	"</table>";
 	
-	// COMPONENTS
-	private JMenuBar jJMenuBar	= null;
+	private JMenuBar jMenuBar = null;
 	private CloseableJTabbedPane documentTabbedPane = null;
 	
 	public MainWindow(List<OperationWrapper> operaciones) {
@@ -212,7 +215,7 @@ public class MainWindow extends JFrame {
 				}.start();
 			}
 		});
-		
+
 		String title = Workbench.CONFIG.getProperty("mainwindow.title");
 		if (title == null) {
 			title = "AIBench";
@@ -220,6 +223,7 @@ public class MainWindow extends JFrame {
 		this.setTitle(title);
 
 		JMenuBar menuBar = getJJMenuBar();
+
 		if (Workbench.CONFIG.getProperty("mainwindow.menubar.visible") == null || 
 			!Workbench.CONFIG.getProperty("mainwindow.menubar.visible").equals("false")
 		) {
@@ -285,11 +289,11 @@ public class MainWindow extends JFrame {
 					buttons.put(Integer.parseInt(op.getShortcut().replaceAll(" ","")), button);				
 			}
 			
-			//separators
+			// separators
 			String separatorString = Workbench.CONFIG.getProperty("toolbar.separators");
-			ArrayList<String>separators = new ArrayList<String>(); 
-			if(separatorString!=null){
-				
+			ArrayList<String> separators = new ArrayList<String>();
+			if (separatorString != null) {
+
 				String[] separatorTokens = separatorString.replaceAll(" ","").split(",");
 				for(String sep : separatorTokens){
 					if (sep.length()>0) separators.add(sep);
@@ -402,25 +406,70 @@ public class MainWindow extends JFrame {
 	}
 
 	private JMenuBar getJJMenuBar() {
-
-		if (jJMenuBar == null) {
-
-			jJMenuBar = new JMenuBar();
+		if (jMenuBar == null) {
+			jMenuBar = new JMenuBar();
 			List<OperationWrapper> operations = this.interceptedOperations;
-
-			sortOperations(operations);
-
-			for (OperationWrapper opw: operations){
-				if (Workbench.getInstance().isOperationViewableIn(opw.getOperationDefinition(), "MENU")){
-					Utilities.putOperationInMenu(jJMenuBar, opw);
+			this.sortOperations(operations);
+			for (OperationWrapper opw : operations) {
+				if (Workbench.getInstance().isOperationViewableIn(opw.getOperationDefinition(), "MENU")) {
+					Utilities.putOperationInMenu(jMenuBar, opw);
 				}
-//				putOperationInMenu(jJMenuBar, opw);
 			}
+			this.setJMenuBarIcons();
 		}
 
-		return jJMenuBar;
+		return jMenuBar;
 	}
 
+	private void setJMenuBarIcons() {
+		setJMenuBarIcons(jMenuBar, getIconMappings());
+	}
+
+	private Map<String, ImageIcon> getIconMappings() {
+		Map<String, ImageIcon> menuIcons = new HashMap<>();
+		for (Extension extension : WorkbenchExtensionTools.getWorkbenchViewExtensions()) {
+			for (PluginXmlNode node : extension.getExtensionXmlNode().getChildren()) {
+				if (node.getName().equals("menu-icon")) {
+					String menuName = node.getAttribute("menu");
+					String menuIcon = node.getAttribute("icon");
+					if (menuName != null && menuIcon != null) {
+						if(menuIcons.containsKey(menuName)) {
+							LOGGER.warn("Found duplicated menu-icon declaration. "
+								+ "Overriding menu icon for path " + menuName +
+								" with icon from plugin " + extension.getPlugin().getName());
+						}
+						menuIcons.put(menuName, new ImageIcon(Util.getGlobalResourceURL(menuIcon)));
+					}
+				}
+			}
+		}
+		return menuIcons;
+	}
+
+	private void setJMenuBarIcons(JMenuBar menuBar, Map<String, ImageIcon> menuIcons) {
+		for (int i = 0; i < menuBar.getMenuCount(); i++) {
+			JMenu menu = menuBar.getMenu(i);
+			String menuText = menu.getText();
+			if (menuIcons.containsKey(menuText)) {
+				menu.setIcon(menuIcons.get(menuText));
+			}
+			setJMenuIcons(menu, menuIcons);
+		}
+	}
+
+	private void setJMenuIcons(JMenu parentMenu, Map<String, ImageIcon> menuIcons) {
+		String parentMenuName = parentMenu.getText();
+		for (int i = 0; i < parentMenu.getItemCount(); i++) {
+			JMenuItem menu = parentMenu.getItem(i);
+			if (menu instanceof JMenu) {
+				JMenu jMenu = (JMenu) menu;
+				String menuName = jMenu.getText();
+				if (menuIcons.containsKey(parentMenuName + "/" + menuName)) {
+					jMenu.setIcon(menuIcons.get(parentMenuName + "/" + menuName));
+				}
+			}
+		}
+	}
 
 	private int getPositionForPathName(String pathElement){
 		

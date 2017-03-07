@@ -86,6 +86,14 @@
 		</extension>
 		-->
 		
+		<!-- "Custom menu icons". Icons for menu items that are not associated with operations -->
+		<!--
+		<extension uid="aibench.workbench" name="aibench.workbench.view" >
+			<menu-icon menu="Sample" icon="conf/icons/menu/sample.png"/>
+			<menu-icon menu="Sample/SubmenuExample" icon="conf/icons/menu/sample.png"/>
+		</extension>		
+		-->
+		
 		<!-- "Custom input dialogs". If you don't like the default generated input dialog for some operation, put your own here -->
 		<!--
 		<extension uid="aibench.workbench" name="aibench.workbench.view" >
