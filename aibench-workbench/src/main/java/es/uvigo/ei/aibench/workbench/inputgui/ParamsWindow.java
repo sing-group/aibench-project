@@ -100,24 +100,34 @@ public class ParamsWindow extends JDialog implements InputGUI {
 	private static final String BUTTONTEXT_HELP = "paramswindow.buttontext.help";
 	private static final String BUTTONICON_HELP = "paramswindow.buttonicon.help";
 	
-	static Logger logger = Logger.getLogger(ParamsWindow.class.getName());
+	protected static Logger LOGGER = Logger.getLogger(ParamsWindow.class.getName());
 
-	//// COMPONENTS
-	JTextArea textArea = null;
-	JPanel buttonsPanel = null;
-	
+	protected JPanel inputComponents;
+	protected JTextArea textArea = null;
+	protected JPanel buttonsPanel = null;
+	private JButton okButton;
+	private boolean autoresize = true;
+
+	private boolean finished = false;
 	private OperationDefinition<?> operation;
+	private ParamsReceiver receiver;
 	private Object operationObject;
-	private List<ParamProvider> providers= new ArrayList<ParamProvider>();
+	private List<ParamProvider> providers = new ArrayList<>();
 	private boolean wasCancelled = false;
 
-	private ParamsReceiver receiver;
-
 	public static ClipboardItem preferredClipboardItem;
-	private JPanel inputComponents;
 
 	public ParamsWindow() {
 		super(Workbench.getInstance().getMainFrame());
+	}
+
+	private void initialize() {
+		this.setLayout(new BorderLayout());
+		this.add(getDescriptionPane(), BorderLayout.NORTH);
+		inputComponents = createInputComponents();
+		JScrollPane scroll = new JScrollPane(inputComponents);
+		this.add(scroll, BorderLayout.CENTER);
+		this.add(getButtonsPane(), BorderLayout.SOUTH);
 	}
 
 	public JPanel createInputComponents() {
@@ -138,11 +148,16 @@ public class ParamsWindow extends JDialog implements InputGUI {
 			}
 		}
 
+		Map<Port, ParamProvider> portToProvider = new HashMap<>();
 		JPanel advancedPortsPane = null;
 		if (!incomingAdvancedPorts.isEmpty()) {
-			advancedPortsPane = createParamsPanel(incomingAdvancedPorts, portClass);
+			advancedPortsPane = createParamsPanel(incomingAdvancedPorts, portClass, portToProvider);
 		}
-		JPanel basicPortsPane = createParamsPanel(incomingVisiblePorts, portClass); 
+		JPanel basicPortsPane = createParamsPanel(incomingVisiblePorts, portClass, portToProvider);
+		
+		for (Port p : incomingPorts) {
+			this.providers.add(portToProvider.get(p));
+		}
 
 		JPanel toret = new JPanel(new BorderLayout());
 		toret.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
@@ -204,7 +219,9 @@ public class ParamsWindow extends JDialog implements InputGUI {
 		}
 	}
 
-	protected final JPanel createParamsPanel(List<Port> ports, Map<Port, Class<?>> portClass) {
+	protected final JPanel createParamsPanel(List<Port> ports, Map<Port, Class<?>> portClass,
+		Map<Port, ParamProvider> portToProvider
+	) {
 		JPanel toret = new JPanel();
 		
 		GridBagLayout layout = new GridBagLayout();
@@ -241,7 +258,7 @@ public class ParamsWindow extends JDialog implements InputGUI {
 			if (provider != null) {
 				provider.init();
 				
-				this.providers.add(provider);
+				portToProvider.put(incomingPort, provider);
 				JComponent component = provider.getComponent();
 				
 				if (component != null) {
@@ -277,7 +294,7 @@ public class ParamsWindow extends JDialog implements InputGUI {
 
 						ImageIcon icon;
 						if (iconFile == null) {
-							logger.info(String.format("Help icon for ParamsWindow not found: %s. Using default help icon.", iconFile));
+							LOGGER.info(String.format("Help icon for ParamsWindow not found: %s. Using default help icon.", iconFile));
 							
 							icon = DEFAULT_HELP_ICON;
 						} else {
@@ -285,7 +302,7 @@ public class ParamsWindow extends JDialog implements InputGUI {
 								icon = new ImageIcon(Util.getGlobalResourceURL(iconFile));
 								
 							} catch (RuntimeException re) {
-								logger.error(String.format("Error retrieving help icon for ParamsWindow not found: %s. Using default help icon.", iconFile));
+								LOGGER.error(String.format("Error retrieving help icon for ParamsWindow not found: %s. Using default help icon.", iconFile));
 								
 								icon = DEFAULT_HELP_ICON;
 							}
@@ -342,65 +359,45 @@ public class ParamsWindow extends JDialog implements InputGUI {
 	}
 	
 	private class JButtonOk extends JButton implements Observer, ActionListener, ClipboardListener {
-		/**
-		 * 
-		 */
 		private static final long serialVersionUID = 1L;
-//		private boolean finished = false;
 
 		public JButtonOk(String label) {
 			super(label);
 			this.addActionListener(this);
-			for (ParamProvider provider:ParamsWindow.this.providers) {
+			for (ParamProvider provider : ParamsWindow.this.providers) {
 				if (provider instanceof Observable) {
 					((Observable) provider).addObserver(this);
 				}
 			}
 		}
 
-		/* (non-Javadoc)
-		 * @see java.awt.event.ActionListener#actionPerformed(java.awt.event.ActionEvent)
-		 */
 		public void actionPerformed(ActionEvent e) {
-//			this.finished = true;
 			if ((e.getModifiers() & ActionEvent.CTRL_MASK) == 0) {
 				okButton.setEnabled(false);
 				ParamSpec[] spec = ParamsWindow.this.getParamSpec();
-				//ParamsWindow.this.finish(); //TODO: Remove this
 				receiver.paramsIntroduced(spec);				
 			}
 		}
 		
 		public void checkEnabled() {
-//			if (this.finished) return;
-			
 			boolean enabled = true;
-			for (ParamProvider provider:ParamsWindow.this.providers) {
+			for (ParamProvider provider : ParamsWindow.this.providers) {
 				if (!provider.isValidValue()) {
 					enabled = false;
 				}
 			}
-			
-			this.setEnabled(enabled/* && !this.finished*/);
+
+			this.setEnabled(enabled);
 		}
-		
-		/* (non-Javadoc)
-		 * @see java.util.Observer#update(java.util.Observable, java.lang.Object)
-		 */
+
 		public void update(Observable o, Object arg) {
 			this.checkEnabled();
 		}
 
-		/* (non-Javadoc)
-		 * @see es.uvigo.ei.aibench.core.clipboard.ClipboardListener#elementAdded(es.uvigo.ei.aibench.core.clipboard.ClipboardItem)
-		 */
 		public void elementAdded(ClipboardItem item) {
 			this.checkEnabled();
 		}
 
-		/* (non-Javadoc)
-		 * @see es.uvigo.ei.aibench.core.clipboard.ClipboardListener#elementRemoved(es.uvigo.ei.aibench.core.clipboard.ClipboardItem)
-		 */
 		public void elementRemoved(ClipboardItem item) {
 			this.checkEnabled();
 		}
@@ -408,7 +405,6 @@ public class ParamsWindow extends JDialog implements InputGUI {
 	
 	private JPanel getButtonsPane(){
 		if (this.buttonsPanel == null){
-	//		 OK and CANCEL Buttons
 			this.buttonsPanel = new JPanel();
 			this.buttonsPanel.setLayout(new FlowLayout());
 			
@@ -436,9 +432,8 @@ public class ParamsWindow extends JDialog implements InputGUI {
 				}
 			});
 			
-			//Detect the close button
-			this.addWindowListener(new WindowAdapter(){
-				public void windowClosing(WindowEvent e){
+			this.addWindowListener(new WindowAdapter() {
+				public void windowClosing(WindowEvent e) {
 					ParamsWindow.this.wasCancelled = true;
 				}
 			});
@@ -487,29 +482,7 @@ public class ParamsWindow extends JDialog implements InputGUI {
 		}
 		return this.buttonsPanel;
 	}
-	
-	private void initialize(){
-		this.setLayout(new BorderLayout());
 
-		this.add(getDescriptionPane(), BorderLayout.NORTH);
-		
-		inputComponents = createInputComponents();
-		JScrollPane scroll = new JScrollPane(inputComponents);
-		/*scroll.getViewport().addChangeListener(new ChangeListener(){
-
-			public void stateChanged(ChangeEvent arg0) {
-		
-				//_pack();
-				
-			}
-			
-		});*/
-		
-		this.add(scroll, BorderLayout.CENTER);
-		this.add(getButtonsPane(), BorderLayout.SOUTH);
-	}
-	
-	private JButton okButton;
 	private JButton getOKButton(){
 		if (okButton == null){
 			String okButtonLabel = Workbench.CONFIG.getProperty(BUTTONTEXT_OK);
@@ -525,49 +498,40 @@ public class ParamsWindow extends JDialog implements InputGUI {
 			}
 			
 			((JButtonOk) this.okButton).checkEnabled();
-//			okButton=  new JButton("OK");
-//			okButton.addActionListener(new ActionListener(){
-//				public void actionPerformed(ActionEvent e) {
-//					receiver.paramsIntroduced(ParamsWindow.this.getParamSpec());
-//					okButton.setEnabled(false);
-//					/*if(checkParams()){
-//						ParamsWindow.this.dispose();
-//					}*/
-//				}
-//			});
 		}
 		return okButton;
 	}
 	
-	//Needed to detect the ESCAPE KEY to cancel and close
 	protected JRootPane createRootPane() {
-		  KeyStroke stroke = KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0);
-		  JRootPane rootPane = new JRootPane();
-		  rootPane.registerKeyboardAction(new ActionListener(){
+		KeyStroke stroke = KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0);
+		JRootPane rootPane = new JRootPane();
+		rootPane.registerKeyboardAction(new ActionListener() {
 
 			public void actionPerformed(ActionEvent e) {
-				ParamsWindow.this.wasCancelled=true;
+				ParamsWindow.this.wasCancelled = true;
 				ParamsWindow.this.dispose();
 			}
 
-		  }, stroke, JComponent.WHEN_IN_FOCUSED_WINDOW);
+		}, stroke, JComponent.WHEN_IN_FOCUSED_WINDOW);
 
-		  return rootPane;
+		return rootPane;
 	}
 
-	private ParamSpec[] getParamSpec(){
-		if (this.wasCancelled)
+	private ParamSpec[] getParamSpec() {
+		if (this.wasCancelled) {
 			return null;
-		ParamSpec[] ret = new ParamSpec[this.providers.size()];
+		} else {
+			ParamSpec[] ret = new ParamSpec[this.providers.size()];
 
-		int i=0;
-		for (ParamProvider provider : this.providers){
-			ret[i++] = provider.getParamSpec();
+			int i = 0;
+			for (ParamProvider provider : this.providers) {
+				ret[i++] = provider.getParamSpec();
+			}
+
+			return ret;
 		}
-		
-		return ret;
 	}
-	
+
 	private void centerOnOwner() {
          Rectangle rectOwner;
          Rectangle rectDialog;
@@ -576,73 +540,63 @@ public class ParamsWindow extends JDialog implements InputGUI {
          setLocation((rectOwner.x + (rectOwner.width / 2)) - (rectDialog.width / 2), (rectOwner.y + (rectOwner.height / 2)) - (rectDialog.height / 2));
 	 }
 	 
-	private boolean finished = false;
-	/* (non-Javadoc)
-	 * @see es.uvigo.ei.aibench.workbench.InputGUI#finish()
-	 */
 	public synchronized void finish() {
 		if (!this.finished) {
 			this.finished = true;
 			this.setVisible(false);
-			if (logger.getEffectiveLevel().equals(Level.DEBUG)) logger.debug("finishing params window");
-			for (ParamProvider p : this.providers){
-				if (logger.getEffectiveLevel().equals(Level.DEBUG)) logger.debug("finishing param provider of class "+p.getClass());	
+			if (LOGGER.getEffectiveLevel().equals(Level.DEBUG)) {
+				LOGGER.debug("finishing params window");
+			}
+			for (ParamProvider p : this.providers) {
+				if (LOGGER.getEffectiveLevel().equals(Level.DEBUG)) {
+					LOGGER.debug("finishing param provider of class " + p.getClass());
+				}
 				p.finish();
 			}
 		}
 	}
-	
-	/* (non-Javadoc)
-	 * @see es.uvigo.ei.aibench.workbench.InputGUI#init(es.uvigo.ei.aibench.workbench.ParamsReceiver)
-	 */
+
 	public void init(ParamsReceiver receiver, OperationDefinition<?> operation) {
 		this.receiver = receiver;
 		this.operation = operation;
 		this.setTitle(operation.getName());
-		//this.operationObject=operationObject;
 		this.setModal(true);
-		
-		initialize();
-	
+
+		this.initialize();
+
 		_pack();
-		
-		this.setSize(new Dimension(this.getWidth()+20, this.getHeight()+40));
+
+		this.setSize(new Dimension(this.getWidth() + 20, this.getHeight() + 40));
 		this.centerOnOwner();
-		
+
 		if (operation.getIncomingArgumentTypes().isEmpty()) {
 			this.getOKButton().doClick();
 		} else {
 			this.setVisible(true);
 		}
-		
 	}
-	/* (non-Javadoc)
-	 * @see es.uvigo.ei.aibench.workbench.InputGUI#onValidationError(java.lang.Throwable)
-	 */
+
 	public void onValidationError(Throwable t) {
 		JOptionPane.showMessageDialog(this, t.getMessage(), "Input not valid", JOptionPane.WARNING_MESSAGE);
 		okButton.setEnabled(true);
 	}
 	
-	private boolean autoresize=true;
-	
-	private void _pack(){
-		if (!autoresize) return;
-		
-		
+	private void _pack() {
+		if (!autoresize) {
+			return;
+		}
+
 		this.pack();
 
 		GraphicsEnvironment ge = GraphicsEnvironment.getLocalGraphicsEnvironment();
-		// too much height
-		if (this.getHeight()>(ge.getMaximumWindowBounds().height-100)){
-			autoresize=false;	
-			this.setSize(this.getWidth()+50, ge.getMaximumWindowBounds().height-100);
+		if (this.getHeight() > (ge.getMaximumWindowBounds().height - 100)) {
+			autoresize = false;
+			this.setSize(this.getWidth() + 50, ge.getMaximumWindowBounds().height - 100);
 		}
-		
-	
-		if (this.getWidth()>(ge.getMaximumWindowBounds().width-100)){
-			autoresize=false;
-			this.setSize(ge.getMaximumWindowBounds().width-100, this.getHeight()+50);
+
+		if (this.getWidth() > (ge.getMaximumWindowBounds().width - 100)) {
+			autoresize = false;
+			this.setSize(ge.getMaximumWindowBounds().width - 100, this.getHeight() + 50);
 		}
 	}
 }
