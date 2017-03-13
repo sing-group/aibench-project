@@ -204,9 +204,10 @@ public class MonitorizeDialog extends JDialog {
 	private class JProgressBarRenderer extends JProgressBar implements RenderComponent {
 		private static final long serialVersionUID = 1L;
 
-		JProgressBarRenderer() {
+		JProgressBarRenderer(boolean stringPainted) {
 			this.setMaximum(100);
 			this.setValue(0);
+			this.setStringPainted(stringPainted);
 		}
 
 		public void updateValue(Object value) {
@@ -256,11 +257,10 @@ public class MonitorizeDialog extends JDialog {
 
 			int i = 0;
 			for (PropertyDescriptor descriptor : this.descriptors) {
-
 				GridBagConstraints c = new GridBagConstraints();
 				i++;
 
-				JLabel label = new JLabel(getDescriptorName(bean, descriptor, info));
+				JLabel label = new JLabel(getDescriptorName(descriptor));
 				c.fill = GridBagConstraints.HORIZONTAL;
 				c.gridx = 0;
 				c.gridy = i;
@@ -272,16 +272,16 @@ public class MonitorizeDialog extends JDialog {
 
 
 				JComponent component =null;
-				if (descriptor.getPropertyType().equals(float.class) || descriptor.getPropertyType().equals(Float.class)) {
-					component = new JProgressBarRenderer();
-				} else {
+				if (descriptor.getPropertyType().equals(float.class) || descriptor.getPropertyType().equals(Float.class) ){
+					component = new JProgressBarRenderer(getDescriptorStringPainted(descriptor));
+				}else{
 					component = new JLabelRenderer();
 				}
 				mapping.put(descriptor, (RenderComponent) component);
-
-				c.gridx = 1;
-				c.weightx = 1.0;
-
+				
+				c.gridx=1;
+				c.weightx=1.0;
+				
 				newLayout.setConstraints(component, c);
 				beanInfoPanel.add(component);
 			}
@@ -399,7 +399,7 @@ public class MonitorizeDialog extends JDialog {
 		return orderedDescriptors.toArray(new PropertyDescriptor[orderedDescriptors.size()]);
 	}
 
-	private String getDescriptorName(Object bean, PropertyDescriptor descriptor, BeanInfo info) {
+	private String getDescriptorName(PropertyDescriptor descriptor) {
 		ProgressProperty descriptorProperty = descriptor.getReadMethod().getAnnotation(ProgressProperty.class);
 		if (descriptorProperty != null) {
 			if (descriptorProperty.label().equals(ProgressProperty.DEFAULT_LABEL)) {
@@ -410,6 +410,11 @@ public class MonitorizeDialog extends JDialog {
 		} else {
 			return descriptor.getName();
 		}
+	}
+
+	private boolean getDescriptorStringPainted(PropertyDescriptor descriptor) {
+		ProgressProperty descriptorProperty = descriptor.getReadMethod().getAnnotation(ProgressProperty.class);
+		return descriptorProperty.showProgressBarLabel();
 	}
 	
 	private void addCancelButtonPanel() {
@@ -442,16 +447,14 @@ public class MonitorizeDialog extends JDialog {
 					mapping.get(descriptor).updateValue(readMethod.invoke(bean, new Object[] {}));
 				}
 			} catch (IllegalArgumentException e) {
-				// TODO Auto-generated catch block
 				e.printStackTrace();
 			} catch (IllegalAccessException e) {
-				// TODO Auto-generated catch block
 				e.printStackTrace();
 			} catch (InvocationTargetException e) {
-				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
 		}
+
 		this.pack();
 	}
 

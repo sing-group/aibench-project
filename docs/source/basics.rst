@@ -486,8 +486,9 @@ Please, note that using default values for properties ``preferredWidth`` and
 dialog.
 
 Finally, bean properties can be customized using the @ProgressProperty annotation, which allows
-to specify the name and the order of each property. Moreover, this annotation allows you to 
-exclude a getter by specifying ``ignore = true``.
+to specify the name and the order of each property and, in the case of float properties, whether
+the progress bart should be painted or not. Moreover, this annotation allows you to exclude a 
+getter by specifying ``ignore = true``.
 
 Here you can see an example of a customized progress monitor dialog and a customized Java bean:
 
@@ -516,7 +517,7 @@ Here you can see an example of a customized progress monitor dialog and a custom
   	  this.subtask = subtask; 
   	}
 
-  	@ProgressProperty(order = 2, label = "Total progress: ")
+  	@ProgressProperty(order = 2, label = "Total progress: ", showProgressBarLabel = true)
   	public float getTotal() { 
   	  return this.total; 
   	}

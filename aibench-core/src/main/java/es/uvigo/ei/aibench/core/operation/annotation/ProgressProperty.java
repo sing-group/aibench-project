@@ -41,10 +41,13 @@ public @interface ProgressProperty {
 	public static final String DEFAULT_LABEL = "";
 	public static final int DEFAULT_ORDER = 0;
 	public static final boolean DEFAULT_IGNORE = false;
+	public static final boolean DFAULT_PROGRESS_BAR_PAINTED = false;
 
 	String label() default DEFAULT_LABEL;
 
 	int order() default DEFAULT_ORDER;
 
 	boolean ignore() default DEFAULT_IGNORE;
+
+	boolean showProgressBarLabel() default DFAULT_PROGRESS_BAR_PAINTED;
 }
