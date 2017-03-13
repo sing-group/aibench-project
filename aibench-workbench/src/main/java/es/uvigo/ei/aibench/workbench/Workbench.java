@@ -707,7 +707,7 @@ public class Workbench implements IGenericGUI, ClipboardListener {
 		
 		return callback.clipboardItems;
 	}
-	
+
 	/**
 	 * Executes an operation. Requests the core to execute an operation, and monitors its progress. 
 	 * It also monitorizes the operation progress.
@@ -718,7 +718,7 @@ public class Workbench implements IGenericGUI, ClipboardListener {
 	public void executeOperation(final OperationDefinition<?> operation, ParamSpec[] params) {
 		this.executeOperation(operation, null, params);
 	}
-	
+
 	/**
 	 * @param uid the operation identifier.
 	 * @param userHandler a progress handler.
@@ -727,6 +727,7 @@ public class Workbench implements IGenericGUI, ClipboardListener {
 	public void executeOperation(String uid, ProgressHandler userHandler, List<?> parameters) {
 		executeOperation(Core.getInstance().getOperationById(uid), userHandler, CoreUtils.createParams(parameters));
 	}
+
 	/**
 	 * Executes an operation. Requests the core to execute an operation, and monitors its progress. 
 	 * It also monitorizes the operation progress.
@@ -827,6 +828,18 @@ public class Workbench implements IGenericGUI, ClipboardListener {
 		MyProgressHandler handler = new MyProgressHandler();
 		Core.getInstance().executeOperation(operation,  handler, params);
 	}
+
+	/**
+	 * Executes an operation. First retrieves the params from the user and then requests the core to execute it
+	 * It also monitorizes the operation progress.
+	 * 
+	 * @param uid the operation to be executed. 
+	 */
+	public void executeOperation(String uid) {
+		this.executeOperation(Core.getInstance().getOperationById(uid), (ProgressHandler) null);
+
+	}
+
 	/**
 	 * Executes an operation. First retrieves the params from the user and then requests the core to execute it
 	 * It also monitorizes the operation progress.
@@ -834,9 +847,10 @@ public class Workbench implements IGenericGUI, ClipboardListener {
 	 * @param operation the operation to be executed. 
 	 */
 	public void executeOperation(final OperationDefinition<?> operation) {
-		this.executeOperation(operation, (ProgressHandler)null);
-		
+		this.executeOperation(operation, (ProgressHandler) null);
+
 	}
+
 	/**
 	 * Executes an operation. First retrieves the params from the user and then requests the core to execute it
 	 * It also monitorizes the operation progress.
