@@ -45,6 +45,7 @@ import es.uvigo.ei.aibench.core.operation.annotation.Port;
 import es.uvigo.ei.aibench.workbench.ParamsReceiver;
 import es.uvigo.ei.aibench.workbench.Workbench;
 import es.uvigo.ei.aibench.workbench.utilities.FileDrop;
+import es.uvigo.ei.aibench.workbench.utilities.PortExtras;
 
 public class FileParamProvider extends AbstractParamProvider {
 	private final static Logger LOG = Logger.getLogger(FileParamProvider.class);
@@ -120,86 +121,94 @@ public class FileParamProvider extends AbstractParamProvider {
 			return this.description;
 		}
 	}
-	
+
 	private static class FileChooserConfiguration {
+		public static final String FILE_FILTERS_DELIMITER = ";";
+		public static final String FILE_FILTERS_ASSIGNMENT = ":";
+
 		private final List<ExtensionFileFilter> filters;
 		private int selectionMode;
 		private boolean allowAll;
-		
+
 		public static void configure(String configuration, JFileChooser fc) {
 			new FileChooserConfiguration(configuration).configureFileChooser(fc);
 		}
-		
+
 		public FileChooserConfiguration(String configuration) {
 			this.filters = new ArrayList<>();
 			this.selectionMode = JFileChooser.FILES_AND_DIRECTORIES;
 			this.allowAll = true;
 
-			if (configuration != null && !configuration.trim().isEmpty()) {
-				final String[] props = configuration.split(",");
-				
-				for (String prop : props) {
-					final String[] propValue = prop.split("=");
-					
-					if (propValue.length == 2) {
-						final String property = propValue[0].trim();
-						final String value = propValue[1].trim();
-	
-						if (FILTERS_EXTRAS_PROPERTY.equalsIgnoreCase(property)) {
-							this.allowAll = false;
-	
-							final String[] filters = value.split(";");
-							for (String filter : filters) {
-								final String[] nameExpAndDesc = filter.split(":");
-								
-								if (nameExpAndDesc.length == 2) {
-									final String nameExtension = nameExpAndDesc[0].trim();
-									final String description = nameExpAndDesc[1].trim();
-	
-									this.filters.add(new ExtensionFileFilter(nameExtension, description));
-								} else if (nameExpAndDesc.length == 1) {
-									final String nameExtension = nameExpAndDesc[0].trim();
-									
-									if (FILTERS_EXTRAS_ALLOWALL_FILTER.equalsIgnoreCase(nameExtension)) {
-										this.allowAll = true;
-									} else {
-										LOG.warn("unable to parse a filter in extras: " + filter);
-									}
-								}
-							}
-						} else if (FILTERS_EXTRAS_SELECTION_MODE.equalsIgnoreCase(property)) {
-							if (SELECTION_MODE_FILES.equalsIgnoreCase(value)) {
-								this.selectionMode = JFileChooser.FILES_ONLY;
-							} else if (SELECTION_MODE_DIRECTORIES.equalsIgnoreCase(value)) {
-								this.selectionMode = JFileChooser.DIRECTORIES_ONLY;
-							} else if (SELECTION_MODE_FILES_AND_DIRECTORIES.equalsIgnoreCase(value)) {
-								this.selectionMode = JFileChooser.FILES_AND_DIRECTORIES;
-							} else {
-								LOG.warn("unknown value for " + FILTERS_EXTRAS_ALLOWALL_FILTER + " filter: " + value);
-	
-								this.selectionMode = JFileChooser.FILES_AND_DIRECTORIES;
-							}
-						} else {
-							LOG.warn("unknown filter: " + property);
-						}
-					} else {
-						LOG.warn("unable to parse a property in extras: " + prop);
-					}
+			parseConfiguration(configuration);
+		}
+
+		private void parseConfiguration(String configuration) {
+			PortExtras extras = PortExtras.parse(configuration);
+			for (String extraProperty : extras.getProperties()) {
+				final String property = extraProperty;
+				final String value = extras.getPropertyValue(extraProperty);
+
+				if (FILTERS_EXTRAS_PROPERTY.equalsIgnoreCase(property)) {
+					parseFilters(value);
+				} else if (FILTERS_EXTRAS_SELECTION_MODE.equalsIgnoreCase(property)) {
+					parseSelectionMode(value);
+				} else {
+					LOG.warn("Unknown extra property: " + property);
 				}
 			}
 		}
-		
+
+		private void parseFilters(String value) {
+			this.allowAll = false;
+
+			final String[] filters = value.split(FILE_FILTERS_DELIMITER);
+			for (String filter : filters) {
+				final String[] nameExpAndDesc = filter.trim().split(FILE_FILTERS_ASSIGNMENT);
+
+				if (nameExpAndDesc.length == 2) {
+					final String nameExtension = nameExpAndDesc[0].trim();
+					final String description = nameExpAndDesc[1].trim();
+
+					this.filters.add(new ExtensionFileFilter(nameExtension, description));
+				} else if (nameExpAndDesc.length == 1) {
+					final String nameExtension = nameExpAndDesc[0].trim();
+
+					if (FILTERS_EXTRAS_ALLOWALL_FILTER.equalsIgnoreCase(nameExtension)) {
+						this.allowAll = true;
+					} else {
+						LOG.warn("Unable to parse a filter in extras: " + filter);
+					}
+				} else {
+					LOG.warn("Unable to parse a filter in extras: " + filter);
+				}
+			}
+		}
+
+		private void parseSelectionMode(String value) {
+			if (SELECTION_MODE_FILES.equalsIgnoreCase(value)) {
+				this.selectionMode = JFileChooser.FILES_ONLY;
+			} else if (SELECTION_MODE_DIRECTORIES.equalsIgnoreCase(value)) {
+				this.selectionMode = JFileChooser.DIRECTORIES_ONLY;
+			} else if (SELECTION_MODE_FILES_AND_DIRECTORIES.equalsIgnoreCase(value)) {
+				this.selectionMode = JFileChooser.FILES_AND_DIRECTORIES;
+			} else {
+				LOG.warn("Unknown value for " + FILTERS_EXTRAS_SELECTION_MODE + " filter: " + value);
+
+				this.selectionMode = JFileChooser.FILES_AND_DIRECTORIES;
+			}
+		}
 		public void configureFileChooser(JFileChooser fc) {
 			final File selectedFile = fc.getSelectedFile();
 			fc.setSelectedFile(null);
 			
-			fc.setAcceptAllFileFilterUsed(this.allowAll);
+			fc.setAcceptAllFileFilterUsed(false);
 			fc.setFileSelectionMode(this.selectionMode);
 
 			fc.resetChoosableFileFilters();
 			for (ExtensionFileFilter filter : this.filters) {
 				fc.addChoosableFileFilter(filter);
 			}
+			fc.setAcceptAllFileFilterUsed(this.allowAll);
 
 			// Solves a bug on the JFileChooser that makes the dialog to lose
 			// the selected file when the file selection mode is changed,
