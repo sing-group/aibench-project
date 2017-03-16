@@ -239,7 +239,7 @@ attributes of this annotation are showed in the following table.
 Additional parameters can be passed here. Parameters are delimited by ``,`` and 
 values are assigned with ``parameter=value``.
 
-Ports of type ``File`` can use the following two parameters to configure the file 
+Ports of type ``File`` can use the following three parameters to configure the file 
 chooser showed to the user:
 
 - ``selectionMode``: which can be ``files``, ``directories`` or ``filesAndDirectories``.
@@ -249,10 +249,16 @@ chooser showed to the user:
   filter ``.*\\.csv|: Comma-separated values (CSV) files`` allows only selection of 
   files with csv extension. Note that adding one filter disables the "All files" 
   selection filter and it must be explicitly added.
+  
+- ``caseSensitiveFilters``:  which can be ``true`` or ``false`` and indicates whether 
+  regular expressions in ``filters`` should be evaluated as case sensitive (``true``, 
+  the default behaviour) or not (``false``).
 
 For example, the following example shows the creation of an ``extras`` string to 
 configure a file chooser that only accepts files and has three filters: one for 
-CSV files, one for plain text files and the "All files" filter.
+CSV files, one for plain text files and the "All files" filter. Moreover, file filters
+are evaluated as case insensitive (e.g.: the CSV files filter would show files ending
+with both .csv and .CSV).
 
 .. code-block:: java
   
@@ -264,7 +270,8 @@ CSV files, one for plain text files and the "All files" filter.
                "filters=" +
                   ".*\\.csv|:Comma-separated values (CSV) files; " +
                   ".*\\.txt|:Plain text files;" +
-                  "allowAll"
+                  "allowAll," +
+                "caseSensitiveFilters=false"
    )
    public void setFile(File f) {
       this.file = f;

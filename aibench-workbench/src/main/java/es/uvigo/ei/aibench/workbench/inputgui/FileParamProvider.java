@@ -52,9 +52,11 @@ public class FileParamProvider extends AbstractParamProvider {
 	
 	private final JTextField field = new JTextField();
 	private final JButton findButton = new JButton(Common.ICON_FILE_OPEN);
-	
+
 	private final FileChooserConfiguration fcConfiguration;
-	
+
+	public static final boolean DEFAULT_CASE_SENSITIVE = true;
+	public static final String CASE_SENSITIVE_FILTERS_EXTRAS_PROPERTY = "caseSensitiveFilters";
 	public static final String FILTERS_EXTRAS_PROPERTY = "filters";
 	public static final String FILTERS_EXTRAS_ALLOWALL_FILTER= "allowAll";
 	public static final String FILTERS_EXTRAS_SELECTION_MODE = "selectionMode";
@@ -101,21 +103,27 @@ public class FileParamProvider extends AbstractParamProvider {
 			setSelectedFile(Common.SINGLE_FILE_CHOOSER.getSelectedFile());
 		}
 	}
-	
+
 	private static class ExtensionFileFilter extends FileFilter {
 		private final String nameregexp;
 		private final String description;
+		private boolean caseSensitive;
 
-		public ExtensionFileFilter(String nameregexp, String desc) {
+		public ExtensionFileFilter(String nameregexp, String desc, boolean caseSensitive) {
 			this.nameregexp = nameregexp;
 			this.description = desc;
+			this.caseSensitive = caseSensitive;
 		}
 
 		@Override
 		public boolean accept(File pathname) {
-			return (pathname.isDirectory() || pathname.getName().matches(this.nameregexp));
+			return (pathname.isDirectory() || pathname.getName().matches(getRegex()));
 		}
-		
+
+		private String getRegex() {
+			return caseSensitive == true ? nameregexp : ("(?i)" + nameregexp);
+		}
+
 		@Override
 		public String getDescription() {
 			return this.description;
@@ -144,21 +152,48 @@ public class FileParamProvider extends AbstractParamProvider {
 
 		private void parseConfiguration(String configuration) {
 			PortExtras extras = PortExtras.parse(configuration);
-			for (String extraProperty : extras.getProperties()) {
-				final String property = extraProperty;
-				final String value = extras.getPropertyValue(extraProperty);
 
-				if (FILTERS_EXTRAS_PROPERTY.equalsIgnoreCase(property)) {
-					parseFilters(value);
-				} else if (FILTERS_EXTRAS_SELECTION_MODE.equalsIgnoreCase(property)) {
-					parseSelectionMode(value);
-				} else {
-					LOG.warn("Unknown extra property: " + property);
+			boolean caseSensitive = DEFAULT_CASE_SENSITIVE;
+			if (extras.containsProperty(CASE_SENSITIVE_FILTERS_EXTRAS_PROPERTY)) {
+				caseSensitive = parseCaseSensitiveFilter(
+					extras.getPropertyValue(CASE_SENSITIVE_FILTERS_EXTRAS_PROPERTY)
+				);
+			}
+
+			if (extras.containsProperty(FILTERS_EXTRAS_PROPERTY)) {
+				parseFilters(extras.getPropertyValue(FILTERS_EXTRAS_PROPERTY), caseSensitive);
+			}
+
+			if (extras.containsProperty(FILTERS_EXTRAS_SELECTION_MODE)) {
+				parseSelectionMode(extras.getPropertyValue(FILTERS_EXTRAS_SELECTION_MODE));
+			}
+
+			warnUnknownExtraProperties(extras);
+		}
+
+		private boolean parseCaseSensitiveFilter(String caseSensitiveValue) {
+			if (caseSensitiveValue.equalsIgnoreCase("false")) {
+				return false;
+			} else if (caseSensitiveValue.equalsIgnoreCase("true")) {
+				return true;
+			} else {
+				LOG.warn("Invalid value for property: " + CASE_SENSITIVE_FILTERS_EXTRAS_PROPERTY);
+			}
+			return DEFAULT_CASE_SENSITIVE;
+		}
+
+		private void warnUnknownExtraProperties(PortExtras extras) {
+			for (String property : extras.getProperties()) {
+				if (!property.equalsIgnoreCase(CASE_SENSITIVE_FILTERS_EXTRAS_PROPERTY)
+						&& !property.equalsIgnoreCase(FILTERS_EXTRAS_PROPERTY)
+						&& !property.equalsIgnoreCase(FILTERS_EXTRAS_SELECTION_MODE)
+				) {
+					LOG.warn("Uknown extra property: " + property);
 				}
 			}
 		}
 
-		private void parseFilters(String value) {
+		private void parseFilters(String value, boolean caseSensitive) {
 			this.allowAll = false;
 
 			final String[] filters = value.split(FILE_FILTERS_DELIMITER);
@@ -169,7 +204,7 @@ public class FileParamProvider extends AbstractParamProvider {
 					final String nameExtension = nameExpAndDesc[0].trim();
 					final String description = nameExpAndDesc[1].trim();
 
-					this.filters.add(new ExtensionFileFilter(nameExtension, description));
+					this.filters.add(new ExtensionFileFilter(nameExtension, description, caseSensitive));
 				} else if (nameExpAndDesc.length == 1) {
 					final String nameExtension = nameExpAndDesc[0].trim();
 

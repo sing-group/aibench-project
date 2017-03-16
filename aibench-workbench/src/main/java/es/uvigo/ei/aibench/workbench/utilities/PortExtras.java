@@ -79,4 +79,36 @@ public class PortExtras {
 	public String getPropertyValue(String property) {
 		return extras.get(property);
 	}
+
+	/**
+	 * Returns {@code true} if the specified {@code property} is present ignoring the case.
+	 * 
+	 * @param property the name of the property.
+	 * @return {@code true} if the specified {@code property} is present ignoring the case.
+	 */
+	public boolean containsProperty(String property) {
+		return containsProperty(property, true); 
+	}
+
+	/**
+	 * Returns {@code true} if the specified {@code property} is present. The
+	 * {@code ignoreCase} parameter allows specifying when case should be
+	 * ignored or not.
+	 * 
+	 * @param property the name of the property.
+	 * @param ignoreCase {@code true} if case should be ignored and {@code false} otherwise.
+	 * @return {@code true} if the specified {@code property} is present.
+	 */
+	public boolean containsProperty(String property, boolean ignoreCase) {
+		return ignoreCase ? containsPropertyIgnoreCase(property) : this.extras.containsKey(property); 
+	}
+
+	private boolean containsPropertyIgnoreCase(String property) {
+		for (String p : getProperties()) {
+			if (p.equalsIgnoreCase(property)) {
+				return true;
+			}
+		}
+		return false;
+	}
 }
