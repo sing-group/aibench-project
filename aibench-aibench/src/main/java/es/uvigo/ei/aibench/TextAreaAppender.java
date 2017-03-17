@@ -42,6 +42,12 @@ import org.apache.log4j.AppenderSkeleton;
 import org.apache.log4j.Level;
 import org.apache.log4j.spi.LoggingEvent;
 
+/**
+ * A Log4J appender that displays messages on a GUI component including a text area
+ *
+ * @author Rubén Domínguez Carbajales
+ * @author Daniel Glez-Peña
+ */
 public class TextAreaAppender extends AppenderSkeleton {
     private static final Font 	DEBUGFont = new Font("monospaced", Font.BOLD, 12);
     private static final Color 	DEBUGColor = Color.BLUE;
@@ -66,6 +72,7 @@ public class TextAreaAppender extends AppenderSkeleton {
     
     /**
      * Gives you the GUI component in which the log messages appear.
+	 *
      * @return The GUI component.
      */
 	public static JComponent getGUIComponent() {
@@ -94,6 +101,11 @@ public class TextAreaAppender extends AppenderSkeleton {
         return true;
     }
 
+	/**
+	 * Appends a Log4J message into the GUI component
+	 *
+	 * @param arg0 The logging event to process
+	 */
 	protected void append(LoggingEvent arg0) {
 		JTextPane pane = (JTextPane) _textArea.jTextPane;
 
@@ -156,9 +168,6 @@ public class TextAreaAppender extends AppenderSkeleton {
         }
     }
 
-    /**
-	 * @author   Rub�n Dom�nguez Carbajales 13-feb-2006 - 2006
-	 */
     private static class LogTextArea extends JPanel {
     	private static final long serialVersionUID = 1L;
     	

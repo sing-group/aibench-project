@@ -24,6 +24,8 @@ package es.uvigo.ei.aibench;
 import java.io.File;
 
 /**
+ * A singleton class to access AIBench main paths.
+ *
  * @author Miguel Reboiro Jato
  *
  */
@@ -35,7 +37,12 @@ public class Paths {
 			Paths.instance = new Paths();
 		}
 	}
-	
+
+	/**
+	 * Gets the instance of the singleton
+	 *
+	 * @return The unique instance
+	 */
 	public static Paths getInstance() {
 		if (Paths.instance == null) {
 			Paths.createInstance();
@@ -59,13 +66,19 @@ public class Paths {
 	private String pluginsConfigurationPath;
 	
 	private Paths() {}
-	
+
+	/**
+	 * Gets the aibench basic runtime configuration file path
+	 *
+	 * @return The aibench basic runtime configuration file path
+	 */
 	public String getAibenchConfigurationPath() {
 		if (this.aibenchConfigurationPath == null) {
 			this.createAibenchConfPath();
 		}
 		return this.aibenchConfigurationPath;
 	}
+
 
 	private synchronized void createAibenchConfPath() {
 		if (this.aibenchConfigurationPath == null) {
@@ -77,7 +90,8 @@ public class Paths {
 	}
 
 	/**
-	 * @return the log4jConfigurationPath
+	 * Gets the Log4J configuration file path
+	 * @return The Log4J configuration file path
 	 */
 	public String getLog4jConfigurationPath() {
 		if (this.log4jConfigurationPath == null) {
@@ -86,9 +100,6 @@ public class Paths {
 		return this.log4jConfigurationPath;
 	}
 
-	/**
-	 * 
-	 */
 	private synchronized void createLog4jConfigurationPath() {
 		if (this.log4jConfigurationPath == null) {
 			this.log4jConfigurationPath = System.getProperty(
@@ -99,7 +110,9 @@ public class Paths {
 	}
 
 	/**
-	 * @return the pluginManagerConfigurationPath
+	 * Gets the plugin manager configuration file path
+	 *
+	 * @return The plugin manager configuration file path
 	 */
 	public String getPluginManagerConfigurationPath() {
 		if (this.pluginManagerConfigurationPath == null) {
@@ -108,9 +121,6 @@ public class Paths {
 		return this.pluginManagerConfigurationPath;
 	}
 
-	/**
-	 * 
-	 */
 	private synchronized void createPluginManagerConfigurationPath() {
 		if (this.pluginManagerConfigurationPath == null) {
 			this.pluginManagerConfigurationPath = System.getProperty(
@@ -121,7 +131,8 @@ public class Paths {
 	}
 
 	/**
-	 * @return the pluginsConfigurationPath
+	 * Gets the plugins configuration file path
+	 * @return The plugins configuration file path
 	 */
 	public String getPluginsConfigurationPath() {
 		if (this.pluginsConfigurationPath == null) {
@@ -130,9 +141,6 @@ public class Paths {
 		return this.pluginsConfigurationPath;
 	}
 
-	/**
-	 * 
-	 */
 	private synchronized void createPluginsConfigurationPath() {
 		if (this.pluginsConfigurationPath == null) {
 			this.pluginsConfigurationPath = System.getProperty(

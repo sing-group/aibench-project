@@ -39,6 +39,14 @@ import org.platonos.pluginengine.event.IPluginEngineListener;
 import org.platonos.pluginengine.event.PluginEngineEvent;
 import org.platonos.pluginengine.event.PluginEngineEventType;
 
+/**
+ * The AIBench starting splash frame
+ *
+ * This class shows a loading application splash image, by also showing the plugin loading progress.
+ *
+ * @author Rubén Domínguez Carbajales
+ * @author Daniel Glez-Peña
+ */
 public class SplashFrame extends JFrame implements IPluginEngineListener {
 
 	private static Logger logger = Logger.getLogger(SplashFrame.class);
@@ -53,6 +61,9 @@ public class SplashFrame extends JFrame implements IPluginEngineListener {
 
 	private int current = 0, toStart = 0;
 
+	/**
+	 * Creates the splash frame. Do not shows it. Call {@link #setVisible(boolean) setVisible} to do so.
+	 */
 	public SplashFrame() {
 		super();
 		initialize();
@@ -154,6 +165,12 @@ public class SplashFrame extends JFrame implements IPluginEngineListener {
 		return jContentPane;
 	}
 
+	/**
+	 * Handles plugin engine events, interested in loading events in order to update the progress bar
+	 *
+	 * @param evt The plugin engine event
+	 */
+	@Override
 	public void handlePluginEngineEvent(PluginEngineEvent evt) {
 		if (evt.getEventType().equals(PluginEngineEventType.STARTUP)) {
 

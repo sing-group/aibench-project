@@ -39,16 +39,37 @@ import org.platonos.pluginengine.PluginFileConfiguration;
 import es.uvigo.ei.aibench.repository.PluginInstaller;
 
 /**
- * @author Ruben Dominguez Carbajales 13-feb-2006 - 2006
+ * The main class of AIBench.
+ *
+ * This class launches the Platonos plugin engine.
+ *
+ * @author Ruben Dominguez Carbajales
+ * @author Daniel Glez-Peña
  */
 public class Launcher {
 	private static Logger logger = Logger.getLogger(Launcher.class);
 
+	/**
+	 * Configuration of the aibench basic runtime. By default, the configuration is located in aibench.conf file
+	 */
 	public static Properties CONFIG = new Properties();
 
+	/**
+	 * Plugins base directory. By default, it is "plugins_bin".
+	 */
 	public static String pluginsDir;
+
+
+	/**
+	 * The Platonos plugin engine
+	 */
 	public static PluginEngine pluginEngine;
 
+	/**
+	 * Initializes (if not yet) and gets the plugin engine
+	 *
+	 * @return The plugin engine
+	 */
 	public static PluginEngine getPluginEngine() {
 		if (pluginEngine == null) {
 			IPluginConfiguration configuration = null;
@@ -69,16 +90,26 @@ public class Launcher {
 		return pluginEngine;
 	}
 
+	/**
+	 * Gets objects implementing an extension point of a given plugin
+	 *
+	 * @param pluginID The id of the plugin
+	 * @param extensionPoint The name of the extension point
+	 * @return A list of objects implementing the extension point
+	 */
 	public static List<Object> getExtensionPointInstances(String pluginID,
 			String extensionPoint) {
+
 		Plugin plugin = getPluginEngine().getPlugin(pluginID);
-		List<Object> toret = new ArrayList<Object>();
 		ExtensionPoint extPoint = plugin.getExtensionPoint(extensionPoint);
+
+		List<Object> toret = new ArrayList<>();
 		if (extPoint != null) {
 			for (Extension extension : extPoint.getExtensions()) {
 				toret.add(extension.getExtensionInstance());
 			}
 		}
+
 		return toret;
 	}
 	
@@ -113,6 +144,15 @@ public class Launcher {
 		PropertyConfigurator.configure(url);
 	}
 
+	/**
+	 * Starts AIBench.
+	 *
+	 * This also shows a loading splash screen (see {@link SplashFrame}).
+	 * You can use the system property "aibench.nogui" to remove the splash
+	 * screen.
+	 *
+	 * @param args The directory of plugins. By default, it is "plugins_bin"
+	 */
 	public static void main(String[] args) {
 		readConfig();
 		Launcher.pluginsDir = (args.length >= 1) ? args[0] : "plugins_bin";
@@ -147,9 +187,6 @@ public class Launcher {
 		engine.start();
 	}
 
-	/**
-	 * Reads the config from <AIBench_directory>/conf/aibench.conf
-	 */
 	private static void readConfig() {
 		try {
 			Launcher.CONFIG.load(Util.getGlobalResourceURL(Paths.getInstance().getAibenchConfigurationPath()).openStream());
@@ -157,6 +194,8 @@ public class Launcher {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-
 	}
+
+	// hide constructor
+	private Launcher() { }
 }

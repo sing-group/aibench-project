@@ -27,6 +27,10 @@ import org.platonos.pluginengine.logging.ILogger;
 import org.platonos.pluginengine.logging.LoggerLevel;
 
 /**
+ * A class implementing a logger for the Platonos plugin engine.
+ *
+ * This class shows less messages (only SEVERE and/or WARNING) than the default Platonos logger.
+ *
  * @author Ruben Dominguez Carbajales 11-oct-2005 - 2005
  */
 public class AIBenchLogger implements ILogger {
