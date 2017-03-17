@@ -27,6 +27,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Properties;
 
+import org.apache.log4j.Logger;
 import org.apache.log4j.PropertyConfigurator;
 import org.platonos.pluginengine.Extension;
 import org.platonos.pluginengine.ExtensionPoint;
@@ -41,6 +42,8 @@ import es.uvigo.ei.aibench.repository.PluginInstaller;
  * @author Ruben Dominguez Carbajales 13-feb-2006 - 2006
  */
 public class Launcher {
+	private static Logger logger = Logger.getLogger(Launcher.class);
+
 	public static Properties CONFIG = new Properties();
 
 	public static String pluginsDir;
@@ -127,20 +130,20 @@ public class Launcher {
 
 		if (System.getProperty("aibench.nogui") == null) {
 			engine.addPluginEngineListener(splash);
-		} else {
-			Runtime.getRuntime().addShutdownHook(new Thread() {
-				/**
-				 * Performs the plugin engine shutdown.
-				 */
-				@Override
-				public void run() {
-					Launcher.getPluginEngine().shutdown();
-				}
-			});
 		}
+
+		Runtime.getRuntime().addShutdownHook(new Thread() {
+			@Override
+			public void run() {
+				logger.info("Shutting down plugin engine");
+				Launcher.getPluginEngine().shutdown();
+			}
+		});
+
 
 		engine.setStartPluginThreadCount(1);
 		engine.loadPlugins(Launcher.pluginsDir);
+		logger.info("Plugins loaded");
 		engine.start();
 	}
 
