@@ -34,6 +34,8 @@ import java.util.Map;
 import java.util.SortedMap;
 import java.util.TreeMap;
 
+import org.apache.log4j.Logger;
+
 import es.uvigo.ei.aibench.core.clipboard.ClipboardItem;
 import es.uvigo.ei.aibench.core.operation.annotation.Direction;
 import es.uvigo.ei.aibench.core.operation.annotation.Port;
@@ -43,6 +45,7 @@ import es.uvigo.ei.aibench.core.operation.annotation.Port;
  * 
  */
 public final class CoreUtils {
+	private static final Logger LOGGER = Logger.getLogger(CoreUtils.class.getName());
 	// TODO �abstraer todos los createParams() en uno solo??
 	
 	public final static Comparator<Port> PORT_COMPARATOR = new Comparator<Port>() {
@@ -351,15 +354,17 @@ public final class CoreUtils {
 				String[] browsers = { "firefox", "opera", "konqueror", "epiphany", "mozilla", "netscape" };
 				String browser = null;
 				for (int count = 0; count < browsers.length && browser == null; count++)
-					if (Runtime.getRuntime().exec(new String[] { "which", browsers[count] }).waitFor() == 0)
+					if (Runtime.getRuntime().exec(new String[] { "which", browsers[count] }).waitFor() == 0) {
 						browser = browsers[count];
-				if (browser == null)
+					}
+				if (browser == null) {
 					throw new Exception("Could not find web browser");
-				else
+				} else {
 					Runtime.getRuntime().exec(new String[] { browser, url });
+				}
 			}
 		} catch (Exception e) {
-			Core.logger.warn("The url '" + url +"' could not be opened", e);
+			LOGGER.warn("The url '" + url + "' could not be opened", e);
 			throw e;
 		}
 	}

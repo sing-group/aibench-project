@@ -66,34 +66,28 @@ import es.uvigo.ei.aibench.core.operation.execution.IncomingEndPoint;
 import es.uvigo.ei.aibench.core.operation.execution.SynchronousResultCollector;
 
 /**
- * The AiBench's Core plugins does:
+ * The AIBench's Core plugins does:
  * <ol>
- *  <li> Registers operations</li>
- *  <li> Executes operations</li>
- *  <ol>
- *  
- *   	<li>Retrive user params.</li>
- *   	<li>Executes.</li>
- *   	<li>Collect the results and puts them in the clipboard.</li>
- *   	<li>Keeps a history of all the operations executed.</li>
- *   </ol>
+ * 	<li>Registers operations</li>
+ * 	<li>Executes operations</li>
+ * 	<li>Collect the results and puts them in the clipboard.</li>
+ * 	<li>Keeps a history of all the operations executed.</li>
  * </ol>
+ * 
  * Uses the GUI for:
  * <ol>
- * <li>Retrieve user params.</li>
- * <li>Display operations results.</li>
+ * 	<li>Retrieve user parameters.</li>
+ * 	<li>Display operations results.</li>
  * </ol>
  *
- * @author Ruben Dominguez Carbajales, Daniel Glez-Peña
- */
-/**
+ * @author Ruben Dominguez Carbajales
  * @author Daniel Glez-Peña
- *
+ * @author Hugo López-Fernández
  */
 public class Core {
 	private final static String HELP_HS_PATH = String.format("help%shelpset.hs", File.separator);
 	
-	static Logger logger = Logger.getLogger(Core.class.getName());
+	private static final Logger LOGGER = Logger.getLogger(Core.class.getName());
 
 	/**
 	 * Core configuration
@@ -183,10 +177,10 @@ public class Core {
 			try{
 			poolSize = Integer.parseInt(CONFIG.getProperty("threadpool.size"));
 			}catch(NumberFormatException e){
-				logger.warn("configuration parameter: threadpool.size is not an integer, using default value: "+poolSize);
+				LOGGER.warn("configuration parameter: threadpool.size is not an integer, using default value: "+poolSize);
 			}
 		}
-		if (logger.getEffectiveLevel().equals(Level.DEBUG))logger.debug("Using a pool size of "+poolSize+" threads");
+		if (LOGGER.getEffectiveLevel().equals(Level.DEBUG))LOGGER.debug("Using a pool size of "+poolSize+" threads");
 		this.pool = Executors.newFixedThreadPool(poolSize, new ThreadFactory(){
 			public Thread newThread(Runnable arg0) {
 			Thread t = new Thread(arg0);
@@ -418,7 +412,7 @@ public class Core {
 						//check 
 						Class<?> destinyType = extensionPlugin.getPluginClassLoader().loadClass(node.getAttribute("destinyType"));
 						if (!destinyType.isAssignableFrom(method.getReturnType())){
-							logger.warn("Cant create transformer");
+							LOGGER.warn("Cant create transformer");
 						}
 						
 						Transformer transformer = new Transformer(method);
@@ -448,7 +442,7 @@ public class Core {
 					}
 				}
 			}catch(Exception e){
-				logger.warn("Cant create transformed defined in plugin "+extensionPlugin+": "+e);
+				LOGGER.warn("Cant create transformed defined in plugin "+extensionPlugin+": "+e);
 			}
 		
 		}
@@ -567,10 +561,10 @@ public class Core {
 				URL hsURL = new File(path).toURI().toURL();//HelpSet.findHelpSet(cl, path);
 				this.helpBroker = new DefaultHelpBroker(new HelpSet(null, hsURL));
 				
-				Core.logger.info("HelpSet " + path + " configured");
+				Core.LOGGER.info("HelpSet " + path + " configured");
 			} catch (Exception ee) {
 				// Say what the exception really is
-				Core.logger.error("HelpSet " + path + " not found", ee);
+				Core.LOGGER.error("HelpSet " + path + " not found", ee);
 				this.helpBroker = null;
 			}
 		}
@@ -604,11 +598,12 @@ public class Core {
 	 */
 	private void validate(OperationDefinition<?> operationDefinition, Object operationObject, ParamSpec[] specs) throws Throwable{
 		ArrayList<Port> incomingPorts = new ArrayList<Port>();
-		for (Port p: operationDefinition.getPorts()){
-			if (p.direction()!=Direction.OUTPUT){
+		for (Port p : operationDefinition.getPorts()) {
+			if (p.direction() != Direction.OUTPUT) {
 				incomingPorts.add(p);
 			}
 		}
+
 		int i = 0;
 		for (Port p : incomingPorts){
 
@@ -618,34 +613,46 @@ public class Core {
 				if (spec.getType().isPrimitive() && spec.getValue().toString().equals("")){
 					throw new IllegalArgumentException(spec.getName()+": Primitive params can't be null");
 				}
-				
-				// validating method
-				try {
-					Method validateMethod = operationObject.getClass().getMethod(p.validateMethod(), new Class[]{spec.getType()});
-					try{
+
+				Method validateMethod = findValidateMethod(operationObject, p, spec.getType());
+
+				if (validateMethod != null) {
+					try {
 						validateMethod.invoke(operationObject, spec.getRawValue());
-					}catch(InvocationTargetException e){
-						//the validate method doesn't validate the input
+					} catch (InvocationTargetException e) {
+						/**
+						 * The validate method doesn't validate the input
+						 */
 						throw e.getCause();
-					} catch (IllegalArgumentException e) {
-						// TODO Auto-generated catch block
-						e.printStackTrace();
-					} catch (IllegalAccessException e) {
-						// TODO Auto-generated catch block
-						e.printStackTrace();
+					} catch (IllegalAccessException | IllegalArgumentException e) {
+						LOGGER.error("Error calling validate method", e);
 					}
-
-
-				} catch (SecurityException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				} catch (NoSuchMethodException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
 				}
 			}
 			i++;
 		}
+	}
+
+	private Method findValidateMethod(Object operationObject, Port p, Class<?> specType) {
+		try {
+			for (Method m : operationObject.getClass().getMethods()) {
+				if (m.getName().equals(p.validateMethod())) {
+					if (m.getParameterTypes().length == 1) {
+						if (m.getParameterTypes()[0].isAssignableFrom(specType)) {
+							return m;
+						} else {
+							LOGGER.warn("Validate method must accept the same parameter type than the corresponding port method");
+						}
+					} else {
+						LOGGER.warn("Validate method must have one argument");
+					}
+				}
+			} 
+		} catch (SecurityException e) {
+			LOGGER.warn("Security exception retrieving operation methods");
+		}
+
+		return null;
 	}
 	
 	class OperationKey{
@@ -700,9 +707,9 @@ public class Core {
 					//final ParamSpec[] specs = getGUI().collectUserParams(operation, operationInstance);
 					if (specs == null) return ; // the user cancelled the operation
 
-					if (logger.getEffectiveLevel().equals(Level.DEBUG)){
+					if (LOGGER.getEffectiveLevel().equals(Level.DEBUG)){
 						for (ParamSpec spec : specs){
-							logger.debug(spec);
+							LOGGER.debug(spec);
 						}
 					}
 					
@@ -800,17 +807,17 @@ public class Core {
 							for (ClipboardItemNeed need : allNeeded ){
 								if (need.type=='r'){
 									Lock lk = need.item.getLock().readLock();
-									if (logger.getEffectiveLevel().equals(Level.DEBUG))logger.debug("Thread "+Thread.currentThread()+" trying to get READ lock "+lk+" item "+need.item);
+									if (LOGGER.getEffectiveLevel().equals(Level.DEBUG))LOGGER.debug("Thread "+Thread.currentThread()+" trying to get READ lock "+lk+" item "+need.item);
 									
 									lk.lock();
 									aquiredLocks.add(lk);
-									if (logger.getEffectiveLevel().equals(Level.DEBUG))logger.debug("Thread "+Thread.currentThread()+" aquired READ lock "+lk+" item "+need.item);
+									if (LOGGER.getEffectiveLevel().equals(Level.DEBUG))LOGGER.debug("Thread "+Thread.currentThread()+" aquired READ lock "+lk+" item "+need.item);
 								}else{
 									Lock lk = need.item.getLock().writeLock();
-									if (logger.getEffectiveLevel().equals(Level.DEBUG))logger.debug("Thread "+Thread.currentThread()+" trying to get WRITE lock "+lk+" item "+need.item);
+									if (LOGGER.getEffectiveLevel().equals(Level.DEBUG))LOGGER.debug("Thread "+Thread.currentThread()+" trying to get WRITE lock "+lk+" item "+need.item);
 									lk.lock();
 									aquiredLocks.add(lk);
-									if (logger.getEffectiveLevel().equals(Level.DEBUG))logger.debug("Thread "+Thread.currentThread()+" aquired WRITE lock "+lk+" item "+need.item);
+									if (LOGGER.getEffectiveLevel().equals(Level.DEBUG))LOGGER.debug("Thread "+Thread.currentThread()+" aquired WRITE lock "+lk+" item "+need.item);
 								}
 							}
 							// ALL LOCKS AQUIRED
@@ -827,7 +834,7 @@ public class Core {
 									// 3. Get Results
 									List<Object> portOutputs = new ArrayList<Object>();
 									
-									if (logger.getEffectiveLevel().equals(Level.DEBUG)) logger.debug("Getting outputs and sending them to clipboard");
+									if (LOGGER.getEffectiveLevel().equals(Level.DEBUG)) LOGGER.debug("Getting outputs and sending them to clipboard");
 									for (List<Object> list : results){
 										for (Object elem : list){									
 											portOutputs.add(elem);
@@ -838,7 +845,7 @@ public class Core {
 											clipboardItems.addAll(getClipboard().putItem(elem, null)); //this null could be the port names....
 										}
 									}
-									if (logger.getEffectiveLevel().equals(Level.DEBUG)) logger.debug("Creating a new History item");
+									if (LOGGER.getEffectiveLevel().equals(Level.DEBUG)) LOGGER.debug("Creating a new History item");
 									// Keep history...
 //									if (clipboardItems == null) clipboardItems = new ArrayList<ClipboardItem>();
 									Core.this.getHistory().putHistoryElement(specs, operation, clipboardItems, portOutputs );
@@ -859,7 +866,7 @@ public class Core {
 								
 																
 								for (Lock lk : aquiredLocks){
-									if (logger.getEffectiveLevel().equals(Level.DEBUG))logger.debug("Thread "+Thread.currentThread()+" releasing lock: "+lk);
+									if (LOGGER.getEffectiveLevel().equals(Level.DEBUG))LOGGER.debug("Thread "+Thread.currentThread()+" releasing lock: "+lk);
 									lk.unlock();
 								}
 								
@@ -869,7 +876,7 @@ public class Core {
 								
 								decreaseRunningCount();
 								
-								if (logger.getEffectiveLevel().equals(Level.DEBUG)) logger.debug("Operation finished");	
+								if (LOGGER.getEffectiveLevel().equals(Level.DEBUG)) LOGGER.debug("Operation finished");	
 								
 							}
 
