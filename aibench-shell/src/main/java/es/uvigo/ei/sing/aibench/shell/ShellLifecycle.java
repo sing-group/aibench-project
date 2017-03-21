@@ -61,13 +61,10 @@ public class ShellLifecycle extends PluginLifecycle {
 							new File(System.getProperty("sing.aibench.shell.script")).getAbsolutePath()
 						);
 					} catch (FileNotFoundException e) {
-						// TODO Auto-generated catch block
 						e.printStackTrace();
 					} catch (IOException e) {
-						// TODO Auto-generated catch block
 						e.printStackTrace();
 					} catch (EvalError e) {
-						// TODO Auto-generated catch block
 						e.printStackTrace();
 					}
 				}

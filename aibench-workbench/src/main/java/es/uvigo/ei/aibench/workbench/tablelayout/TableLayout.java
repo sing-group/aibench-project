@@ -101,7 +101,6 @@ public class TableLayout extends JPanel{
 			}
 			init(allFile);
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 	}

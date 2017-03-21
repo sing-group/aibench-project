@@ -312,13 +312,10 @@ public class ShellFrame extends JFrame {
 								try {
 								interpreter.getInterpreter().source(f.getAbsolutePath());
 								} catch (FileNotFoundException e1) {
-									// TODO Auto-generated catch block
 									e1.printStackTrace();
 								} catch (IOException e1) {
-									// TODO Auto-generated catch block
 									e1.printStackTrace();
 								} catch (EvalError e1) {
-									// TODO Auto-generated catch block
 									e1.printStackTrace();
 								}
 							}
@@ -366,7 +363,6 @@ public class ShellFrame extends JFrame {
 							ps.print(getOperationsTextArea().getText());
 							ps.close();
 						} catch (FileNotFoundException e1) {
-							// TODO Auto-generated catch block
 							e1.printStackTrace();
 						}
 

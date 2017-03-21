@@ -191,11 +191,10 @@ public class Launcher {
 		try {
 			Launcher.CONFIG.load(Util.getGlobalResourceURL(Paths.getInstance().getAibenchConfigurationPath()).openStream());
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 	}
 
-	// hide constructor
-	private Launcher() { }
+	private Launcher() {
+	}
 }

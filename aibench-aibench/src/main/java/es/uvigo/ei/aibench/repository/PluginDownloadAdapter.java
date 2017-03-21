@@ -50,7 +50,6 @@ public class PluginDownloadAdapter implements PluginDownloadListener {
 	 * @see es.uvigo.ei.aibench.repository.PluginDownloadListener#downloadInfoError(es.uvigo.ei.aibench.repository.PluginDownloadEvent)
 	 */
 	public void downloadInfoError(PluginDownloadInfoEvent event) {
-		// TODO Auto-generated method stub
 		
 	}
 
@@ -58,7 +57,6 @@ public class PluginDownloadAdapter implements PluginDownloadListener {
 	 * @see es.uvigo.ei.aibench.repository.PluginDownloadListener#downloadInfoFinished(es.uvigo.ei.aibench.repository.PluginDownloadEvent)
 	 */
 	public void downloadInfoFinished(PluginDownloadInfoEvent event) {
-		// TODO Auto-generated method stub
 		
 	}
 
@@ -66,7 +64,6 @@ public class PluginDownloadAdapter implements PluginDownloadListener {
 	 * @see es.uvigo.ei.aibench.repository.PluginDownloadListener#downloadInfoStarted(es.uvigo.ei.aibench.repository.PluginDownloadEvent)
 	 */
 	public void downloadInfoStarted(PluginDownloadInfoEvent event) {
-		// TODO Auto-generated method stub
 		
 	}
 }

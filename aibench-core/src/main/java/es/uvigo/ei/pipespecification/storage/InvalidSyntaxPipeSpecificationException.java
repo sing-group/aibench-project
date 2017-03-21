@@ -42,7 +42,6 @@ public class InvalidSyntaxPipeSpecificationException extends SAXException {
 
 	protected InvalidSyntaxPipeSpecificationException(String message) {
 		super(message);
-		// TODO Auto-generated constructor stub
 	}
 
 }

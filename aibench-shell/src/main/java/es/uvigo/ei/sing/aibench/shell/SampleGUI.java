@@ -33,7 +33,6 @@ public class SampleGUI implements InputGUI{
 
 	private ParamsReceiver rec;
 	public void finish() {
-		// TODO Auto-generated method stub
 		
 	}
 
@@ -44,7 +43,6 @@ public class SampleGUI implements InputGUI{
 	}
 
 	public void onValidationError(Throwable arg0) {
-		// TODO Auto-generated method stub
 		
 	}
 

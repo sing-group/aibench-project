@@ -79,12 +79,10 @@ public class ShellProgressHandler implements ProgressHandler {
 	}
 
 	public void validationError(Throwable arg0) {
-		// TODO Auto-generated method stub
 
 	}
 
 	public void operationStart(Object arg0, Object arg1) {
-		// TODO Auto-generated method stub
 
 	}
 
@@ -96,7 +94,6 @@ public class ShellProgressHandler implements ProgressHandler {
 				wait();
 				if (logger.getEffectiveLevel().equals(Level.DEBUG))logger.debug(callerName +" ("+Thread.currentThread()+") waked up ("+this+")");
 			} catch (InterruptedException e) {
-				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
 	}
@@ -144,7 +141,6 @@ public class ShellProgressHandler implements ProgressHandler {
 	}
 
 	public void elementAdded(ClipboardItem arg0) {
-		// TODO Auto-generated method stub
 
 	}
 

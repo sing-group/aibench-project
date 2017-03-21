@@ -115,7 +115,6 @@ public class AIBenchJTreeManager implements HistoryListener, ClipboardListener, 
 
 			this.addCellEditorListener(new CellEditorListener() {
 				public void editingCanceled(ChangeEvent e) {
-					// TODO Auto-generated method stub
 
 				}
 
@@ -140,7 +139,6 @@ public class AIBenchJTreeManager implements HistoryListener, ClipboardListener, 
 									m.invoke(item.getUserData(), MyTreeCellEditor.this.getCellEditorValue().toString());
 
 								} catch (SecurityException f) {
-									// TODO Auto-generated catch block
 									f.printStackTrace();
 								} catch (NoSuchMethodException f) {
 									logger.error("Couldn't find the set name method in the Complex item "
@@ -149,13 +147,10 @@ public class AIBenchJTreeManager implements HistoryListener, ClipboardListener, 
 										+ datatypeAnnot.setNameMethod()
 									);
 								} catch (IllegalArgumentException f) {
-									// TODO Auto-generated catch block
 									f.printStackTrace();
 								} catch (IllegalAccessException f) {
-									// TODO Auto-generated catch block
 									f.printStackTrace();
 								} catch (InvocationTargetException f) {
-									// TODO Auto-generated catch block
 									f.printStackTrace();
 								}
 							}
@@ -585,10 +580,8 @@ public class AIBenchJTreeManager implements HistoryListener, ClipboardListener, 
 				try {
 					SwingUtilities.invokeAndWait(runnable);
 				} catch (InterruptedException e) {
-					// TODO Auto-generated catch block
 					e.printStackTrace();
 				} catch (InvocationTargetException e) {
-					// TODO Auto-generated catch block
 					e.printStackTrace();
 				}
 				}else{
@@ -636,13 +629,10 @@ public class AIBenchJTreeManager implements HistoryListener, ClipboardListener, 
 									+ m.invoke(clipItem.getUserData(), (Object[]) null);
 								}
 							} catch (IllegalArgumentException e) {
-								// TODO Auto-generated catch block
 								e.printStackTrace();
 							} catch (IllegalAccessException e) {
-								// TODO Auto-generated catch block
 								e.printStackTrace();
 							} catch (InvocationTargetException e) {
-								// TODO Auto-generated catch block
 								e.printStackTrace();
 							}
 							return "";
@@ -657,13 +647,10 @@ public class AIBenchJTreeManager implements HistoryListener, ClipboardListener, 
 								+ m.invoke(clipItem.getUserData(), (Object[]) null)), 
 								toret.getChildCount());
 					} catch (IllegalArgumentException e) {
-						// TODO Auto-generated catch block
 						e.printStackTrace();
 					} catch (IllegalAccessException e) {
-						// TODO Auto-generated catch block
 						e.printStackTrace();
 					} catch (InvocationTargetException e) {
-						// TODO Auto-generated catch block
 						e.printStackTrace();
 					}
 				}
@@ -704,13 +691,10 @@ public class AIBenchJTreeManager implements HistoryListener, ClipboardListener, 
 												(Object[]) null);
 							}
 						} catch (IllegalArgumentException e) {
-							// TODO Auto-generated catch block
 							e.printStackTrace();
 						} catch (IllegalAccessException e) {
-							// TODO Auto-generated catch block
 							e.printStackTrace();
 						} catch (InvocationTargetException e) {
-							// TODO Auto-generated catch block
 							e.printStackTrace();
 						}
 						return "";
@@ -727,13 +711,10 @@ public class AIBenchJTreeManager implements HistoryListener, ClipboardListener, 
 										(Object[]) null)), toret
 								.getChildCount());
 					} catch (IllegalArgumentException e) {
-						// TODO Auto-generated catch block
 						e.printStackTrace();
 					} catch (IllegalAccessException e) {
-						// TODO Auto-generated catch block
 						e.printStackTrace();
 					} catch (InvocationTargetException e) {
-						// TODO Auto-generated catch block
 						e.printStackTrace();
 					}
 				}
@@ -923,7 +904,6 @@ public class AIBenchJTreeManager implements HistoryListener, ClipboardListener, 
 	 *      java.io.File)
 	 */
 	public void elementLoaded(File f) {
-		// TODO Auto-generated method stub
 
 	}
 

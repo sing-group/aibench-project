@@ -58,13 +58,11 @@ public class AIBenchInterpreter {
 				}
 			}
 		} catch (InterruptedException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 		try {
 			this.interpreter.eval("server(" + port + ");");
 		} catch (EvalError e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 	}
@@ -98,7 +96,6 @@ public class AIBenchInterpreter {
 							try {
 								interpreter.eval("server(" + port + ");");
 							} catch (EvalError e) {
-								// TODO Auto-generated catch block
 								e.printStackTrace();
 							}
 						}
@@ -111,8 +108,6 @@ public class AIBenchInterpreter {
 					try {
 						weak.join();
 					} catch (InterruptedException e) {
-						// TODO Auto-generated
-						// catch block
 						e.printStackTrace();
 					}
 				}
@@ -131,7 +126,6 @@ public class AIBenchInterpreter {
 				}
 			}
 		} catch (InterruptedException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 		// Capture the application log

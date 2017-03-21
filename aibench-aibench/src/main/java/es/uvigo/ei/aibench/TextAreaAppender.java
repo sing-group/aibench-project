@@ -90,14 +90,12 @@ public class TextAreaAppender extends AppenderSkeleton {
      * @see org.apache.log4j.Appender#close()
      */
     public void close() {
-        // TODO Auto-generated method stub
     }
 
     /* (non-Javadoc)
      * @see org.apache.log4j.Appender#requiresLayout()
      */
     public boolean requiresLayout() {
-        // TODO Auto-generated method stub
         return true;
     }
 

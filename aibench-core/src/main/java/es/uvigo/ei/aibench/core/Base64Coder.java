@@ -178,7 +178,6 @@ public static String encodeSerializableObject(Serializable object){
 		
 		return new String(encode(bytes));
 	} catch (IOException e) {
-		// TODO Auto-generated catch block
 		e.printStackTrace();
 	}
 	return null;

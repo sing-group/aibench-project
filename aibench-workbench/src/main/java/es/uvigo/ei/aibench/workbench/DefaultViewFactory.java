@@ -223,10 +223,8 @@ public class DefaultViewFactory extends AbstractViewFactory implements Observer 
 				}
 			}
 		} catch (IntrospectionException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		} catch (IllegalArgumentException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 	}

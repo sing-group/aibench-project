@@ -67,7 +67,6 @@ class CompositedExecutionSession implements ExecutionSession {
 	 * @see es.uvigo.ei.aibench.core.operation.execution.ExecutionSession#cancel()
 	 */
 	public void cancel() {
-		// TODO Auto-generated method stub
 
 	}
 

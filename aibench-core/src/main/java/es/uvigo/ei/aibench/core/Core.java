@@ -889,19 +889,16 @@ public class Core {
 
 
 					} catch (IllegalArgumentException e) {
-						// TODO Auto-generated catch block
 						e.printStackTrace();
 						if (t!=null) t.interrupt();
 
 						if(handler!=null) handler.operationFinished(null,null);
 					} catch (IllegalAccessException e) {
-						// TODO Auto-generated catch block
 						e.printStackTrace();
 //						if (t!=null) t.interrupt();
 
 						if(handler!=null) handler.operationFinished(null,null);
 					} catch (InvocationTargetException e) {
-						// TODO Auto-generated catch block
 						e.printStackTrace();
 //						if (t!=null) t.interrupt();
 
@@ -925,17 +922,14 @@ public class Core {
 					if (Core.this.gui != null)
 						Core.this.gui.update();
 				} catch (SecurityException e) {
-					// TODO Auto-generated catch block
 					e.printStackTrace();
 					if (t!=null) t.interrupt();
 
 				} catch (InstantiationException e) {
-					// TODO Auto-generated catch block
 					e.printStackTrace();
 //					if (t!=null) t.interrupt();
 
 				} catch (IllegalAccessException e) {
-					// TODO Auto-generated catch block
 					e.printStackTrace();
 //					if (t!=null) t.interrupt();
 
@@ -993,13 +987,10 @@ public class Core {
 				cancel.invoke(_key.operationInstance, (Object[]) null);
 				_key.cancelled = true;
 			} catch (IllegalArgumentException e) {
-				// TODO Auto-generated catch block
 				e.printStackTrace();
 			} catch (IllegalAccessException e) {
-				// TODO Auto-generated catch block
 				e.printStackTrace();
 			} catch (InvocationTargetException e) {
-				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
 		}
@@ -1069,7 +1060,6 @@ public class Core {
 		try {
 			Core.CONFIG.load(url.openStream());
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 	}

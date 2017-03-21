@@ -311,18 +311,14 @@ public class Clipboard {
 										}
 										else ClipboardItemImpl.this.name="null";
 									} catch (SecurityException e) {
-										// TODO Auto-generated catch block
 										e.printStackTrace();
 									} catch (NoSuchMethodException e) {
 										logger.error("Couldn't find the naming method in the Complex item "+ClipboardItemImpl.this.getUserData().getClass()+":  "+datatypeAnnot.namingMethod());
 									} catch (IllegalArgumentException e) {
-										// TODO Auto-generated catch block
 										e.printStackTrace();
 									} catch (IllegalAccessException e) {
-										// TODO Auto-generated catch block
 										e.printStackTrace();
 									} catch (InvocationTargetException e) {
-										// TODO Auto-generated catch block
 										e.printStackTrace();
 									}
 								}
@@ -501,18 +497,14 @@ public class Clipboard {
 						if (nameResult!= null) surname = nameResult.toString();
 						else nameResult="null";
 					} catch (SecurityException e) {
-						// TODO Auto-generated catch block
 						e.printStackTrace();
 					} catch (NoSuchMethodException e) {
 						logger.error("Couldn't find the naming method in the Complex item "+elem.getClass()+":  "+datatypeAnnot.namingMethod());
 					} catch (IllegalArgumentException e) {
-						// TODO Auto-generated catch block
 						e.printStackTrace();
 					} catch (IllegalAccessException e) {
-						// TODO Auto-generated catch block
 						e.printStackTrace();
 					} catch (InvocationTargetException e) {
-						// TODO Auto-generated catch block
 						e.printStackTrace();
 					}
 				}
@@ -571,18 +563,14 @@ public class Clipboard {
 						Method m = elem.getClass().getMethod(datatypeAnnot.setNameMethod(), new Class<?>[]{String.class});
 						m.invoke(elem, finalName); // final name used here as default name for the inner object
 					} catch (SecurityException e) {
-						// TODO Auto-generated catch block
 						e.printStackTrace();
 					} catch (NoSuchMethodException e) {
 						logger.error("Couldn't find the set name method in the Complex item "+elem.getClass()+":  "+datatypeAnnot.setNameMethod());
 					} catch (IllegalArgumentException e) {
-						// TODO Auto-generated catch block
 						e.printStackTrace();
 					} catch (IllegalAccessException e) {
-						// TODO Auto-generated catch block
 						e.printStackTrace();
 					} catch (InvocationTargetException e) {
-						// TODO Auto-generated catch block
 						e.printStackTrace();
 					}
 				}
@@ -634,13 +622,10 @@ public class Clipboard {
 					//end of modifications
 					
 				} catch (IllegalArgumentException e) {
-					// TODO Auto-generated catch block
 					e.printStackTrace();
 				} catch (IllegalAccessException e) {
-					// TODO Auto-generated catch block
 					e.printStackTrace();
 				} catch (InvocationTargetException e) {
-					// TODO Auto-generated catch block
 					e.printStackTrace();
 				}
 			}
@@ -665,13 +650,10 @@ public class Clipboard {
 				itemsOrdered.put(new Integer(item.getID()), new Integer(k));
 				subItems.add(item);
 			} catch (IllegalArgumentException e) {
-				// TODO Auto-generated catch block
 				e.printStackTrace();
 			} catch (IllegalAccessException e) {
-				// TODO Auto-generated catch block
 				e.printStackTrace();
 			} catch (InvocationTargetException e) {
-				// TODO Auto-generated catch block
 				e.printStackTrace();
 			} 
 		}
@@ -705,13 +687,10 @@ public class Clipboard {
 						}
 					}
 				} catch (IllegalArgumentException e) {
-					// TODO Auto-generated catch block
 					e.printStackTrace();
 				} catch (IllegalAccessException e) {
-					// TODO Auto-generated catch block
 					e.printStackTrace();
 				} catch (InvocationTargetException e) {
-					// TODO Auto-generated catch block
 					e.printStackTrace();
 				}
 			}
@@ -849,13 +828,10 @@ public class Clipboard {
 							this.removeClipboardItem(possibleOld);
 						}
 					} catch (IllegalArgumentException e) {
-						// TODO Auto-generated catch block
 						e.printStackTrace();
 					} catch (IllegalAccessException e) {
-						// TODO Auto-generated catch block
 						e.printStackTrace();
 					} catch (InvocationTargetException e) {
-						// TODO Auto-generated catch block
 						e.printStackTrace();
 					}
 					counter++;
@@ -900,13 +876,10 @@ public class Clipboard {
 							throw new RuntimeException("please dont make null a list");
 						}
 					} catch (IllegalArgumentException e) {
-						// TODO Auto-generated catch block
 						e.printStackTrace();
 					} catch (IllegalAccessException e) {
-						// TODO Auto-generated catch block
 						e.printStackTrace();
 					} catch (InvocationTargetException e) {
-						// TODO Auto-generated catch block
 						e.printStackTrace();
 					}
 					break;

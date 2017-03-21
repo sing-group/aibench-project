@@ -309,7 +309,6 @@ public class OperationsTextArea extends JTextArea implements HistoryListener, Cl
 		}
 	}
 	public synchronized void elementAdded(ClipboardItem arg0) {
-		// TODO Auto-generated method stub
 		
 	}
 	public synchronized void elementRemoved(ClipboardItem arg0) {
@@ -328,7 +327,6 @@ public class OperationsTextArea extends JTextArea implements HistoryListener, Cl
 	 * @see es.uvigo.ei.aibench.core.history.HistoryListener#historyElementRemoved(es.uvigo.ei.aibench.core.history.HistoryElement)
 	 */
 	public void historyElementRemoved(HistoryElement history) {
-		// TODO Auto-generated method stub
 		
 	}
 	

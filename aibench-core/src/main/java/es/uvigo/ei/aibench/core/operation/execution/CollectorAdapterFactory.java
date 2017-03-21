@@ -200,7 +200,6 @@ class CollectorAdapter implements ResultsCollector {
 	 * @see es.uvigo.ei.aibench.core.operation.execution.ResultsCollector#crash(java.lang.Exception)
 	 */
 	public void crash(Throwable cause) {
-		// TODO Auto-generated method stub
 
 	}
 

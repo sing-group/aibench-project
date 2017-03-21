@@ -142,16 +142,10 @@ public class AIBenchTreeMouseListener extends MouseAdapter {
 															);
 														}
 													} catch (IllegalArgumentException e1) {
-														// TODO Auto-generated catch
-														// block
 														e1.printStackTrace();
 													} catch (IllegalAccessException e1) {
-														// TODO Auto-generated catch
-														// block
 														e1.printStackTrace();
 													} catch (InvocationTargetException e1) {
-														// TODO Auto-generated catch
-														// block
 														e1.printStackTrace();
 													}
 												}
@@ -165,10 +159,8 @@ public class AIBenchTreeMouseListener extends MouseAdapter {
 										Method m = item.getUserData().getClass().getMethod(datatypeAnnot.removeMethod(), new Class[]{});
 										addSpecificRemove(popup,item,m);
 									} catch (SecurityException e1) {
-										// TODO Auto-generated catch block
 										e1.printStackTrace();
 									} catch (NoSuchMethodException e1) {
-										// TODO Auto-generated catch block
 										e1.printStackTrace();
 									}
 								} 
@@ -248,19 +240,15 @@ public class AIBenchTreeMouseListener extends MouseAdapter {
 								m.invoke(item.getUserData(), newName);
 								
 							} catch (SecurityException f) {
-								// TODO Auto-generated catch block
 								f.printStackTrace();
 							} catch (NoSuchMethodException f) {
 //								logger.error("Couldn't find the set name method in the Complex item "+item.getUserData().getClass()+":  "+datatypeAnnot.setNameMethod());
 								f.printStackTrace();
 							} catch (IllegalArgumentException f) {
-								// TODO Auto-generated catch block
 								f.printStackTrace();
 							} catch (IllegalAccessException f) {
-								// TODO Auto-generated catch block
 								f.printStackTrace();
 							} catch (InvocationTargetException f) {
-								// TODO Auto-generated catch block
 								f.printStackTrace();
 							}
 						}
@@ -377,13 +365,10 @@ public class AIBenchTreeMouseListener extends MouseAdapter {
 					try {
 						m.invoke(item.getUserData());
 					} catch (IllegalArgumentException e1) {
-						// TODO Auto-generated catch block
 						e1.printStackTrace();
 					} catch (IllegalAccessException e1) {
-						// TODO Auto-generated catch block
 						e1.printStackTrace();
 					} catch (InvocationTargetException e1) {
-						// TODO Auto-generated catch block
 						e1.printStackTrace();
 					}
 					Core.getInstance().getClipboard().removeClipboardItem(item);

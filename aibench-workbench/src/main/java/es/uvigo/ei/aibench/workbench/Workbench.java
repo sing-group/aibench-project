@@ -699,7 +699,6 @@ public class Workbench implements IGenericGUI, ClipboardListener {
 				try {
 					pleaseWait.wait();
 				} catch (InterruptedException e) {
-					// TODO Auto-generated catch block
 					e.printStackTrace();
 				}
 			}
@@ -1049,10 +1048,8 @@ public class Workbench implements IGenericGUI, ClipboardListener {
 				});
 				return toret;
 			} catch (InterruptedException e) {
-				// TODO Auto-generated catch block
 				e.printStackTrace();
 			} catch (InvocationTargetException e) {
-				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
 		}
@@ -1464,7 +1461,6 @@ public class Workbench implements IGenericGUI, ClipboardListener {
 					try {
 						this.dataTypeIcon.put(extension.getPlugin().getPluginClassLoader().loadClass(dataType),icon);
 					} catch (ClassNotFoundException e) {
-						// TODO Auto-generated catch block
 						e.printStackTrace();
 					}
 				}
@@ -1605,7 +1601,6 @@ public class Workbench implements IGenericGUI, ClipboardListener {
 									extension.getPlugin().getPluginClassLoader().loadClass(className)
 								);
 							} catch (ClassNotFoundException e) {
-								// TODO Auto-generated catch block
 								e.printStackTrace();
 							}
 						}
@@ -1701,7 +1696,6 @@ public class Workbench implements IGenericGUI, ClipboardListener {
 							this.dataTypeViews.get(view.getDataType()).add(view);
 						}
 					} catch (ClassNotFoundException e) {
-						// TODO Auto-generated catch block
 						e.printStackTrace();
 					}
 				}
@@ -1720,10 +1714,8 @@ public class Workbench implements IGenericGUI, ClipboardListener {
 			try {
 				return (InputGUI) c.newInstance();
 			} catch (InstantiationException e) {
-				// TODO Auto-generated catch block
 				e.printStackTrace();
 			} catch (IllegalAccessException e) {
-				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
 		}
@@ -1760,13 +1752,10 @@ public class Workbench implements IGenericGUI, ClipboardListener {
 						}
 					}
 				} catch (SecurityException e1) {
-					// TODO Auto-generated catch block
 					e1.printStackTrace();
 				}  catch (IllegalArgumentException e) {
-					// TODO Auto-generated catch block
 					e.printStackTrace();
 				} catch (InvocationTargetException e) {
-					// TODO Auto-generated catch block
 					e.printStackTrace();
 				}
 
@@ -1783,16 +1772,12 @@ public class Workbench implements IGenericGUI, ClipboardListener {
 								}
 							}
 						} catch (IntrospectionException e) {
-							// TODO Auto-generated catch block
 							e.printStackTrace();
 						} catch (IllegalArgumentException e) {
-							// TODO Auto-generated catch block
 							e.printStackTrace();
 						} catch (IllegalAccessException e) {
-							// TODO Auto-generated catch block
 							e.printStackTrace();
 						} catch (InvocationTargetException e) {
-							// TODO Auto-generated catch block
 							e.printStackTrace();
 						}
 					}
@@ -1843,10 +1828,8 @@ public class Workbench implements IGenericGUI, ClipboardListener {
 				// return this
 				return componentExtensionIntance;
 			} catch (InstantiationException e1) {
-				// TODO Auto-generated catch block
 				e1.printStackTrace();
 			} catch (IllegalAccessException e1) {
-				// TODO Auto-generated catch block
 				e1.printStackTrace();
 			}
 			return null;
@@ -1869,7 +1852,6 @@ public class Workbench implements IGenericGUI, ClipboardListener {
 			
 			Workbench.CONFIG.load(Util.getGlobalResourceURL(path).openStream());
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 	}
