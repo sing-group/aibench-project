@@ -222,7 +222,11 @@ public class AIBenchJTreeManager implements HistoryListener, ClipboardListener, 
 				if (node.getUserObject() instanceof ClipboardItem) {
 					ClipboardItem citem = (ClipboardItem) node.getUserObject();
 					Datatype datatypeAnnot = citem.getUserData().getClass().getAnnotation(Datatype.class);
-					System.err.println("annotation: "+datatypeAnnot);
+
+					if (logger.getEffectiveLevel().equals(Level.DEBUG)) {
+						logger.debug("annotation: " + datatypeAnnot);
+					}
+
 					if (datatypeAnnot != null && !datatypeAnnot.renameable()){
 						return false;
 					}

@@ -272,8 +272,10 @@ public class Workbench implements IGenericGUI, ClipboardListener {
 		if (this.activeItem != data) {
 			this.activeItem = data;
 		}
-		
-		this.mainWindow.bringToFront(data);	
+
+		if (this.activeItem != null) {
+			this.mainWindow.bringToFront(this.activeItem);
+		}
 	}
 	
 	/**
@@ -365,12 +367,11 @@ public class Workbench implements IGenericGUI, ClipboardListener {
 						 * and add a node in the tree.
 						 */
 						this.mainWindow.showViews(copied, data);
-						//AIBenchJTreeManager.getInstance().showData(data);
 						this.openedItems.add(data);
 
 					}
 
-					if (this.getActiveData()!=null) {
+					if (this.getActiveData() != null) {
 						this.fireDataHided(this.getActiveData());
 					}
 					
@@ -394,18 +395,17 @@ public class Workbench implements IGenericGUI, ClipboardListener {
 	public void hideData(ClipboardItem data) {
 		this.openedItems.remove(data);
 		this.closedItems.add(data);
-		
+
 		this.mainWindow.hideData(data);
-		
+
 		this.fireDataClosed(data);
-		
+
 		if (this.openedItems.size() == 0) {
 			this.setActiveData(null);
 		} else if (this.getActiveData() == data) {
 			this.setActiveData(this.openedItems.get(0));
-			this.showData(this.activeItem);
 		}
-		
+
 		if (logger.getEffectiveLevel().equals(Level.DEBUG))
 			logger.debug("Closed " + (data.getUserData()!=null?data.getUserData().toString().substring(0, Math.min(data.getUserData().toString().length(),100)):" null item"));
 		

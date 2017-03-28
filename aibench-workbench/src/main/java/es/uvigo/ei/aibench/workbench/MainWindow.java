@@ -36,8 +36,8 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 import java.util.Map.Entry;
 import java.util.StringTokenizer;
 import java.util.Vector;
@@ -87,18 +87,16 @@ import es.uvigo.ei.aibench.workbench.utilities.Utilities;
 public class MainWindow extends JFrame {
 	private static final long serialVersionUID = 1L;
 
-	private static Logger logger = Logger.getLogger(MainWindow.class);
+	private static final Logger LOGGER = Logger.getLogger(MainWindow.class);
 
-	private final int MAX_TAB_TITLE = 20;
-
+	private static final int MAX_TAB_TITLE = 20;
 
 	// Operations as Actions
-	private List<OperationWrapper>	interceptedOperations = null;
+	private List<OperationWrapper> interceptedOperations = null;
 
 	// Document Viewer JTabbedPane Management
-	private HashMap<ClipboardItem, Integer> tabIndexByData	= new HashMap<ClipboardItem, Integer>();
-	private HashMap<Integer, ClipboardItem>	dataByTab = new HashMap<Integer, ClipboardItem>();
-
+	private HashMap<ClipboardItem, Integer> itemToTabIndex = new HashMap<ClipboardItem, Integer>();
+	private HashMap<Integer, ClipboardItem> tabIndexToItem = new HashMap<Integer, ClipboardItem>();
 	
 	// Plugin's Components management. This hashtable maps strings (components ids) and JComponents 
 	private HashMap<String, JComponent> componentMappings = new HashMap<String, JComponent>();
@@ -107,7 +105,6 @@ public class MainWindow extends JFrame {
 	// STATUS BAR
 	String STATUS_DEFAULT_TEXT = Workbench.CONFIG.getProperty("mainwindow.statusbar.text");
 	private JLabel statusBar = new JLabel(STATUS_DEFAULT_TEXT);
-	
 	
 	// TOOLBAR NOTE: added by paulo maia
 	private JToolBar toolbar = null;
@@ -147,11 +144,10 @@ public class MainWindow extends JFrame {
 	// COMPONENTS
 	private JMenuBar jJMenuBar	= null;
 	private CloseableJTabbedPane documentTabbedPane = null;
-//	private CloseAndMaxTabbedPane documentTabbedPane = null;
 	
 	public MainWindow(List<OperationWrapper> operaciones) {
 		super();
-		logger.info("MainWindow creation");
+		LOGGER.info("MainWindow creation");
 		this.interceptedOperations = operaciones;
 		
 		// locate the template.xml
@@ -169,7 +165,7 @@ public class MainWindow extends JFrame {
 			this.tableLayout = new TableLayout(url.openStream());
 			
 		}catch (IOException e) {
-			logger.warn("Not found a template file, searching in: "+url+" Using default layout....");
+			LOGGER.warn("Not found a template file, searching in: "+url+" Using default layout....");
 			this.tableLayout = new TableLayout(new ByteArrayInputStream(this.DEFAULT_LAYOUT.getBytes()));
 			e.printStackTrace();
 		}
@@ -193,9 +189,6 @@ public class MainWindow extends JFrame {
 	}
 
 	private void initialize() {
-//				JOptionPane pane = new JOptionPane("Finishing application...", JOptionPane.INFORMATION_MESSAGE);
-
-//		this.setDefaultCloseOperation(javax.swing.JFrame.EXIT_ON_CLOSE);
 		this.addWindowListener(new WindowAdapter() {
 			@Override
 			public void windowClosing(final WindowEvent e) {
@@ -221,12 +214,16 @@ public class MainWindow extends JFrame {
 		});
 		
 		String title = Workbench.CONFIG.getProperty("mainwindow.title");
-		if (title == null) title = "AIBench";
+		if (title == null) {
+			title = "AIBench";
+		}
 		this.setTitle(title);
-		
+
 		JMenuBar menuBar = getJJMenuBar();
-		if (Workbench.CONFIG.getProperty("mainwindow.menubar.visible")==null || !Workbench.CONFIG.getProperty("mainwindow.menubar.visible").equals("false")){
-				this.setJMenuBar(menuBar);
+		if (Workbench.CONFIG.getProperty("mainwindow.menubar.visible") == null || 
+			!Workbench.CONFIG.getProperty("mainwindow.menubar.visible").equals("false")
+		) {
+			this.setJMenuBar(menuBar);
 		}
 		
 		// ToolBar NOTE: added by paulo maia
@@ -314,7 +311,7 @@ public class MainWindow extends JFrame {
 						}
 					}
 					catch(NumberFormatException e){
-						logger.error("The toolbar separators must be numbers!, found: "+sep);
+						LOGGER.error("The toolbar separators must be numbers!, found: "+sep);
 					}
 				}
 			}			
@@ -336,27 +333,22 @@ public class MainWindow extends JFrame {
 			String position = BorderLayout.NORTH;
 			int orientation = SwingConstants.HORIZONTAL;
 			
-			if(positionString !=null){				
-				if(positionString.equalsIgnoreCase("SOUTH")){
+			if (positionString != null) {
+				if (positionString.equalsIgnoreCase("SOUTH")) {
 					orientation = SwingConstants.HORIZONTAL;
 					position = BorderLayout.SOUTH;
-				}
-				else if(positionString.equalsIgnoreCase("EAST")){
+				} else if (positionString.equalsIgnoreCase("EAST")) {
 					orientation = SwingConstants.VERTICAL;
 					position = BorderLayout.EAST;
-				}
-				else if(positionString.equalsIgnoreCase("WEST")){
+				} else if (positionString.equalsIgnoreCase("WEST")) {
 					orientation = SwingConstants.VERTICAL;
 					position = BorderLayout.WEST;
 				}
-					
 			}
 				
 			this.toolbar.setOrientation(orientation);
-			this.add(toolbar,position);
-		}				
-		
-		
+			this.add(toolbar, position);
+		}
 	}
 	
 	public CloseableJTabbedPane getDocumentTabbedPane() {
@@ -368,7 +360,7 @@ public class MainWindow extends JFrame {
 				public void stateChanged(ChangeEvent e) {
 					final int index = MainWindow.this.documentTabbedPane.getSelectedIndex();
 					if (index != -1) {
-						final ClipboardItem data = MainWindow.this.dataByTab.get(index);
+						final ClipboardItem data = MainWindow.this.tabIndexToItem.get(index);
 						
 						if (data != null) {
 							Workbench.getInstance().setActiveData(data);
@@ -380,11 +372,12 @@ public class MainWindow extends JFrame {
 				@Override
 				public void tabClosing(TabCloseEvent event) {
 					event.cancel(); // Will be closed by the MainWindow
-					ClipboardItem clipboardItem = MainWindow.this.dataByTab.get(event.getTabIndex());
+
+					ClipboardItem clipboardItem = MainWindow.this.tabIndexToItem.get(event.getTabIndex());
 					if (clipboardItem != null) {
 						Workbench.getInstance().hideData(clipboardItem);
 					} else {
-						documentTabbedPane.removeTabAt(event.getTabIndex());
+						removeTabAt(event.getTabIndex());
 					}
 				}
 			});
@@ -394,35 +387,19 @@ public class MainWindow extends JFrame {
 		
 		return this.documentTabbedPane;
 	}
-//	
-//	private CloseAndMaxTabbedPane getDocumentTabbedPane() {
-//		if (documentTabbedPane == null) {
-//			documentTabbedPane = new CloseAndMaxTabbedPane(true);
-//			documentTabbedPane.setMaxIcon(false);
-//
-//			documentTabbedPane.addCloseListener(new CloseListener() {
-//				public void closeOperation(MouseEvent arg0) {
-//					CloseDataAction close = new CloseDataAction();
-//					close.actionPerformed(null);
-//				}
-//			});
-//
-//			documentTabbedPane.addChangeListener(new ChangeListener() {
-//				public void stateChanged(ChangeEvent arg0) {
-//					int index = documentTabbedPane.getSelectedIndex();
-//					ClipboardItem data = MainWindow.this.dataByTab.get(index);
-//
-//					if (data != null) {
-//						Workbench.getInstance().setActiveData(data);
-//					}
-//				}
-//			});
-//			
-//			documentTabbedPane.setPreferredSize(new Dimension(640, 480));
-//		}
-//
-//		return documentTabbedPane;
-//	}
+
+	/**
+	 * Removes the tab placed at the specified index and updates the data maps
+	 * ({@code itemToTabIndex} and {@code tabIndexToTab}) in order to set the
+	 * correct positions for those items placed in a tab index higher than
+	 * {@code tabIndex}.
+	 * 
+	 * @param tabIndex the index of the tab that should be removed.
+	 */
+	protected void removeTabAt(int tabIndex) {
+		this.documentTabbedPane.removeTabAt(tabIndex);
+		this.updateDataMaps(tabIndex);
+	}
 
 	private JMenuBar getJJMenuBar() {
 
@@ -457,7 +434,7 @@ public class MainWindow extends JFrame {
 			try{
 				res = Integer.parseInt(Workbench.CONFIG.get("menu."+noAt).toString().trim());
 			}catch(NumberFormatException ex){
-				logger.warn("Configuration error: Property menu."+noAt+" must be an integer");
+				LOGGER.warn("Configuration error: Property menu."+noAt+" must be an integer");
 			}
 			
 		}
@@ -556,21 +533,22 @@ public class MainWindow extends JFrame {
 	 */
 	public void showViews(final List<IViewFactory> views, final ClipboardItem data) {
 		JComponent viewsComponent = null;
-		final boolean hide_tabs = views.size() == 1 && Workbench.CONFIG.getProperty("documentviewer.hide_tabs_when_single_view")!=null && Workbench.CONFIG.getProperty("documentviewer.hide_tabs_when_single_view").equals("true");
-		if (hide_tabs){
+		final boolean hideTabs = views.size() == 1 && Workbench.CONFIG.getProperty("documentviewer.hide_tabs_when_single_view")!=null && Workbench.CONFIG.getProperty("documentviewer.hide_tabs_when_single_view").equals("true");
+
+		if (hideTabs) {
 			JPanel panel = new JPanel();
 			panel.setLayout(new BorderLayout());
 			viewsComponent = panel;
-		}else{
+		} else {
 			JTabbedPane tabbedViews = new JTabbedPane();
 			tabbedViews.setTabPlacement(JTabbedPane.BOTTOM);
 			viewsComponent = tabbedViews;
 		}
-
-
 		
 		for (int i = 0; i < views.size(); i++) {
-			if (logger.getEffectiveLevel().equals(Level.DEBUG)) logger.debug("Adding view "+views.get(i));
+			if (LOGGER.getEffectiveLevel().equals(Level.DEBUG)) {
+				LOGGER.debug("Adding view " + views.get(i));
+			}
 			
 			final IViewFactory view= views.get(i);
 			
@@ -584,7 +562,7 @@ public class MainWindow extends JFrame {
 					SwingUtilities.invokeLater(new Runnable(){
 						public void run(){
 							synchronized(viewsComponent){
-								if (!hide_tabs){
+								if (!hideTabs){
 									((JTabbedPane)viewsComponent).add(renderingMessage, view.getViewName());
 								}else{
 									viewsComponent.add(renderingMessage, BorderLayout.CENTER);
@@ -600,7 +578,7 @@ public class MainWindow extends JFrame {
 						public void run(){
 							synchronized(viewsComponent){
 								//find tab placement of renderingMessage
-								if (!hide_tabs){
+								if (!hideTabs){
 									JTabbedPane tabbedViews = (JTabbedPane) viewsComponent;
 									for (int i = 0; i<tabbedViews.getTabCount(); i++){
 										if (tabbedViews.getComponentAt(i) == renderingMessage){
@@ -630,31 +608,30 @@ public class MainWindow extends JFrame {
 	
 		}
 
-		//We don't want tab titles too long!!
+		this.getDocumentTabbedPane().addTab(getTabTitle(data), null, viewsComponent);
+		int viewsComponentIndex = getDocumentTabbedPane().indexOfComponent(viewsComponent);
+		this.getDocumentTabbedPane().setSelectedIndex(viewsComponentIndex);
+
+		this.itemToTabIndex.put(data, viewsComponentIndex);
+		this.tabIndexToItem.put(viewsComponentIndex, data);
+	}
+
+	protected static String getTabTitle(ClipboardItem data) {
 		String title = data.getName();
-		if (title.length()>MAX_TAB_TITLE){
-			title = title.substring(0,MAX_TAB_TITLE);
+		if (title.length() > MAX_TAB_TITLE) {
+			title = title.substring(0, MAX_TAB_TITLE);
 
 			title += "...";
 		}
-		
-		this.getDocumentTabbedPane().addTab(title, null, viewsComponent);
-
-		this.getDocumentTabbedPane().setSelectedIndex(getDocumentTabbedPane().indexOfComponent(viewsComponent));
-
-//		getDocumentTabbedPane().setMaxIcon(false);
-
-		this.tabIndexByData.put(data, getDocumentTabbedPane().indexOfComponent(viewsComponent));
-		this.dataByTab.put(getDocumentTabbedPane().indexOfComponent(viewsComponent), data);
-
+		return title;
 	}
-	
+
 	public synchronized List<Component> getDataViews(ClipboardItem data) {
 		ArrayList<Component> components = new ArrayList<Component>();
 		
-		if (this.tabIndexByData.containsKey(data)) {
-			int posicion = this.tabIndexByData.get(data);
-			Component component = this.getDocumentTabbedPane().getComponentAt(posicion);
+		if (this.itemToTabIndex.containsKey(data)) {
+			int position = this.itemToTabIndex.get(data);
+			Component component = this.getDocumentTabbedPane().getComponentAt(position);
 			if (component instanceof JTabbedPane) {
 				JTabbedPane pane = (JTabbedPane) component;
 				for (int i=0; i<pane.getComponentCount(); i++) {
@@ -669,49 +646,54 @@ public class MainWindow extends JFrame {
 	}
 
 	public synchronized void bringToFront(ClipboardItem data) {
-		/*
-		 * Tenemos que comprobar si está abierta o no, por si acaso.
-		 */
-		if (this.tabIndexByData.containsKey(data)) {
+		if(data == null) {
+			LOGGER.warn("bringToFront(ClibpoardItem data): attempting to "
+					+ "make visible a null ClipboardItem");
+			return;
+		}
 
-			int posicion = this.tabIndexByData.get(data);
-
-			this.getDocumentTabbedPane().setSelectedIndex(posicion);
-
+		if (this.itemToTabIndex.containsKey(data)) {
+			int position = this.itemToTabIndex.get(data);
+			if (position < getDocumentTabbedPane().getTabCount()) {
+				getDocumentTabbedPane().setSelectedIndex(position);
+			} else {
+				LOGGER.warn("bringToFront(ClibpoardItem data): attempting to "
+						+ "make visible an index higher than actual tab "
+						+ "count. Index = " + position + ". Data name " + 
+						data.getName());
+			}
 		} else {
-			//Core.getInstance().getGUI().warn("MainWindow.bringToFront(): Not opened data [ " + data.toString() + " ]");
+			LOGGER.warn("bringToFront(ClibpoardItem data): attempting to "
+					+ "make visible a ClipboardItem which is not opened. "
+					+ "Data name = " + data.getName());
 		}
 	}
 
 	public synchronized void hideData(ClipboardItem data) {
-		if (this.tabIndexByData.containsKey(data)) {
-
-			int index = this.tabIndexByData.get(data);
-
-			getDocumentTabbedPane().remove(index);
-
-			this.tabIndexByData.remove(data);
-			
-			int pos = index;
-			while(pos<this.dataByTab.size()-1){
-				this.dataByTab.put(pos, this.dataByTab.get(pos+1));
-				pos ++;
-			}
-			this.dataByTab.remove(this.dataByTab.size()-1);
-
-			Iterator<Entry<ClipboardItem, Integer>> iterator = this.tabIndexByData.entrySet().iterator();
-			while (iterator.hasNext()) {
-				Entry<ClipboardItem, Integer> entry = iterator.next();
-				int posicion = entry.getValue().intValue();
-				if (posicion > index) {
-					entry.setValue(--posicion);
-				}
-			}
+		if (this.itemToTabIndex.containsKey(data)) {
+			int dataToHideIndex = this.itemToTabIndex.remove(data);
+			this.tabIndexToItem.remove(dataToHideIndex);
+			this.removeTabAt(dataToHideIndex);
 		} else {
 			Core.getInstance().getGUI().warn("MainWindow.hideData(): Not opened data [ " + data.toString() + " ]");
 		}
 	}
 	
+	protected void updateDataMaps(int removeIndex) {
+		Map<Integer, ClipboardItem> newPositions = new HashMap<>();
+		for (Entry<ClipboardItem, Integer> entry : this.itemToTabIndex.entrySet()) {
+			ClipboardItem item = entry.getKey();
+			int oldPosition = entry.getValue();
+			if (oldPosition > removeIndex) {
+				int newPosition = oldPosition - 1;
+				entry.setValue(newPosition);
+				this.tabIndexToItem.remove(oldPosition);
+				newPositions.put(newPosition, item);
+			}
+		}
+		this.tabIndexToItem.putAll(newPositions);
+	}
+
 	public void closeData(ClipboardItem data) {}
 
 	/*
@@ -764,7 +746,7 @@ public class MainWindow extends JFrame {
 			this.componentMappings.put(componentID, component);
 			this.pack();
 		}else{
-			logger.warn("slot not found to place some component: "+slotName);
+			LOGGER.warn("slot not found to place some component: "+slotName);
 		}
 	}
 	
