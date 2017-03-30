@@ -558,8 +558,18 @@ public class Workbench implements IGenericGUI, ClipboardListener {
 		}
 		
 	}
-	
-	
+
+	/**
+	 * Executes an operation, but this method returns all the clipboard items generated, blocking the calling thread until
+	 * the results are generated. If the operation generates some error, null is returned.
+	 *
+	 * @param uid the uid of the operation to execute
+
+	 * @return The clipboardItems generated as result of the operation's execution
+	 */
+	public List<ClipboardItem> executeOperationAndWait(String uid) {
+		return this.executeOperationAndWait(Core.getInstance().getOperationById(uid));
+	}
 
 	/**
 	 * Executes an operation, but this method returns all the clipboard items generated, blocking the calling thread until
