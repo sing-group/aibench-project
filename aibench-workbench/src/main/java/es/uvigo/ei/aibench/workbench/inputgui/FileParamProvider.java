@@ -48,8 +48,8 @@ import es.uvigo.ei.aibench.workbench.utilities.FileDrop;
 import es.uvigo.ei.aibench.workbench.utilities.PortExtras;
 
 public class FileParamProvider extends AbstractParamProvider {
-	private final static Logger LOG = Logger.getLogger(FileParamProvider.class);
-	
+	private final static Logger LOGGER = Logger.getLogger(FileParamProvider.class);
+
 	private final JTextField field = new JTextField();
 	private final JButton findButton = new JButton(Common.ICON_FILE_OPEN);
 
@@ -58,46 +58,49 @@ public class FileParamProvider extends AbstractParamProvider {
 	public static final boolean DEFAULT_CASE_SENSITIVE = true;
 	public static final String CASE_SENSITIVE_FILTERS_EXTRAS_PROPERTY = "caseSensitiveFilters";
 	public static final String FILTERS_EXTRAS_PROPERTY = "filters";
-	public static final String FILTERS_EXTRAS_ALLOWALL_FILTER= "allowAll";
+	public static final String FILTERS_EXTRAS_ALLOWALL_FILTER = "allowAll";
 	public static final String FILTERS_EXTRAS_SELECTION_MODE = "selectionMode";
-	
+
 	private static final String SELECTION_MODE_FILES_AND_DIRECTORIES = "filesAndDirectories";
 	private static final String SELECTION_MODE_DIRECTORIES = "directories";
 	private static final String SELECTION_MODE_FILES = "files";
-	
+
 	private JComponent component = null;
-	
+
 	public FileParamProvider(ParamsReceiver receiver, Port p, Class<?> clazz, Object operationObject) {
 		super(receiver, p, clazz, operationObject);
-		this.field.setEditable(false);
-		
 		this.fcConfiguration = new FileChooserConfiguration(p.extras());
+		this.initComponent(p);
+	}
+
+	private void initComponent(Port p) {
+		this.field.setEditable(false);
 		
 		if (p.defaultValue().length() > 0) {
 			this.field.setText(p.defaultValue());
 		}
 	}
-	
+
 	public static void configureFileChooser(Port p, JFileChooser fc) {
 		FileChooserConfiguration.configure(p.extras(), fc);
 	}
-	
+
 	@Override
 	public void actionPerformed(ActionEvent e) {
 		if (e.getSource() == this.findButton) {
 			this.showFileChooser();
 		}
-		
+
 		super.actionPerformed(e);
 	}
-	
+
 	private void showFileChooser() {
 		this.fcConfiguration.configureFileChooser(Common.SINGLE_FILE_CHOOSER);
-		
+
 		final File selectedFile = this.getSelectedFile();
 		if (selectedFile != null)
 			Common.SINGLE_FILE_CHOOSER.setSelectedFile(selectedFile);
-		
+
 		final int option = Common.SINGLE_FILE_CHOOSER.showDialog(Workbench.getInstance().getMainFrame(), "Select");
 		if (option == JFileChooser.APPROVE_OPTION) {
 			setSelectedFile(Common.SINGLE_FILE_CHOOSER.getSelectedFile());
@@ -177,7 +180,7 @@ public class FileParamProvider extends AbstractParamProvider {
 			} else if (caseSensitiveValue.equalsIgnoreCase("true")) {
 				return true;
 			} else {
-				LOG.warn("Invalid value for property: " + CASE_SENSITIVE_FILTERS_EXTRAS_PROPERTY);
+				LOGGER.warn("Invalid value for property: " + CASE_SENSITIVE_FILTERS_EXTRAS_PROPERTY);
 			}
 			return DEFAULT_CASE_SENSITIVE;
 		}
@@ -188,7 +191,7 @@ public class FileParamProvider extends AbstractParamProvider {
 						&& !property.equalsIgnoreCase(FILTERS_EXTRAS_PROPERTY)
 						&& !property.equalsIgnoreCase(FILTERS_EXTRAS_SELECTION_MODE)
 				) {
-					LOG.warn("Uknown extra property: " + property);
+					LOGGER.warn("Uknown extra property: " + property);
 				}
 			}
 		}
@@ -211,10 +214,10 @@ public class FileParamProvider extends AbstractParamProvider {
 					if (FILTERS_EXTRAS_ALLOWALL_FILTER.equalsIgnoreCase(nameExtension)) {
 						this.allowAll = true;
 					} else {
-						LOG.warn("Unable to parse a filter in extras: " + filter);
+						LOGGER.warn("Unable to parse a filter in extras: " + filter);
 					}
 				} else {
-					LOG.warn("Unable to parse a filter in extras: " + filter);
+					LOGGER.warn("Unable to parse a filter in extras: " + filter);
 				}
 			}
 		}
@@ -227,7 +230,7 @@ public class FileParamProvider extends AbstractParamProvider {
 			} else if (SELECTION_MODE_FILES_AND_DIRECTORIES.equalsIgnoreCase(value)) {
 				this.selectionMode = JFileChooser.FILES_AND_DIRECTORIES;
 			} else {
-				LOG.warn("Unknown value for " + FILTERS_EXTRAS_SELECTION_MODE + " filter: " + value);
+				LOGGER.warn("Unknown value for " + FILTERS_EXTRAS_SELECTION_MODE + " filter: " + value);
 
 				this.selectionMode = JFileChooser.FILES_AND_DIRECTORIES;
 			}
@@ -258,15 +261,35 @@ public class FileParamProvider extends AbstractParamProvider {
 		
 		return text.isEmpty() ? null : new File(text);
 	}
-	
-	private void setSelectedFile(File file) {
+
+	/**
+	 * <p>
+	 * Establishes the selected file. Note that if {@code file} is {@code null},
+	 * then the selection is cleared.
+	 * </p>
+	 * 
+	 * <p>
+	 * Calling this method marks this {@code Observable} object as having been
+	 * changed and notifies observers.
+	 * </p>
+	 * 
+	 * @param file the selected file
+	 */
+	public void setSelectedFile(File file) {
 		if (file == null) {
 			this.field.setText("");
 		} else {
 			this.field.setText(file.getAbsolutePath());
 		}
+		this.setChanged();
+		this.notifyObservers();
 	}
 
+	/**
+	 * Returns the {@code JTextField} used to display the selected file.
+	 * 
+	 * @return the {@code JTextField} used to display the selected file
+	 */
 	public JTextField getField() {
 		return this.field;
 	}
@@ -287,8 +310,6 @@ public class FileParamProvider extends AbstractParamProvider {
 					public void filesDropped(File[] files) {
 						if (files.length > 0) {
 							FileParamProvider.this.setSelectedFile(files[0]);
-							FileParamProvider.this.setChanged();
-							FileParamProvider.this.notifyObservers();
 						}
 					}
 				}
@@ -299,8 +320,6 @@ public class FileParamProvider extends AbstractParamProvider {
 					@Override
 					public void mouseClicked(MouseEvent e) {
 						FileParamProvider.this.showFileChooser();
-						FileParamProvider.this.setChanged();
-						FileParamProvider.this.notifyObservers();
 					}
 				}
 			);
