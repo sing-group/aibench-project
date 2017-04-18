@@ -6,6 +6,15 @@ import java.util.Set;
 
 import org.apache.log4j.Logger;
 
+import es.uvigo.ei.aibench.core.operation.annotation.Port;
+
+/**
+ * A class that provides support for processing {@code extras} parameters in
+ * {@code Port} configurations.
+ * 
+ * @author Hugo López-Fernández
+ * @see Port
+ */
 public class PortExtras {
 	public static final String EXTRAS_DELIMITER = ",";
 	public static final String EXTRAS_ASSIGNMENT = "=";
@@ -34,6 +43,7 @@ public class PortExtras {
 	 * <p>
 	 * 
 	 * @param extrasString a string containing the extra properties.
+	 * 
 	 * @return a {@code PortExtras} object.
 	 */
 	public static PortExtras parse(String extrasString) {
@@ -110,5 +120,35 @@ public class PortExtras {
 			}
 		}
 		return false;
+	}
+
+	/**
+	 * Checks if there are properties in extras
+	 * ({@link PortExtras#getProperties()}) other than those in
+	 * {@code knownProperties} and emits a warning for each one using the
+	 * specified {@code logger}.
+	 * 
+	 * @param extras the {@code PortExtras} object
+	 * @param logger the {@code Logger} to emit the warnings
+	 * @param ignoreCase {@code true} if case should be ignored and {@code false} otherwise
+	 * @param knownProperties the array of known properties
+	 */
+	public static void warnUnknownExtraProperties(PortExtras extras, Logger logger, boolean ignoreCase,
+			String... knownProperties) {
+		for (String property : extras.getProperties()) {
+			boolean known = false;
+			for(String knownProprety : knownProperties) {
+				if(equals(property, knownProprety, ignoreCase)) {
+					known = true;
+				}
+			}
+			if (!known) {
+				logger.warn("Unknown extra property: " + property);
+			}
+		}
+	}
+
+	private static boolean equals(String a, String b, boolean ignoreCase) {
+		return ignoreCase ? a.equalsIgnoreCase(b) : a.equals(b);
 	}
 }

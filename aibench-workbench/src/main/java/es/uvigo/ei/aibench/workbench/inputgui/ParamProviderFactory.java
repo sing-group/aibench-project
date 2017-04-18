@@ -26,22 +26,27 @@ import java.io.File;
 import es.uvigo.ei.aibench.core.operation.annotation.Port;
 import es.uvigo.ei.aibench.workbench.ParamsReceiver;
 
-public class ParamProviderFactory{
-	public static ParamProvider createParamProvider(ParamsReceiver receiver, Port port , Class<?> clazz, Object operationObject){
+/**
+ * This class instances an appropriate {@code ParamProvider} implementation
+ * based on the required class of the {@code port}.
+ * 
+ * @author Daniel Glez-Peña
+ * @author Hugo López-Fernández
+ *
+ */
+public class ParamProviderFactory {
+	public static ParamProvider createParamProvider(ParamsReceiver receiver, Port port, Class<?> clazz,
+			Object operationObject) {
 		if (clazz.isArray()) {
 			return new ArrayParamProvider(receiver, port, clazz, operationObject);
 		} else if (clazz.isPrimitive()) {
-			return new PrimitiveParamProvider(receiver, port, clazz,operationObject );
-		} else if (clazz.getEnumConstants()!=null) {
-//			return new EnumParamProvider(port, clazz, operationObject);
-			return new EnumParamProviderCombo(receiver, port, clazz, operationObject);
+			return new PrimitiveParamProvider(receiver, port, clazz, operationObject);
+		} else if (clazz.getEnumConstants() != null) {
+			return new EnumParamProvider(receiver, port, clazz, operationObject);
 		} else if (File.class.isAssignableFrom(clazz)) {
 			return new FileParamProvider(receiver, port, clazz, operationObject);
 		} else {
 			return new ClipboardParamProvider(receiver, port, clazz, operationObject);
 		}
-
-
-		//return null;
 	}
 }

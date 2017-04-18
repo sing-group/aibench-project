@@ -26,12 +26,16 @@ import javax.swing.JComponent;
 import es.uvigo.ei.aibench.core.ParamSpec;
 import es.uvigo.ei.aibench.core.operation.annotation.Port;
 
-
 public interface ParamProvider {
 	JComponent getComponent();
+
 	Port getPort();
+
 	ParamSpec getParamSpec() throws IllegalArgumentException;
+
 	void init();
+
 	void finish();
+
 	boolean isValidValue();
 }

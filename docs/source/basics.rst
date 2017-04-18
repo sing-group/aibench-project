@@ -239,6 +239,9 @@ attributes of this annotation are showed in the following table.
 Additional parameters can be passed here. Parameters are delimited by ``,`` and 
 values are assigned with ``parameter=value``.
 
+File ports
+~~~~~~~~~~
+
 Ports of type ``File`` can use the following three parameters to configure the file 
 chooser showed to the user:
 
@@ -277,6 +280,42 @@ with both .csv and .CSV).
       this.file = f;
    }
 
+Enum ports
+~~~~~~~~~~
+
+Ports of type ``Enum`` can use the following three parameters to configure the component showed
+to the user:
+
+- ``mode``: which can be ``combo`` to display enum constants in a combo box or ``radiobuttons``
+  to display them as radio buttons.
+
+- ``numrows``: which specifies the number of rows when ``radiobuttons`` mode is used. A value
+  of ``0`` means that it will be used as many rows as necessary.
+
+- ``numcolumns``: which specifies the number of columns when ``radiobuttons`` mode is used. A
+  value of ``0`` means that it will be used as many columns as necessary.
+
+Note that ``numrows`` and ``numcolumns`` cannot both be zero.
+
+For example, the following example shows the creation of an ``extras`` string to configure a
+port that shows enum constants in a combo box with one row and as the required number of columns.
+
+.. code-block:: java
+
+   @Port(
+   public enum Enum {
+      A, B, C
+   };
+
+   @Port(
+      direction = Direction.INPUT,
+      name = "An enum port",
+      order = 1,
+      extras = "mode=radiobuttons, numrows=1, numcolumns=0"
+   )
+   public void setEnumParameter(Enum enumParameter) {
+      this.enumParameter = enumParameter;
+   }
 
 @Progress Annotation
 ++++++++++++++++++++
