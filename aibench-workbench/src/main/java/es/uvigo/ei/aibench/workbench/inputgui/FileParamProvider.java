@@ -65,7 +65,14 @@ public class FileParamProvider extends AbstractParamProvider {
 	private static final String SELECTION_MODE_DIRECTORIES = "directories";
 	private static final String SELECTION_MODE_FILES = "files";
 
+	private static final String[] KNOWN_PROPERTIES = {
+		CASE_SENSITIVE_FILTERS_EXTRAS_PROPERTY,
+		FILTERS_EXTRAS_PROPERTY,
+		FILTERS_EXTRAS_SELECTION_MODE
+	};
+
 	private JComponent component = null;
+	private FileFilter lastFileFilter = null;
 
 	public FileParamProvider(ParamsReceiver receiver, Port p, Class<?> clazz, Object operationObject) {
 		super(receiver, p, clazz, operationObject);
@@ -95,15 +102,25 @@ public class FileParamProvider extends AbstractParamProvider {
 	}
 
 	private void showFileChooser() {
-		this.fcConfiguration.configureFileChooser(Common.SINGLE_FILE_CHOOSER);
+		JFileChooser fileChooser = Common.SINGLE_FILE_CHOOSER;
+		this.fcConfiguration.configureFileChooser(fileChooser);
+		configureLastFileFilter(fileChooser, this.lastFileFilter);
 
 		final File selectedFile = this.getSelectedFile();
-		if (selectedFile != null)
-			Common.SINGLE_FILE_CHOOSER.setSelectedFile(selectedFile);
+		if (selectedFile != null) {
+			fileChooser.setSelectedFile(selectedFile);
+		}
 
-		final int option = Common.SINGLE_FILE_CHOOSER.showDialog(Workbench.getInstance().getMainFrame(), "Select");
+		final int option = fileChooser.showDialog(Workbench.getInstance().getMainFrame(), "Select");
+		this.lastFileFilter = fileChooser.getFileFilter();
 		if (option == JFileChooser.APPROVE_OPTION) {
-			setSelectedFile(Common.SINGLE_FILE_CHOOSER.getSelectedFile());
+			setSelectedFile(fileChooser.getSelectedFile());
+		}
+	}
+
+	private static void configureLastFileFilter(JFileChooser fileChooser, FileFilter lastFileFilter) {
+		if (lastFileFilter != null) {
+			fileChooser.setFileFilter(lastFileFilter);
 		}
 	}
 
@@ -171,7 +188,7 @@ public class FileParamProvider extends AbstractParamProvider {
 				parseSelectionMode(extras.getPropertyValue(FILTERS_EXTRAS_SELECTION_MODE));
 			}
 
-			warnUnknownExtraProperties(extras);
+			PortExtras.warnUnknownExtraProperties(extras, LOGGER, true, KNOWN_PROPERTIES);
 		}
 
 		private boolean parseCaseSensitiveFilter(String caseSensitiveValue) {
@@ -183,17 +200,6 @@ public class FileParamProvider extends AbstractParamProvider {
 				LOGGER.warn("Invalid value for property: " + CASE_SENSITIVE_FILTERS_EXTRAS_PROPERTY);
 			}
 			return DEFAULT_CASE_SENSITIVE;
-		}
-
-		private void warnUnknownExtraProperties(PortExtras extras) {
-			for (String property : extras.getProperties()) {
-				if (!property.equalsIgnoreCase(CASE_SENSITIVE_FILTERS_EXTRAS_PROPERTY)
-						&& !property.equalsIgnoreCase(FILTERS_EXTRAS_PROPERTY)
-						&& !property.equalsIgnoreCase(FILTERS_EXTRAS_SELECTION_MODE)
-				) {
-					LOGGER.warn("Uknown extra property: " + property);
-				}
-			}
 		}
 
 		private void parseFilters(String value, boolean caseSensitive) {
