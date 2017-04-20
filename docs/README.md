@@ -13,5 +13,8 @@ To build the documentation run:
 
     make html
 
+Documentation is written using [reStructuredText](http://docutils.sourceforge.net/rst.html). In the following links you can find information about the syntax:
+- http://docutils.sourceforge.net/docs/user/rst/quickref.html
+- http://docutils.sourceforge.net/docs/ref/rst/restructuredtext.html
 
 
