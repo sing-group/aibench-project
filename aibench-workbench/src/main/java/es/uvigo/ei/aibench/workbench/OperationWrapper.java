@@ -26,6 +26,8 @@ import java.awt.event.ActionEvent;
 import javax.swing.AbstractAction;
 import javax.swing.Action;
 
+import org.apache.log4j.Logger;
+
 import es.uvigo.ei.aibench.core.operation.OperationDefinition;
 
 /**
@@ -34,13 +36,11 @@ import es.uvigo.ei.aibench.core.operation.OperationDefinition;
  * @see es.uvigo.ei.aibench.core.operation.OperationDefinition
  */
 public class OperationWrapper extends AbstractAction {
-	/**
-	 * Serial Version UID
-	 */
 	private static final long serialVersionUID = 1L;
-	/**
-	 * The real operation
-	 */
+	private static final Logger LOGGER = Logger.getLogger(OperationWrapper.class);
+
+	public static final String SUSPENSION_POINTS = "mainwindow.menubar.names_append_suspension_points";
+	public static final boolean DEFAULT_SUSPENSION_POINTS = true;
 	private OperationDefinition<?>	operation;
 
 	/**
@@ -51,11 +51,28 @@ public class OperationWrapper extends AbstractAction {
 		this.operation = op;
 		this.putValue(Action.NAME, getOperationName());
 		this.setEnabled(op.isEnabled());
-
 	}
 
 	private String getOperationName() {
-		return operation.getMenuName() + "...";
+		return operation.getMenuName() + getSuspensionPoints();
+	}
+
+	private String getSuspensionPoints() {
+		return isAddSuspensionPoints() ? "..." : "";
+	}
+
+	private boolean isAddSuspensionPoints() {
+		String suspensionPoints = Workbench.CONFIG.getProperty(SUSPENSION_POINTS);
+		if (suspensionPoints != null) {
+			if (suspensionPoints.toLowerCase().equals("false")) {
+				return false;
+			} else if (suspensionPoints.toLowerCase().equals("true")) {
+				return true;
+			} else {
+				LOGGER.warn("Warning: invalid value for " + SUSPENSION_POINTS + ". Using default value instead.");
+			}
+		}
+		return DEFAULT_SUSPENSION_POINTS;
 	}
 
 	public void actionPerformed(ActionEvent arg0) {

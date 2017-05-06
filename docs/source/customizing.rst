@@ -46,6 +46,18 @@ behavior. They are all inside the ``src/main/global-resources/conf`` directory.
       in the configuration files. If your plugin will be reused in another
       AIBench project, remember that your configuration file will not be
       *active* in that project.
+      
+Menu bar configuration
+----------------------
+
+The ``workbench.conf`` allows you establish the following options to customize the
+menu bar:
+    
+    - ``mainwindow.menubar.visible``: it can be ``true`` or ``false`` and allows
+      you to define if it must be visible or not.
+    - ``mainwindow.menubar.names_append_suspension_points``: it can be ``true`` or 
+      ``false`` and allows you to define if the names of the operations in the menu
+      bar should be appended with ``...`` or not. It is ``true`` by default.
 
 Changing the Splash Screen
 ==========================
