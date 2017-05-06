@@ -49,9 +49,13 @@ public class OperationWrapper extends AbstractAction {
 	 */
 	public OperationWrapper(OperationDefinition<?> op) {
 		this.operation = op;
-		this.putValue(Action.NAME, operation.getName()+"...");
+		this.putValue(Action.NAME, getOperationName());
 		this.setEnabled(op.isEnabled());
 
+	}
+
+	private String getOperationName() {
+		return operation.getMenuName() + "...";
 	}
 
 	public void actionPerformed(ActionEvent arg0) {

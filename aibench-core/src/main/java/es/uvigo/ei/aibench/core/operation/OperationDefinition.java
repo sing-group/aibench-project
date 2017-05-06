@@ -8,12 +8,12 @@
  * it under the terms of the GNU Lesser General Public License as
  * published by the Free Software Foundation, either version 3 of the
  * License, or (at your option) any later version.
- * 
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Lesser Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Lesser Public
  * License along with this program.  If not, see
  * <http://www.gnu.org/licenses/lgpl-3.0.html>.
@@ -56,31 +56,22 @@ import es.uvigo.ei.pipespecification.InvalidAnnotationsException;
  * @author Daniel González Peña 23-sep-2006
  *
  */
-
 public class OperationDefinition<T> {
 	private String name = "";
-
 	private String id = "";
-
 	private String description = "";
-	
-	//NOTE: added by miguel reboiro
+	// NOTE: added by miguel reboiro
 	private String help = "";
-
 	private String pluginName = "";
 	private String pluginID = "";
-	
-	//NOTE: added by paulo maia
+	// NOTE: added by paulo maia
 	private String shortcut = "";
-	
+	private String path = "";
+	private String menuName = "";
 	private boolean enabledByDefault;
-
 	private List<EndpointsFactory<T>> factories;
-
 	private List<Class<?>> outcomingArgumentTypes;
-
 	private List<Class<?>> incomingArgumentTypes;
-
 	private Port[] ports;
 
 	/**
@@ -89,7 +80,7 @@ public class OperationDefinition<T> {
 	protected OperationDefinition() {
 
 	}
-	
+
 	public String getPluginID() {
 		return this.pluginID;
 	}
@@ -121,12 +112,12 @@ public class OperationDefinition<T> {
 	public void setName(String name) {
 		this.name = name;
 	}
-	
+
 	//NOTE: added by paulo maia
 	public String getShortcut(){
 		return this.shortcut;
 	}
-	
+
 	//NOTE: added by paulo maia
 	public void setShortcut(String shortcut){
 		this.shortcut = shortcut;
@@ -138,14 +129,14 @@ public class OperationDefinition<T> {
 	public String getHelp() {
 		return this.help;
 	}
-	
+
 	/**
 	 * @param help the help to set
 	 */
 	public void setHelp(String help) {
 		this.help = help;
 	}
-	
+
 	/**
 	 * The path represents the logical type of this operation. For example a
 	 * loader operation named "Load CSV..." could have one logical path such as
@@ -163,11 +154,8 @@ public class OperationDefinition<T> {
 	 *
 	 * @return the logical paths
 	 */
-	private String path = "";
-
 	public String getPath() {
 		return this.path;
-
 	}
 
 	/**
@@ -180,8 +168,27 @@ public class OperationDefinition<T> {
 	}
 
 	/**
+	 * The name that is used to display in menus and toolbars.
+	 *
+	 * @return name that is used to display in menus and toolbars
+	 */
+	public String getMenuName() {
+		return menuName.isEmpty() ? name : menuName;
+	}
+
+	/**
+	 * Sets the menu name.
+	 *
+	 * @param menuName the new menu name
+	 */
+	public void setMenuName(String menuName) {
+		this.menuName = menuName;
+	}
+
+
+	/**
 	 * Returns whether the operation is enabled or not.
-	 * 
+	 *
 	 * @return whether the operation is enabled or not.
 	 */
 	public boolean isEnabled() {
@@ -191,11 +198,11 @@ public class OperationDefinition<T> {
 	public boolean isEnabled(Core instance) {
 		return instance.isOperationEnabled(this);
 	}
-	
+
 	public boolean isEnabledByDefault(){
 		return this.enabledByDefault;
 	}
-	
+
 	public static <T> OperationDefinition<T> createOperationDefinition(
 		Class<T> annotatedClass
 	) throws InvalidAnnotationsException {
@@ -224,7 +231,7 @@ public class OperationDefinition<T> {
 			if (progress != null) {
 				progressMethod = method;
 			}
-			
+
 			Cancel cancel = method.getAnnotation(Cancel.class);
 			if (cancel!=null){
 				cancelMethod = method;
@@ -250,9 +257,9 @@ public class OperationDefinition<T> {
 		toret.enabledByDefault = pipeElement.enabled();
 		toret.setMonitorBeanMethod(progressMethod);
 		toret.setCancelMethod(cancelMethod);
-		
-		
-		
+
+
+
 		return toret;
 	}
 
@@ -276,7 +283,7 @@ public class OperationDefinition<T> {
 				if (toret == 0) {
 					if (o1Port.direction() == o2Port.direction())
 						return 0;
-					else 
+					else
 						return o1Port.direction() == Direction.INPUT ? -1 : 1;
 
 				} else {
@@ -295,10 +302,10 @@ public class OperationDefinition<T> {
 			);
 		}
 		return new OperationDefinition<T>(
-			annotatedClass, 
-			Collections.unmodifiableList(factoriesList), null, 
-			annotatedClass.getAnnotation(Operation.class).name(), 
-			annotatedClass.getAnnotation(Operation.class).description(), 
+			annotatedClass,
+			Collections.unmodifiableList(factoriesList), null,
+			annotatedClass.getAnnotation(Operation.class).name(),
+			annotatedClass.getAnnotation(Operation.class).description(),
 			annotatedClass.getAnnotation(Operation.class).help()
 		);
 	}
@@ -309,7 +316,7 @@ public class OperationDefinition<T> {
 		this.name = name;
 		this.description = description;
 		this.help = help;
-		
+
 		/*
 		 * if (factories.isEmpty()) throw new IllegalArgumentException( "At
 		 * least one port must be defined");
@@ -357,7 +364,7 @@ public class OperationDefinition<T> {
 	public void setMonitorBeanMethod(Method method) {
 		this.monitorBeanMethod = method;
 	}
-	
+
 	private Method cancelMethod;
 
 	/**
@@ -388,5 +395,4 @@ public class OperationDefinition<T> {
 	public void setDescription(String description) {
 		this.description = description;
 	}
-
 }

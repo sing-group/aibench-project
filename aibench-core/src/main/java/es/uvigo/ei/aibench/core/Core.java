@@ -8,12 +8,12 @@
  * it under the terms of the GNU Lesser General Public License as
  * published by the Free Software Foundation, either version 3 of the
  * License, or (at your option) any later version.
- * 
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Lesser Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Lesser Public
  * License along with this program.  If not, see
  * <http://www.gnu.org/licenses/lgpl-3.0.html>.
@@ -73,7 +73,7 @@ import es.uvigo.ei.aibench.core.operation.execution.SynchronousResultCollector;
  * 	<li>Collect the results and puts them in the clipboard.</li>
  * 	<li>Keeps a history of all the operations executed.</li>
  * </ol>
- * 
+ *
  * Uses the GUI for:
  * <ol>
  * 	<li>Retrieve user parameters.</li>
@@ -86,15 +86,15 @@ import es.uvigo.ei.aibench.core.operation.execution.SynchronousResultCollector;
  */
 public class Core {
 	private final static String HELP_HS_PATH = String.format("help%shelpset.hs", File.separator);
-	
+
 	private static final Logger LOGGER = Logger.getLogger(Core.class.getName());
 
 	/**
 	 * Core configuration
 	 */
 	public static Properties CONFIG = new Properties();
-	
-	
+
+
 	private static Core _instance = null;
 
 	// Operations plugged
@@ -103,7 +103,7 @@ public class Core {
 	//	Internal mappings
 	private HashMap<OperationDefinition<?>, Object> operationInstances = new HashMap<OperationDefinition<?>, Object>();
 	private HashMap<OperationDefinition<?>, Class<?>> operationAnnotatedClasses = new HashMap<OperationDefinition<?>, Class<?>>();
-	
+
 	// Enabled operations
 	private HashSet<OperationDefinition<?>> enabledOperations = new HashSet<OperationDefinition<?>>();
 
@@ -111,10 +111,10 @@ public class Core {
 	private HashMap<Class<?>, List<Transformer>> transformersBySource = new HashMap<Class<?>, List<Transformer>>();
 	private HashMap<Class<?>, List<Transformer>> transformersByDestiny = new HashMap<Class<?>, List<Transformer>>();
 	private HashMap<String, Transformer> transformersBySignature = new HashMap<String, Transformer>();
-	
+
 	// OperationListeners
 	private List<CoreListener> coreListeners = new LinkedList<CoreListener>();
-	
+
 	// The GUI
 	private IGenericGUI gui = null;
 
@@ -123,33 +123,33 @@ public class Core {
 
 	// The History
 	private History history = new History();
-	
+
 	// The pool
-	private ExecutorService pool; 
+	private ExecutorService pool;
 
 	// Running counter
 	private int runningCount = 0;
-	
+
 	// Help broker (JavaHelp)
 	private HelpBroker helpBroker;
-	
+
 	// Multicore for web-workbench users
 	private static HashMap<Integer, Core> _coreInstances = new HashMap<Integer, Core>();
-	
+
 	private Core() {
 		Core.readConfig();
 		createThreadPool();
 		createOperations();
 		createTransformers();
 	}
-	
+
 	synchronized public static Core getInstance() {
 		if (_instance == null) {
 			_instance = new Core();
 		}
 		return _instance;
 	}
-	
+
 	synchronized public static Core getInstance(Integer key) {
 		Core i = _coreInstances.get(key);
 		if (i == null) {
@@ -158,19 +158,19 @@ public class Core {
 		}
 		return i;
 	}
-	
+
 	synchronized public static Core removeInstance(Integer key) {
 		return _coreInstances.remove(key);
 	}
-	
-	
+
+
 	public void addCoreListener(CoreListener listener){
 		this.coreListeners.add(listener);
 	}
 	public void removeCoreListener(CoreListener listener){
 		this.coreListeners.remove(listener);
 	}
-	
+
 	private void createThreadPool(){
 		int poolSize=Runtime.getRuntime().availableProcessors()*2;
 		if (CONFIG.getProperty("threadpool.size")!=null){
@@ -194,14 +194,14 @@ public class Core {
 
 	/**
 	 * Returns the operations plugged.
-	 * 
+	 *
 	 * @return the operations plugged.
 	 */
 	public List<OperationDefinition<?>> getOperations(){
 		return this.operations;
 	}
-	
-	
+
+
 	/**
 	 * Returns an operation given its uid.
 	 * @param uid the operation uid.
@@ -217,8 +217,8 @@ public class Core {
 		}
 		return op;
 	}
-	
-	
+
+
 	/**
 	 * Returns an operation given its uid of some active session.
 	 * @param key user session identifier.
@@ -235,7 +235,7 @@ public class Core {
 		}
 		return op;
 	}
-	
+
 	/**
 	 * Returns all compatible transformers with a given source. That is, all transformers whose source type is
 	 * the given class or superclass.
@@ -251,11 +251,11 @@ public class Core {
 		}
 		return result;
 	}
-	
+
 	/**
 	 * Returns all compatible transformers with a given destiny. That is, all transformers whose destiny type is
 	 * the given class or sublcass.
-	 * 
+	 *
 	 * @param destinyType the destiny type.
 	 * @return the compatible transformers.
 	 */
@@ -268,10 +268,10 @@ public class Core {
 		}
 		return result;
 	}
-	
+
 	/**
 	 * Returns all declared Transformers.
-	 * 
+	 *
 	 * @return all declared Transformers.
 	 */
 	public List<Transformer> getAllTransformers(){
@@ -281,7 +281,7 @@ public class Core {
 	}
 	/**
 	 * Returns a Transformer given its signature.
-	 * 
+	 *
 	 * @param signature the signature of the Transformer.
 	 * @return a Transformer given its signature.
 	 */
@@ -305,16 +305,16 @@ public class Core {
 			if (annotatedClass.getAnnotation(Operation.class)==null) continue;
 			try{
 				OperationDefinition<?> operationDefinition = OperationDefinition.createOperationDefinition(annotatedClass);
-				
-				
+
+
 				operationDefinition.setPluginName(extension.getPlugin().getName());
 				operationDefinition.setPluginID(extension.getPlugin().getUID());
-				
+
 				List<?> children = extension.getExtensionXmlNode().getChildren();
 				for (int i = 0; i < children.size(); i++) {
 					PluginXmlNode node = (PluginXmlNode) children.get(i);
 					if (node.getName().equals("operation-description")) {
-						
+
 						//name
 						String configName = CONFIG.getProperty(node.getAttribute("uid")+".name");
 						if (configName != null){
@@ -326,10 +326,9 @@ public class Core {
 								operationDefinition.setName(name);
 							}
 						}
-						
-						
+
 						operationDefinition.setID(node.getAttribute("uid"));
-						
+
 						//path
 						String configPath = CONFIG.getProperty(node.getAttribute("uid")+".path");
 						if (configPath != null){
@@ -351,11 +350,18 @@ public class Core {
 								operationDefinition.setHelp(help);
 							}
 						}
-						
+
 						//shortcut NOTE: added by paulo maia
 						String shortcut = node.getAttribute("shortcut");
-						if(shortcut!=null){						
+						if(shortcut!=null){
 							operationDefinition.setShortcut(shortcut);
+						}
+
+						String menuName = node.getAttribute("menuName");
+						if (menuName != null) {
+							operationDefinition.setMenuName(menuName);
+						} else {
+							operationDefinition.setMenuName(operationDefinition.getName());
 						}
 					}
 				}
@@ -379,7 +385,7 @@ public class Core {
 		}
 	}
 
-	
+
 	/**
 	 * Creates the transformers reading the operations plugins and parsing the annotations of the
 	 * indicated class in the plugin.xml.
@@ -397,26 +403,26 @@ public class Core {
 				for (int i = 0; i < children.size(); i++) {
 					PluginXmlNode node = (PluginXmlNode) children.get(i);
 					if (node.getName().equals("transformer-description")) {
-						
+
 						Class<?> transformerClass = extensionPlugin.getPluginClassLoader().loadClass(node.getAttribute("transformerClass"));
-						
+
 						Class<?> sourceType = null;
 						Class<?>[] params=null;
 						if (node.getAttribute("sourceType")!=null){
 							sourceType = extensionPlugin.getPluginClassLoader().loadClass(node.getAttribute("sourceType"));
 							params = new Class[]{sourceType};
 						}
-						
+
 						Method method = transformerClass.getMethod(node.getAttribute("methodName"), params);
-						
-						//check 
+
+						//check
 						Class<?> destinyType = extensionPlugin.getPluginClassLoader().loadClass(node.getAttribute("destinyType"));
 						if (!destinyType.isAssignableFrom(method.getReturnType())){
 							LOGGER.warn("Cant create transformer");
 						}
-						
+
 						Transformer transformer = new Transformer(method);
-						
+
 						if (node.getAttribute("name")!=null){
 							transformer.setName(node.getAttribute("name"));
 						}else{
@@ -428,7 +434,7 @@ public class Core {
 							this.transformersByDestiny.put(destinyType, tlist);
 						}
 						tlist.add(transformer );
-						
+
 						if (sourceType != null){
 							List<Transformer> tlist2 = this.transformersBySource.get(sourceType);
 							if (tlist2 == null){
@@ -436,7 +442,7 @@ public class Core {
 								this.transformersBySource.put(sourceType, tlist2);
 							}
 							tlist2.add(transformer);
-							
+
 						}
 						this.transformersBySignature.put(transformer.getSignature(), transformer);
 					}
@@ -444,13 +450,13 @@ public class Core {
 			}catch(Exception e){
 				LOGGER.warn("Cant create transformed defined in plugin "+extensionPlugin+": "+e);
 			}
-		
+
 		}
 	}
 
 	/**
 	 * Returns the GUI currently plugged.
-	 * 
+	 *
 	 * @return the GUI currently plugged.
 	 */
 	public IGenericGUI getGUI() {
@@ -463,53 +469,53 @@ public class Core {
 
 					@Override
 					public void init() {
-						
-						
+
+
 					}
 
 					@Override
 					public void update() {
-						
-						
+
+
 					}
 
 					@Override
 					public void info(String info) {
 						System.out.println(info);
-						
+
 					}
 
 					@Override
 					public void warn(String warning) {
 						System.err.println(warning);
-						
+
 					}
 
 					@Override
 					public void error(Throwable error) {
 						System.err.println(error);
 						error.printStackTrace();
-						
+
 					}
 
 					@Override
 					public void error(String error) {
 						System.err.println(error);
-						
+
 					}
 
 					@Override
 					public void setStatusText(String text) {
 						System.out.println(text);
-						
+
 					}
-					
+
 				};
 			}else{
-				Extension _extension = (Extension) extensions.get(0);			
+				Extension _extension = (Extension) extensions.get(0);
 				gui = (IGenericGUI) _extension.getExtensionInstance();
 			}
-			
+
 		}
 
 		return gui;
@@ -517,14 +523,14 @@ public class Core {
 
 	/**
 	 * Gives access to the AIBench's Clipboard.
-	 * 
+	 *
 	 * @return the AIBench's Clipboard.
 	 * @see es.uvigo.ei.aibench.core.clipboard.Clipboard
 	 */
 	public Clipboard getClipboard(){
 		return this.clipboard;
 	}
-	
+
 	/**
 	 * Gives access to the AIBench's History.
 	 * @return the AIBench's History.
@@ -533,10 +539,10 @@ public class Core {
 	public History getHistory() {
 		return this.history;
 	}
-	
+
 	/**
 	 * Returns the path to the helpset.hs file.
-	 * 
+	 *
 	 * @return the path to the helpset.hs file.
 	 */
 	public String getHelpPath() {
@@ -548,19 +554,19 @@ public class Core {
 		}
 		return path;
 	}
-	
+
 	private synchronized void createHelpBroker() {
 		if (this.helpBroker ==  null &&
 			Boolean.parseBoolean(Core.CONFIG.getProperty("help.enabled", "false"))) {
 			String path = Core.CONFIG.getProperty("help.path");
 			if (path == null) path = Core.HELP_HS_PATH;
-			
+
 //            SwingHelpUtilities.setContentViewerUI("BasicNativeContentViewerUI");
 			// Find the HelpSet file and create the HelpSet object:
 			try {
 				URL hsURL = new File(path).toURI().toURL();//HelpSet.findHelpSet(cl, path);
 				this.helpBroker = new DefaultHelpBroker(new HelpSet(null, hsURL));
-				
+
 				Core.LOGGER.info("HelpSet " + path + " configured");
 			} catch (Exception ee) {
 				// Say what the exception really is
@@ -569,11 +575,11 @@ public class Core {
 			}
 		}
 	}
-	
+
 	/**
 	 * Creates and configures the JavaHelp help broker. The property "help.enabled" on the "core.conf" file must be true.
 	 * The default help set file location is "help/helpset.hs" and can be changed with the property "help.path".
-	 * 
+	 *
 	 * @return the JavaHelp help broker or {@code null} if the help is not enabled or it couldn't be configured.
 	 */
 	public HelpBroker getHelpBroker() {
@@ -586,7 +592,7 @@ public class Core {
 	/**
 	 * Validates the input data using the method defined in the
 	 * {@link Port#validateMethod()} annotation (if used).
-	 * 
+	 *
 	 * @param operationDefinition
 	 *            the operation.
 	 * @param operationObject
@@ -647,23 +653,23 @@ public class Core {
 						LOGGER.warn("Validate method must have one argument");
 					}
 				}
-			} 
+			}
 		} catch (SecurityException e) {
 			LOGGER.warn("Security exception retrieving operation methods");
 		}
 
 		return null;
 	}
-	
+
 	class OperationKey{
 		Object operationInstance;
 		OperationDefinition<?> definition;
 		boolean cancelled = false;
 	}
-	
+
 	/**
 	 * Executes an AIBench Operation.
-	 * 
+	 *
 	 * @param <T> the type of the operation.
 	 * @param operation the operation.
 	 * @param handler a (optional) progress handler to monitorize the start and finish of the operation. May be {@code null}.
@@ -677,7 +683,7 @@ public class Core {
 			public void run(){
 				final ExecutionSession session;
 				if(operations.indexOf(operation)==-1)throw new RuntimeException("Core: not a registered operation");
-				
+
 				Thread t=null;
 				//ExecutionSession session=null;
 				try {
@@ -686,14 +692,14 @@ public class Core {
 					//Object operationInstance = this.operationInstances.get(operation);
 					Object operationInstance = operationAnnotatedClasses.get(operation).newInstance();
 					// **********************************************************************************************
-					
-					
+
+
 					/* Prepare the key */
 					final OperationKey key = new OperationKey();
 					key.operationInstance = operationInstance;
 					key.definition = operation;
-					
-					
+
+
 
 					// VALIDATING
 					try{
@@ -712,8 +718,8 @@ public class Core {
 							LOGGER.debug(spec);
 						}
 					}
-					
-					
+
+
 					Executable ex = operation.makeExecutable((T) operationInstance, pool);
 
 					final SynchronousResultCollector collector = new SynchronousResultCollector();
@@ -730,7 +736,7 @@ public class Core {
 
 					// 2. Execute
 					t = new Thread(){
-						public void run(){		
+						public void run(){
 							class ClipboardItemNeed implements Comparable<ClipboardItemNeed>{
 								private ClipboardItem item;
 								private char type; // 'r' or 'w'
@@ -738,12 +744,12 @@ public class Core {
 									this.item = item;
 									this.type = type;
 								}
-								
+
 								@Override
 								public int compareTo(ClipboardItemNeed other){
 									return this.item.getID()-other.item.getID();
 								}
-								
+
 								public boolean equals(Object o){
 									ClipboardItemNeed other = (ClipboardItemNeed) o;
 									return this.item == other.item;
@@ -752,14 +758,14 @@ public class Core {
 
 							Vector<Lock> aquiredLocks = new Vector<Lock>();
 							Vector<ClipboardItemNeed> allNeeded = new Vector<ClipboardItemNeed>();
-							
+
 							int i =0;
-					
+
 							// RETRIEVE PARAMS
 							for (IncomingEndPoint port : session.getIncomingEndpoints()){
 								Object value = specs[i].getRawValue();
-								
-								// PREPARE LOCKS NEEDED								
+
+								// PREPARE LOCKS NEEDED
 								if (((Port) operation.getPorts().get(i)).lock() && specs[i].getSource()==ParamSource.CLIPBOARD){
 									ClipboardItem item = (ClipboardItem)specs[i].getValue();
 									if (item!=null){
@@ -775,21 +781,21 @@ public class Core {
 										}
 									}
 								}else if (specs[i].getSource()==ParamSource.CLIPBOARD){
-									ClipboardItem item = (ClipboardItem)specs[i].getValue();									
+									ClipboardItem item = (ClipboardItem)specs[i].getValue();
 									if(item!=null){
 										ClipboardItemNeed need = new ClipboardItemNeed(item, 'r');
 										if (allNeeded.indexOf(need)==-1){
-											allNeeded.add(need);			
+											allNeeded.add(need);
 										}
 									}
 								}
 								// END PREPARE LOCK NEEDED
-								
-								
+
+
 								if (port.getArgumentTypes().length==0){
 									port.call();
 								}else{
-									
+
 									/*// Transform
 									Transformer trans = Core.this.transformersBySignature.get(specs[i].getTransformerSignature());
 									if (trans!= null) value = trans.transform(value);
@@ -797,18 +803,18 @@ public class Core {
 								}
 								port.call(value);
 								i++;
-								
+
 							}
 
 							// AQUIRE LOCKS TO CLIPBOARD ITEMS
 							// sort by ID to avoid deadlocks...
 							Collections.sort(allNeeded);
-							
+
 							for (ClipboardItemNeed need : allNeeded ){
 								if (need.type=='r'){
 									Lock lk = need.item.getLock().readLock();
 									if (LOGGER.getEffectiveLevel().equals(Level.DEBUG))LOGGER.debug("Thread "+Thread.currentThread()+" trying to get READ lock "+lk+" item "+need.item);
-									
+
 									lk.lock();
 									aquiredLocks.add(lk);
 									if (LOGGER.getEffectiveLevel().equals(Level.DEBUG))LOGGER.debug("Thread "+Thread.currentThread()+" aquired READ lock "+lk+" item "+need.item);
@@ -821,27 +827,27 @@ public class Core {
 								}
 							}
 							// ALL LOCKS AQUIRED
-						
+
 							session.finish();
-							
-							
+
+
 							List<Object> allResults=new Vector<Object>();
 							List<ClipboardItem> clipboardItems = new ArrayList<ClipboardItem>();
 							try{
 								List<List<Object>> results =collector.getResults();
-				
+
 								if (!key.cancelled){
 									// 3. Get Results
 									List<Object> portOutputs = new ArrayList<Object>();
-									
+
 									if (LOGGER.getEffectiveLevel().equals(Level.DEBUG)) LOGGER.debug("Getting outputs and sending them to clipboard");
 									for (List<Object> list : results){
-										for (Object elem : list){									
+										for (Object elem : list){
 											portOutputs.add(elem);
 											allResults.add(elem);
-											
+
 											//recursively populate the clipboard...
-											
+
 											clipboardItems.addAll(getClipboard().putItem(elem, null)); //this null could be the port names....
 										}
 									}
@@ -852,37 +858,37 @@ public class Core {
 									results = null;
 									portOutputs = null;
 								}
-								
+
 							}catch(Throwable e){
 								e.printStackTrace();
-								if(handler!=null){ 
+								if(handler!=null){
 									handler.operationError(e);
 									handler.operationFinished(allResults, clipboardItems);
-								
+
 								}
 								gui.error(e);
 
 							}finally{
-								
-																
+
+
 								for (Lock lk : aquiredLocks){
 									if (LOGGER.getEffectiveLevel().equals(Level.DEBUG))LOGGER.debug("Thread "+Thread.currentThread()+" releasing lock: "+lk);
 									lk.unlock();
 								}
-								
+
 								if(handler!=null) handler.operationFinished(allResults, clipboardItems);
-								
+
 								allResults = null;
-								
+
 								decreaseRunningCount();
-								
-								if (LOGGER.getEffectiveLevel().equals(Level.DEBUG)) LOGGER.debug("Operation finished");	
-								
+
+								if (LOGGER.getEffectiveLevel().equals(Level.DEBUG)) LOGGER.debug("Operation finished");
+
 							}
 
 						}
 					};
-					
+
 					t.start();
 
 					increaseRunningCount();
@@ -907,18 +913,18 @@ public class Core {
 						if (t!=null) t.interrupt();
 
 						if(handler!=null) handler.operationFinished(null,null);
-						
+
 					}
 					finally{
-						
-						
-						
-						
-						
+
+
+
+
+
 					}
 					// TODO: is this util?
 					Core.getInstance().getGUI().update();
-				
+
 					if (Core.this.gui != null)
 						Core.this.gui.update();
 				} catch (SecurityException e) {
@@ -934,13 +940,13 @@ public class Core {
 //					if (t!=null) t.interrupt();
 
 				}finally{
-					
+
 
 				}
 			}
 		};
-		
-		
+
+
 		working.start();
 	}
 
@@ -959,12 +965,12 @@ public class Core {
 		ParamSpec[] paramsSpecs = CoreUtils.createParams(params);
 		this.executeOperation(op, handler, paramsSpecs);
 	}
-	
+
 	private void increaseRunningCount(){
 		runningCount++;
 		getGUI().setStatusText("Core Running "+runningCount+" operations");
 	}
-	
+
 	private void decreaseRunningCount(){
 		runningCount--;
 		if (runningCount == 0){
@@ -973,10 +979,10 @@ public class Core {
 			getGUI().setStatusText("Core Running "+runningCount+" operations");
 		}
 	}
-	
+
 	/**
 	 * Request the finalization of the operations. The operations will receive a {@link Thread#interrupt()} call, so if they mask this signal or fails, they may never finish.
-	 * 
+	 *
 	 * @param key the operation to cancel.
 	 */
 	synchronized public void cancelOperation(Object key){
@@ -994,26 +1000,26 @@ public class Core {
 				e.printStackTrace();
 			}
 		}
-		
+
 	}
-	
+
 	/**
 	 * Enables an operation identified by its uid.
-	 * 
+	 *
 	 * @param uid the uid of the operation to be enabled.
 	 */
 	public void enableOperation(String uid) {
 		this.enableOperation(this.getOperationById(uid));
 	}
-	
+
 	/**
 	 * Enables an operation identified by its OperationDefinition.
-	 * 
+	 *
 	 * @param def the OperationDefinition of the operation to be enabled.
 	 */
 	public void enableOperation(OperationDefinition<?> def){
 		this.enabledOperations.add(def);
-		
+
 		for (CoreListener listener: this.coreListeners){
 			listener.operationEnabled(def);
 		}
@@ -1021,16 +1027,16 @@ public class Core {
 
 	/**
 	 * Disables an operation identified by its uid.
-	 * 
+	 *
 	 * @param uid the uid of the operation to be disabled.
 	 */
 	public void disableOperation(String uid){
 		this.disableOperation(this.getOperationById(uid));
 	}
-	
+
 	/**
 	 * Disables an operation identified by its OperationDefinition.
-	 * 
+	 *
 	 * @param def the OperationDefinition of the operation to be disabled.
 	 */
 	public void disableOperation(OperationDefinition<?> def){
@@ -1039,23 +1045,23 @@ public class Core {
 			listener.operationDisabled(def);
 		}
 	}
-	
+
 	/**
 	 * Checks if an operation is enabled by its OperationDefinition.
-	 * 
+	 *
 	 * @param def the OperationDefinition of the operation to be checked.
 	 * @return {@code true} if the operation is enabled. {@code false} otherwise.
 	 */
 	public boolean isOperationEnabled(OperationDefinition<?> def){
 		return this.enabledOperations.contains(def);
 	}
-	
+
 	/**
 	 * Reads the config from <AIBench_directory>/conf/core.conf
 	 */
 	private static void readConfig() {
 		String path = System.getProperty("aibench.paths.core.conf", "conf/core.conf");
-		
+
 		URL url = Util.getGlobalResourceURL(path);
 		try {
 			Core.CONFIG.load(url.openStream());

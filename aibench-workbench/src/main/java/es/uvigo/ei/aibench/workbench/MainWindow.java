@@ -8,12 +8,12 @@
  * it under the terms of the GNU Lesser General Public License as
  * published by the Free Software Foundation, either version 3 of the
  * License, or (at your option) any later version.
- * 
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Lesser Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Lesser Public
  * License along with this program.  If not, see
  * <http://www.gnu.org/licenses/lgpl-3.0.html>.
@@ -83,7 +83,7 @@ import es.uvigo.ei.aibench.workbench.utilities.Utilities;
 
 /**
  * This class is the main frame of the AIBench's Workbench.
- * 
+ *
  * @author Ruben Dominguez Carbajales
  * @author Hugo López-Fernández
  * @see Workbench
@@ -101,20 +101,20 @@ public class MainWindow extends JFrame {
 	// Document Viewer JTabbedPane Management
 	private HashMap<ClipboardItem, Integer> itemToTabIndex = new HashMap<ClipboardItem, Integer>();
 	private HashMap<Integer, ClipboardItem> tabIndexToItem = new HashMap<Integer, ClipboardItem>();
-	
-	// Plugin's Components management. This hashtable maps strings (components ids) and JComponents 
+
+	// Plugin's Components management. This hashtable maps strings (components ids) and JComponents
 	private HashMap<String, JComponent> componentMappings = new HashMap<String, JComponent>();
 	private HashMap<String, Slot> slotMappings = new HashMap<String, Slot>();
-		
+
 	// STATUS BAR
 	String STATUS_DEFAULT_TEXT = Workbench.CONFIG.getProperty("mainwindow.statusbar.text");
 	private JLabel statusBar = new JLabel(STATUS_DEFAULT_TEXT);
-	
+
 	// TOOLBAR NOTE: added by paulo maia
 	private JToolBar toolbar = null;
 
 	// LAYOUT SYSTEM
-	private TableLayout tableLayout; 
+	private TableLayout tableLayout;
 	private String DEFAULT_LAYOUT=
 	"<table>"+
 		"<row>"+
@@ -144,15 +144,15 @@ public class MainWindow extends JFrame {
 			"</cell>-->"+
 		"</row>"+
 	"</table>";
-	
+
 	private JMenuBar jMenuBar = null;
 	private CloseableJTabbedPane documentTabbedPane = null;
-	
+
 	public MainWindow(List<OperationWrapper> operaciones) {
 		super();
 
 		this.interceptedOperations = operaciones;
-		
+
 		// locate the template.xml
 //		URL url = MainWindow.class.getProtectionDomain().getCodeSource().getLocation();
 //		try {
@@ -160,13 +160,13 @@ public class MainWindow extends JFrame {
 //				url = new URL(url.toString().substring(0,url.toString().lastIndexOf('/'))+"/../conf/template.xml");
 //			}else{
 //				url = new URL(url+"/../../conf/template.xml");
-//				
+//
 //			}
 		String path = System.getProperty("aibench.paths.template.conf", "conf/template.xml");
 		URL url = Util.getGlobalResourceURL(path);
 		try {
 			this.tableLayout = new TableLayout(url.openStream());
-			
+
 		}catch (IOException e) {
 			LOGGER.warn("Not found a template file, searching in: "+url+" Using default layout....");
 			this.tableLayout = new TableLayout(new ByteArrayInputStream(this.DEFAULT_LAYOUT.getBytes()));
@@ -177,12 +177,12 @@ public class MainWindow extends JFrame {
 //			this.tableLayout = new TableLayout(new ByteArrayInputStream(this.DEFAULT_LAYOUT.getBytes()));
 //			e1.printStackTrace();
 //		}
-		
+
 		initialize();
 
 		this.setSize(new Dimension(800,600));
 	}
-	
+
 	public void packSplitters() {
 		this.tableLayout.packSplitters();
 	}
@@ -208,9 +208,9 @@ public class MainWindow extends JFrame {
 				dialog.setVisible(true);
 				e.getWindow().dispose();
 				new Thread(){ //killer thread
-					public void run(){						
-						Launcher.getPluginEngine().shutdown();						
-						System.exit(0);			
+					public void run(){
+						Launcher.getPluginEngine().shutdown();
+						System.exit(0);
 					}
 				}.start();
 			}
@@ -224,20 +224,20 @@ public class MainWindow extends JFrame {
 
 		JMenuBar menuBar = getJJMenuBar();
 
-		if (Workbench.CONFIG.getProperty("mainwindow.menubar.visible") == null || 
+		if (Workbench.CONFIG.getProperty("mainwindow.menubar.visible") == null ||
 			!Workbench.CONFIG.getProperty("mainwindow.menubar.visible").equals("false")
 		) {
 			this.setJMenuBar(menuBar);
 		}
-		
+
 		// ToolBar NOTE: added by paulo maia
 		String toolbarVisible = Workbench.CONFIG.getProperty("toolbar.visible");
 		if(toolbarVisible != null && toolbarVisible.equals("true")){
 			boolean shownames = Workbench.CONFIG.getProperty("toolbar.showOperationNames").equals("true") ? true : false;
-			HashMap<Integer,JButton> buttons = new HashMap<Integer,JButton>();  
-			
+			HashMap<Integer,JButton> buttons = new HashMap<Integer,JButton>();
+
 			this.toolbar = new JToolBar("Operations Toolbar");
-			
+
 			for(final OperationDefinition<?> op : Core.getInstance().getOperations()){
 				if (!Workbench.getInstance().isOperationViewableIn(op, "TOOLBAR"))
 					continue;
@@ -253,42 +253,43 @@ public class MainWindow extends JFrame {
 								if (definition == op){
 									setEnabled(false);
 								}
-								
+
 							}
 
 							public void operationEnabled(OperationDefinition<?> definition) {
 								if (definition == op){
 									setEnabled(true);
 								}
-								
+
 							}
-							
+
 						});
 					}
 				};
 				button.setEnabled(op.isEnabled());
-				
-				// name
-				if(shownames) button.setText(op.getName());
-				// description
+				if(shownames) {
+					button.setText(op.getMenuName());
+				}
 				button.setToolTipText(op.getDescription());
-				// action
+
 				button.addActionListener(new ActionListener() {
 					public void actionPerformed(ActionEvent evt) {
 						Workbench.getInstance().executeOperation(op);
-					}					
+					}
 				});
-				// icon
+
 				ImageIcon bigicon = Workbench.getInstance().getOperationBigIcon(op);
-				if(bigicon!=null)
+				if (bigicon != null) {
 					button.setIcon(bigicon);
-				else
+				} else {
 					button.setIcon(Workbench.getInstance().getOperationIcon(op));
-				
-				if(!(op.getShortcut().replaceAll(" ","").length()==0))
-					buttons.put(Integer.parseInt(op.getShortcut().replaceAll(" ","")), button);				
+				}
+
+				if (!(op.getShortcut().replaceAll(" ", "").length() == 0)) {
+					buttons.put(Integer.parseInt(op.getShortcut().replaceAll(" ", "")), button);
+				}
 			}
-			
+
 			// separators
 			String separatorString = Workbench.CONFIG.getProperty("toolbar.separators");
 			ArrayList<String> separators = new ArrayList<String>();
@@ -299,13 +300,13 @@ public class MainWindow extends JFrame {
 					if (sep.length()>0) separators.add(sep);
 				}
 			}
-			
+
 			Integer[] buttonShortcuts = new Integer[buttons.size()];
 			buttonShortcuts = buttons.keySet().toArray(buttonShortcuts);
 			Arrays.sort(buttonShortcuts);
 
-			
-			for(Integer i: buttonShortcuts){				
+
+			for(Integer i: buttonShortcuts){
 				this.toolbar.add(buttons.get(i));
 				for(String sep:separators){
 					try{
@@ -318,25 +319,25 @@ public class MainWindow extends JFrame {
 						LOGGER.error("The toolbar separators must be numbers!, found: "+sep);
 					}
 				}
-			}			
-			
-		}		
+			}
+
+		}
 
 		this.getContentPane().setLayout(new BorderLayout());
 		this.tableLayout.getDocumentViewerPanel().setLayout(new BorderLayout());
 		this.tableLayout.getDocumentViewerPanel().add(getDocumentTabbedPane(), BorderLayout.CENTER);
-		
+
 		this.getContentPane().add(this.tableLayout, BorderLayout.CENTER);
-		
+
 		if (Workbench.CONFIG.getProperty("mainwindow.statusbar.visible")==null || !Workbench.CONFIG.getProperty("mainwindow.statusbar.visible").equals("false")){
 			this.add(this.statusBar, BorderLayout.SOUTH);
 		}
-		
+
 		if(toolbarVisible != null && toolbarVisible.equals("true")){
 			String positionString = Workbench.CONFIG.getProperty("toolbar.position");
 			String position = BorderLayout.NORTH;
 			int orientation = SwingConstants.HORIZONTAL;
-			
+
 			if (positionString != null) {
 				if (positionString.equalsIgnoreCase("SOUTH")) {
 					orientation = SwingConstants.HORIZONTAL;
@@ -349,23 +350,23 @@ public class MainWindow extends JFrame {
 					position = BorderLayout.WEST;
 				}
 			}
-				
+
 			this.toolbar.setOrientation(orientation);
 			this.add(toolbar, position);
 		}
 	}
-	
+
 	public CloseableJTabbedPane getDocumentTabbedPane() {
 		if (this.documentTabbedPane == null) {
 			this.documentTabbedPane = new CloseableJTabbedPane();
-			
+
 			this.documentTabbedPane.addChangeListener(new ChangeListener() {
 				@Override
 				public void stateChanged(ChangeEvent e) {
 					final int index = MainWindow.this.documentTabbedPane.getSelectedIndex();
 					if (index != -1) {
 						final ClipboardItem data = MainWindow.this.tabIndexToItem.get(index);
-						
+
 						if (data != null) {
 							Workbench.getInstance().setActiveData(data);
 						}
@@ -385,10 +386,10 @@ public class MainWindow extends JFrame {
 					}
 				}
 			});
-			
+
 			this.documentTabbedPane.setPreferredSize(new Dimension(640, 480));
 		}
-		
+
 		return this.documentTabbedPane;
 	}
 
@@ -397,7 +398,7 @@ public class MainWindow extends JFrame {
 	 * ({@code itemToTabIndex} and {@code tabIndexToTab}) in order to set the
 	 * correct positions for those items placed in a tab index higher than
 	 * {@code tabIndex}.
-	 * 
+	 *
 	 * @param tabIndex the index of the tab that should be removed.
 	 */
 	protected void removeTabAt(int tabIndex) {
@@ -472,20 +473,20 @@ public class MainWindow extends JFrame {
 	}
 
 	private int getPositionForPathName(String pathElement){
-		
+
 		String noAt = pathElement;
 		int res = 0;
 		if (pathElement.indexOf("@")!=-1){
 			noAt = noAt.substring(noAt.indexOf("@")+1);
 		}
 		if (Workbench.CONFIG.get("menu."+noAt)!=null){
-			
+
 			try{
 				res = Integer.parseInt(Workbench.CONFIG.get("menu."+noAt).toString().trim());
 			}catch(NumberFormatException ex){
 				LOGGER.warn("Configuration error: Property menu."+noAt+" must be an integer");
 			}
-			
+
 		}
 		else if (pathElement.indexOf("@")!=-1){
 			res= Integer.parseInt(pathElement.substring(0, pathElement.indexOf("@")));
@@ -494,7 +495,7 @@ public class MainWindow extends JFrame {
 		}
 		//System.err.println("get position for "+pathElement+" : "+res);
 		return res;
-		
+
 	}
 	/*
 	 * ============================================
@@ -560,7 +561,7 @@ public class MainWindow extends JFrame {
 
 		operations.addAll(res);
 	}
-	
+
 
 
 	class RenderingMessageComponent extends JPanel{
@@ -593,20 +594,20 @@ public class MainWindow extends JFrame {
 			tabbedViews.setTabPlacement(JTabbedPane.BOTTOM);
 			viewsComponent = tabbedViews;
 		}
-		
+
 		for (int i = 0; i < views.size(); i++) {
 			if (LOGGER.getEffectiveLevel().equals(Level.DEBUG)) {
 				LOGGER.debug("Adding view " + views.get(i));
 			}
-			
+
 			final IViewFactory view= views.get(i);
-			
+
 			class RenderingThread extends Thread{
 				private JComponent viewsComponent;
 				public RenderingThread(JComponent viewsComponent) {
 					this.viewsComponent = viewsComponent;
 				}
-				public void run(){				
+				public void run(){
 					final RenderingMessageComponent renderingMessage = new RenderingMessageComponent("Rendering view \""+view.getViewName()+"\", please wait...");
 					SwingUtilities.invokeLater(new Runnable(){
 						public void run(){
@@ -620,9 +621,9 @@ public class MainWindow extends JFrame {
 							}
 						}
 					});
-					
+
 					final JComponent component = view.getComponent(data.getUserData());
-					
+
 					SwingUtilities.invokeLater(new Runnable(){
 						public void run(){
 							synchronized(viewsComponent){
@@ -652,9 +653,9 @@ public class MainWindow extends JFrame {
 					});
 				}
 			};
-			
+
 			new RenderingThread(viewsComponent).start();
-	
+
 		}
 
 		this.getDocumentTabbedPane().addTab(getTabTitle(data), null, viewsComponent);
@@ -677,7 +678,7 @@ public class MainWindow extends JFrame {
 
 	public synchronized List<Component> getDataViews(ClipboardItem data) {
 		ArrayList<Component> components = new ArrayList<Component>();
-		
+
 		if (this.itemToTabIndex.containsKey(data)) {
 			int position = this.itemToTabIndex.get(data);
 			Component component = this.getDocumentTabbedPane().getComponentAt(position);
@@ -690,7 +691,7 @@ public class MainWindow extends JFrame {
 				components.add(component);
 			}
 		}
-		
+
 		return components;
 	}
 
@@ -708,7 +709,7 @@ public class MainWindow extends JFrame {
 			} else {
 				LOGGER.warn("bringToFront(ClibpoardItem data): attempting to "
 						+ "make visible an index higher than actual tab "
-						+ "count. Index = " + position + ". Data name " + 
+						+ "count. Index = " + position + ". Data name " +
 						data.getName());
 			}
 		} else {
@@ -727,7 +728,7 @@ public class MainWindow extends JFrame {
 			Core.getInstance().getGUI().warn("MainWindow.hideData(): Not opened data [ " + data.toString() + " ]");
 		}
 	}
-	
+
 	protected void updateDataMaps(int removeIndex) {
 		Map<Integer, ClipboardItem> newPositions = new HashMap<>();
 		for (Entry<ClipboardItem, Integer> entry : this.itemToTabIndex.entrySet()) {
@@ -762,35 +763,35 @@ public class MainWindow extends JFrame {
 
 	/**
 	 * CAUTION: This method shouldn't be used. Use {@link Workbench#putItemInSlot(String, String, String, JComponent)} instead.
-	 * 
+	 *
 	 * @param slotName name of the slot where the item should be placed.
 	 * @param componentName name of the component.
 	 * @param componentID identifier of the component.
 	 * @param component the component to be placed in the main window.
 	 */
 	public synchronized void putItemInSlot(String slotName, String componentName, String componentID, JComponent component){
-		if (this.slotMappings.get(componentID)!=null){			
+		if (this.slotMappings.get(componentID)!=null){
 			this.slotMappings.get(componentID).remove(this.componentMappings.get(componentID));
 			this.slotMappings.remove(componentID);
 		}
-		
+
 		Slot slot = this.tableLayout.getSlotByID(slotName);
 		this.slotMappings.put(componentID, slot);
-		
+
 		if (slot != null){
 			/*JTabbedPane tabbed = null;
 			if (slot.getComponentCount() == 0){
 				slot.setLayout(new BorderLayout());
 				tabbed = new JTabbedPane();
-				
+
 				slot.add(tabbed, BorderLayout.CENTER);
 			}else{
 				tabbed = (JTabbedPane) slot.getComponent(0);
-				
+
 			}
-			
+
 			tabbed.addTab(componentName, component);*/
-			
+
 			slot.addComponent(componentName, component);
 			this.componentMappings.put(componentID, component);
 			this.pack();
@@ -798,37 +799,37 @@ public class MainWindow extends JFrame {
 			LOGGER.warn("slot not found to place some component: "+slotName);
 		}
 	}
-	
+
 	/**
 	 * CAUTION: This method should't be used. Use {@link Workbench#getAvailableSlotIDs()} instead.
-	 * 
+	 *
 	 * @return a list with the available slot ids.
 	 */
 	public List<String> getAvailableSlotIDs(){
 		return this.tableLayout.getAvailableSlots();
 	}
-	
+
 	/**
 	 * Returns the component located at a given slot ID.
-	 * 
+	 *
 	 * @param componentID The ID of the component.
 	 * @return the component located at componentID.
 	 */
 	public JComponent getComponentAtSlot(final String componentID) {
 		return this.componentMappings.get(componentID);
 	}
-	
+
 	public synchronized JComponent removeComponentFromSlot(String componentID){
 		JComponent component = this.componentMappings.get(componentID);
-		
+
 		//is there one component with the same id ?
 		if (component != null){
 			if (component.getParent() instanceof JTabbedPane){
 				JTabbedPane theTabbed = (JTabbedPane) component.getParent();
-				theTabbed.remove(component);				
+				theTabbed.remove(component);
 			}
 		}
-		
+
 		this.pack();
 		return component;
 	}

@@ -128,7 +128,7 @@ An example of an :ref:`Operation <operation>` class could be:
 
 .. code-block:: java
 
-   @Operation(description = "this operation adds two numbers")
+   @Operation(name = "Sum", description = "this operation adds two numbers")
    public class Sum {
      
      private int x, y;
@@ -376,30 +376,35 @@ As it was explained before, an Operation must be connected to the core's
 .. code-block:: xml
   
   <extension
-  uid="AIBench.core"
-  name="AIBench.core.operation-definition"
-  class="es.uvigo.ei.sing.geneCBR.dfp.DFPOperation">
+    uid="AIBench.core"
+    name="AIBench.core.operation-definition"
+    class="es.uvigo.ei.sing.geneCBR.dfp.DFPOperation">
 
-  <!-- Additional operation info -->
-  <operation-description
-  name="Discriminant Fuzzy Patterns Filtering"
-  uid= "geneCBR.preprocessing.dfp"
-  path="3@Preprocessing/1@Feature selection/"
-  />
+    <!-- Additional operation info -->
+    <operation-description
+      name="Discriminant Fuzzy Patterns Filtering"
+      uid= "geneCBR.preprocessing.dfp"
+      path="3@Preprocessing/1@Feature selection/"
+      menuName="Discriminant Fuzzy Patterns Filtering"
+    />
   </extension>
 
 The relevant things are these:
 
-- class. Is the class of the Operation.
-- ``<operation-description>`` tag. Gives more information about the operation.
-  - name. The name of the operation.
-  - uid. An identifier useful to reference this operation from other places.
-  - path. The location in the user interface where the user can find this
-  operation (think in a menu). This ``path`` is defined like a file-system path,
-  but each item can be preceded with a number@, that establishes a desired order
-  of the option relative to others. For example: if a operation is in
-  ``@1Data/`` and other in ``@2Preprocessing/``, the Workbench will create two
-  menus in its main window, placing Data before of Preprocessing.
+- ``class``: the Java class of the Operation.
+- ``<operation-description>`` tag: allows you to define more information about the operation.
+
+  - ``name``: the name of the operation. Use this to override the name defined in the ``@Operation``	
+    annotation.
+  - ``uid``: an identifier useful to reference this operation from other places.
+  - ``path``: the location in the user interface where the user can find this
+    operation (think in a menu). This ``path`` is defined like a file-system path,
+    but each item can be preceded with a number@, that establishes a desired order
+    of the option relative to others. For example: if a operation is in
+    ``@1Data/`` and other in ``@2Preprocessing/``, the Workbench will create two
+    menus in its main window, placing Data before of Preprocessing.
+  - ``menuName``: the name which must be used for the operation in menus and toobars. If not 
+    specified, then `name` is used.
 
 .. _validating-input: 
 
