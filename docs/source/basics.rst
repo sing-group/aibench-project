@@ -237,7 +237,7 @@ attributes of this annotation are showed in the following table.
 @Port ``extras``
 ...................
 Additional parameters can be passed here. Parameters are delimited by ``,`` and 
-values are assigned with ``parameter=value``.
+values can be assigned to properties with ``parameter=value``.
 
 File ports
 ~~~~~~~~~~
@@ -316,6 +316,34 @@ port that shows enum constants in a combo box with one row and as the required n
    public void setEnumParameter(Enum enumParameter) {
       this.enumParameter = enumParameter;
    }
+   
+String ports
+~~~~~~~~~~~~
+
+By default, ports of type String accept emtpy Strings as valid values. If you can't
+accept an empty String and you require a value, you can use the ``required`` 
+parameter.
+
+For example, the following code shows the creation two ports of type String. While 
+the second one accepts an empty String, the first one does not and the ``Ok`` button 
+of the dialog will not be enabled until the user had introduced a value.
+
+.. code-block:: java
+
+   @Port(
+      direction = Direction.INPUT, 
+      name = "A required String port", 
+      order = 1, 
+      extras = "required"
+   )
+   public void setNonEmptyString(String nonEmptyString) { }
+
+   @Port(
+      direction = Direction.INPUT, 
+      name = "A String port", 
+      order = 2
+   )
+   public void setString(String string) { }
 
 @Progress Annotation
 ++++++++++++++++++++

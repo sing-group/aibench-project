@@ -8,12 +8,12 @@
  * it under the terms of the GNU Lesser General Public License as
  * published by the Free Software Foundation, either version 3 of the
  * License, or (at your option) any later version.
- * 
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Lesser Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Lesser Public
  * License along with this program.  If not, see
  * <http://www.gnu.org/licenses/lgpl-3.0.html>.
@@ -38,6 +38,8 @@ import javax.swing.JMenuBar;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
 
+import org.apache.log4j.Logger;
+
 import es.uvigo.ei.aibench.core.Core;
 import es.uvigo.ei.aibench.core.ParamSource;
 import es.uvigo.ei.aibench.core.ParamSpec;
@@ -50,12 +52,16 @@ import es.uvigo.ei.aibench.workbench.OperationWrapper;
 import es.uvigo.ei.aibench.workbench.ParamsReceiver;
 import es.uvigo.ei.aibench.workbench.WaitOperationWrapper;
 import es.uvigo.ei.aibench.workbench.Workbench;
+import es.uvigo.ei.aibench.workbench.utilities.PortExtras;
 import es.uvigo.ei.aibench.workbench.utilities.Utilities;
-
 
 public class ClipboardParamProvider extends AbstractParamProvider {
 	final static ImageIcon ICON_OPERATIONS = new ImageIcon(ArrayParamProvider.class.getResource("images/operations.png"));
-	
+	private final static Logger LOGGER = Logger.getLogger(FileParamProvider.class);
+
+	private static final String REQUIRED = "required";
+	private static final String[] KNOWN_PROPERTIES = { REQUIRED };
+
 	private final static FocusListener FOCUS_LISTENER = new FocusAdapter() {
 		public void focusGained(FocusEvent e) {
 			if (e.getComponent() instanceof JComboBox) {
@@ -71,18 +77,20 @@ public class ClipboardParamProvider extends AbstractParamProvider {
 	};
 
 	private JPanel panel = new JPanel(new BorderLayout());
-	private final boolean hasStringConstructor; 
+	private final boolean hasStringConstructor;
 	private JComboBox<Object> combo = null;
 	private JTextField textField = null;
 	private boolean showCreateButton = true;
 	private int countItemsInClipboard = 0;
 
 	private JMenuBar createButton;
-	
+
 	private String nullItemText = "<NULL>";
 
+	private boolean allowTextFieldEmptyString = true;
+
 	public ClipboardParamProvider(ParamsReceiver receiver, Port p, Class<?> clazz, Object operationObject) {
-		super(receiver, p, clazz, operationObject);	
+		super(receiver, p, clazz, operationObject);
 
 		boolean hasStringConstructor;
 		try {
@@ -92,29 +100,37 @@ public class ClipboardParamProvider extends AbstractParamProvider {
 			hasStringConstructor = false;
 		}
 		this.hasStringConstructor = hasStringConstructor;
-		
+
 		List<ClipboardItem> listItems = this.listClibpoardItems();
 		List<ClipboardItem> listTransformables = this.listClipboardTransformables();
 		listTransformables.removeAll(listItems);
-		
+
 		this.countItemsInClipboard = listItems.size() + listTransformables.size();
+
+		this.parseExtras(p.extras());
 	}
-	
+
+	private void parseExtras(String extrasString) {
+		PortExtras extras = PortExtras.parse(extrasString);
+		this.allowTextFieldEmptyString = !extras.containsProperty(REQUIRED);
+		PortExtras.warnUnknownExtraProperties(extras, LOGGER, true, KNOWN_PROPERTIES);
+	}
+
 	public synchronized JComponent getComponent() {
 		this.reloadComponent();
 
 		this.createButton = new JMenuBar();
-		JMenu menu = this.getOperationsWhichGeneratesPopup(clazz); 
+		JMenu menu = this.getOperationsWhichGeneratesPopup(clazz);
 		if (menu != null) {
 			this.createButton.add(menu);
 		}
-		
+
 		if (this.showCreateButton){
 			this.panel.add(this.createButton, BorderLayout.EAST);
 		}
-		
+
 		return this.panel;
-		
+
 	}
 	private ClipboardParamListener listener = null;
 	private class ClipboardParamListener implements ClipboardListener {
@@ -126,45 +142,45 @@ public class ClipboardParamProvider extends AbstractParamProvider {
 			reloadComponent();
 		}
 	};
-	
+
 	/**
 	 * @param nullItemText the nullItemText to set
 	 */
 	public void setNullItemText(String nullItemText) {
 		this.nullItemText = nullItemText;
 	}
-	
+
 	/**
 	 * @return the nullItemText
 	 */
 	public String getNullItemText() {
 		return this.nullItemText;
 	}
-	
+
 	public int countClipboardItems() {
 		return this.countItemsInClipboard;
 	}
-	
+
 	public boolean isShowingCombo() {
 		return this.combo != null;
 	}
-	
+
 	public boolean isShowingTextField() {
 		return this.textField != null;
 	}
-	
+
 	public boolean hasStringConstructor() {
 		return this.hasStringConstructor;
 	}
-	
+
 	public JComboBox<Object> getCombo() {
 		return this.combo;
 	}
-	
+
 	public JTextField getTextField() {
 		return this.textField;
 	}
-	
+
 	public synchronized JComponent getCurrentComponent() {
 		if (this.isShowingCombo()) {
 			return this.getCombo();
@@ -174,7 +190,7 @@ public class ClipboardParamProvider extends AbstractParamProvider {
 			return null;
 		}
 	}
-	
+
 	public synchronized String getCurrentString() {
 		if (this.isShowingCombo()) {
 			if (this.combo.getSelectedItem() instanceof NullItem) {
@@ -192,14 +208,14 @@ public class ClipboardParamProvider extends AbstractParamProvider {
 			return "";
 		}
 	}
-	
+
 	public synchronized void clearFields() {
 		if (this.isShowingCombo())
 			this.combo.setSelectedIndex(-1);
 		else if (this.isShowingTextField())
 			this.textField.setText("");
 	}
-	
+
 	public synchronized void setCurrentString(String string) {
 		if (this.hasStringConstructor) {
 			if (this.isShowingCombo()) {
@@ -209,10 +225,10 @@ public class ClipboardParamProvider extends AbstractParamProvider {
 			}
 		}
 	}
-	
+
 	private List<ClipboardItem> listClibpoardItems() {
 		List<ClipboardItem> items = new ArrayList<ClipboardItem>();
-		
+
 		List<ClipboardItem> clipboardItems = Core.getInstance().getClipboard().getItemsByClass(this.clazz);
 		ext: for (ClipboardItem item : clipboardItems) {
 			for (ClipboardItem yetAdded : items) {
@@ -220,14 +236,14 @@ public class ClipboardParamProvider extends AbstractParamProvider {
 			}
 			items.add(item);
 		}
-		
+
 		return items;
 	}
-	
-	
+
+
 	private List<ClipboardItem> listClipboardTransformables() {
 		List<ClipboardItem> items = new ArrayList<ClipboardItem>();
-		
+
 		//transformable elements
 		List<Transformer> transformers = Core.getInstance().getTransformersByDestiny(this.clazz);
 		List<ClipboardItem> clipboardItems = Core.getInstance().getClipboard().getAllItems();
@@ -242,17 +258,17 @@ public class ClipboardParamProvider extends AbstractParamProvider {
 				}
 			}
 		}
-		
+
 		return items;
 	}
-	
+
 	private synchronized void reloadComponent() {
 		List<ClipboardItem> listItems = this.listClibpoardItems();
 		List<ClipboardItem> listTransformables = this.listClipboardTransformables();
 		listTransformables.removeAll(listItems);
-		
+
 		this.countItemsInClipboard = listItems.size() + listTransformables.size();
-		
+
 		final String lastText = this.getCurrentString();
 		if (!this.hasStringConstructor || this.countItemsInClipboard > 0 || this.port.allowNull()) {
 			final Object lastItem;  // for selecting again if this item continues in the clipboard
@@ -272,7 +288,7 @@ public class ClipboardParamProvider extends AbstractParamProvider {
 				this.combo.addActionListener(this);
 				this.combo.addFocusListener(ClipboardParamProvider.FOCUS_LISTENER);
 			}
-			
+
 			combo.removeAllItems();
 			if (this.hasStringConstructor) {
 				combo.setEditable(true);
@@ -281,17 +297,17 @@ public class ClipboardParamProvider extends AbstractParamProvider {
 				combo.setEditable(false);
 				combo.removeKeyListener(this);
 			}
-			
+
 			int itemindex = 0;
 			if (listItems != null){
 				for (ClipboardItem item : listItems) {
 					combo.addItem(item);
-					
+
 					if (lastItem != null && item == lastItem){
-						combo.setSelectedIndex(itemindex); 
+						combo.setSelectedIndex(itemindex);
 						valueSetted = true;
 					}
-					
+
 					itemindex++;
 					if (!combo.isEditable() || lastText == null || lastText.length() == 0) {
 						if (ParamsWindow.preferredClipboardItem!=null && ParamsWindow.preferredClipboardItem == item){
@@ -301,24 +317,24 @@ public class ClipboardParamProvider extends AbstractParamProvider {
 					}
 				}
 			}
-			
+
 			if (combo.isEditable() && !valueSetted) {
 				if (lastText != null && lastText.length() > 0) {
 					combo.setSelectedItem(lastText);
-					valueSetted = true;					
+					valueSetted = true;
 				} else if (!this.port.defaultValue().equals("")) {
 					combo.setSelectedItem(this.port.defaultValue());
 					valueSetted = true;
 				}
 			}
-			
+
 			//transformable elements
 			List<Transformer> transformers = Core.getInstance().getTransformersByDestiny(this.clazz);
 			for(ClipboardItem item : listTransformables/*Core.getInstance().getClipboard().getAllItems()*/){
 //				if (listItems.indexOf(item)==-1){ //not added yet!
 					for (Transformer t : transformers) {
 						if (item.getUserData() != null && t.getSourceType().isAssignableFrom(item.getUserData().getClass())){
-							TransformerClipboardItem tci =new TransformerClipboardItem(item, t); 
+							TransformerClipboardItem tci =new TransformerClipboardItem(item, t);
 							combo.addItem(tci);
 							if (ParamsWindow.preferredClipboardItem!=null && ParamsWindow.preferredClipboardItem == item){
 								combo.setSelectedItem(tci);
@@ -327,7 +343,7 @@ public class ClipboardParamProvider extends AbstractParamProvider {
 					}
 //				}
 			}
-			
+
 			//allowNull
 			if (this.port.allowNull()) {
 				combo.addItem(new NullItem());
@@ -355,7 +371,7 @@ public class ClipboardParamProvider extends AbstractParamProvider {
 				this.textField.setText(lastText);
 			}
 		}
-		
+
 		this.adjustComponentWidth();
 		this.addComponentToPanel();
 
@@ -364,7 +380,7 @@ public class ClipboardParamProvider extends AbstractParamProvider {
 			Core.getInstance().getClipboard().addClipboardListener(this.listener);
 		}
 	}
-	
+
 	private void addComponentToPanel() {
 		if (this.combo != null) {
 			this.panel.add(this.combo, BorderLayout.CENTER);
@@ -372,7 +388,7 @@ public class ClipboardParamProvider extends AbstractParamProvider {
 			this.panel.add(this.textField, BorderLayout.CENTER);
 		}
 	}
-	
+
 	private void adjustComponentWidth() {
 		JComponent component = this.getCurrentComponent();
 		if (component != null) {
@@ -385,7 +401,7 @@ public class ClipboardParamProvider extends AbstractParamProvider {
 			}
 		}
 	}
-	
+
 	public void finish() {
 		if (this.listener != null)
 			Core.getInstance().getClipboard().removeClipboardListener(this.listener);
@@ -396,7 +412,7 @@ public class ClipboardParamProvider extends AbstractParamProvider {
 			return ClipboardParamProvider.this.nullItemText;
 		}
 	}
-	
+
 	protected class TransformerClipboardItem {
 		ClipboardItem item;
 		Transformer transformer;
@@ -412,19 +428,19 @@ public class ClipboardParamProvider extends AbstractParamProvider {
 			}
 		}
 	}
-	
+
 //	class ParamsList {
 //		public final ParamSpec[] params;
 //		public final String[] names;
-//		
+//
 //		public ParamsList(List<ParamSpec> params, List<String> names) {
 //			this(
 //				params.toArray(new ParamSpec[params.size()]),
 //				names.toArray(new String[names.size()])
 //			);
 //		}
-//		
-//		
+//
+//
 //		/**
 //		 * @param params
 //		 * @param names
@@ -434,15 +450,15 @@ public class ClipboardParamProvider extends AbstractParamProvider {
 //			this.names = names;
 //		}
 //	}
-	
+
 	synchronized ParamSpec[] listParamSpecs() {
 		if (this.isShowingCombo() && this.combo.getItemCount() > 0) {
 			final List<ParamSpec> params = new ArrayList<ParamSpec>(this.combo.getItemCount());
 //			final List<String> names = new ArrayList<String>(this.combo.getItemCount());
-			
+
 			for (int i = 0; i < this.combo.getItemCount(); i++) {
 				Object item = this.combo.getItemAt(i);
-				
+
 				if (!(item == null || item instanceof NullItem)) {
 					/*if (this.combo.isEditable()) {
 						params.add(new ParamSpec(this.port.name(), clazz, item.toString(), ParamSource.STRING_CONSTRUCTOR));
@@ -458,7 +474,7 @@ public class ClipboardParamProvider extends AbstractParamProvider {
 					//}
 				}
 			}
-			
+
 			return params.toArray(new ParamSpec[params.size()]);
 		} else if (this.isShowingTextField()) {
 			return new ParamSpec[] { new ParamSpec(this.port.name(), this.clazz, this.textField.getText(), ParamSource.STRING_CONSTRUCTOR) };
@@ -493,7 +509,7 @@ public class ClipboardParamProvider extends AbstractParamProvider {
 			return new ParamSpec(this.port.name(), this.clazz, "", ParamSource.STRING_CONSTRUCTOR);
 		}
 	}
-	
+
 	protected boolean classHasOperations(Class<?> klazz) {
 		for (OperationWrapper wrapper : Workbench.getInstance().getInterceptedOperations()) {
 			for (Object outcomingType : wrapper.getOperationDefinition().getOutcomingArgumentTypes()) {
@@ -501,7 +517,7 @@ public class ClipboardParamProvider extends AbstractParamProvider {
 				if (klazz.isAssignableFrom(clazz)) {
 					return true;
 				}
-				
+
 				for (Transformer t:Core.getInstance().getTransformersBySource(clazz)) {
 					if (klazz.isAssignableFrom(t.getDestinyType())) {
 						return true;
@@ -511,7 +527,7 @@ public class ClipboardParamProvider extends AbstractParamProvider {
 		}
 		return false;
 	}
-	
+
 	protected JMenu getOperationsWhichGeneratesPopup(Class<?> klazz) {
 		HashMap<OperationWrapper, Integer> added= new HashMap<OperationWrapper, Integer>(); //we want to add an operation once
 		JMenu popup = new JMenu();
@@ -521,12 +537,12 @@ public class ClipboardParamProvider extends AbstractParamProvider {
 					if (results!=null){
 						for (ClipboardItem item : results){
 							Workbench.getInstance().getTreeManager().elementRemoved(item);
-						}	
+						}
 						getReceiver().removeAfterTermination(results);
 					}
 				}
 			});
-			
+
 			for (Object outcomingType: wrapper.getOperationDefinition().getOutcomingArgumentTypes()){
 				Class<?> clazz = (Class<?>) outcomingType;
 				if (klazz.isAssignableFrom(clazz)){
@@ -552,20 +568,20 @@ public class ClipboardParamProvider extends AbstractParamProvider {
 		if (popup.getItemCount()==0){
 			return null;
 		}
-		
+
 		popup.setIcon(ClipboardParamProvider.ICON_OPERATIONS);
 		popup.setToolTipText("Create parameter with an operation.");
 //		popup.setText("...");
 		return popup;
 	}
-	
+
 	/**
 	 * @return the showCreateButton
 	 */
 	public boolean isShowCreateButton() {
 		return this.showCreateButton;
 	}
-	
+
 	/**
 	 * @param showCreateButton the showCreateButton to set
 	 */
@@ -586,9 +602,13 @@ public class ClipboardParamProvider extends AbstractParamProvider {
 			if (this.combo != null) {
 				return this.combo.getSelectedItem() != null;
 			} else if (this.textField != null) {
-				return true;
+				return isValidTextFieldValue();
 			}
 		}
 		return true;
+	}
+
+	private boolean isValidTextFieldValue() {
+		return allowTextFieldEmptyString || !this.textField.getText().isEmpty();
 	}
 }
