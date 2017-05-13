@@ -127,7 +127,7 @@
 		<!-- "Welcome screen". You can set any JComponent as welcome screen and it will be added to the main window at start. -->
 		<!--
 		<extension uid="aibench.workbench" name="aibench.workbench.view" >
-			<welcomescreen class="org.myorg.MyComponent" title="Welcome screen"/>
+			<welcomescreen class="org.myorg.MyComponent" title="Welcome screen" closeable="true"/>
 		</extension>
 		-->
 

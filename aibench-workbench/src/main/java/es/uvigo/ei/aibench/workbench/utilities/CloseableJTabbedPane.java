@@ -32,6 +32,7 @@ import javax.swing.BorderFactory;
 import javax.swing.Icon;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
+import javax.swing.JComponent;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JPopupMenu;
@@ -43,20 +44,20 @@ import es.uvigo.ei.aibench.workbench.Workbench;
 
 /**
  * @author Miguel Reboiro-Jato
+ * @author Hugo López-Fernández
  *
  */
 public class CloseableJTabbedPane extends JTabbedPane {
-	/**
-	 * 
-	 */
 	private static final long serialVersionUID = 1L;
 	
+	private static final Border TAB_PANEL_BORDER = 
+		BorderFactory.createEmptyBorder(3, 1, 3, 1);
 	private static final ImageIcon CLOSE_ICON = 
 		new ImageIcon(CloseableJTabbedPane.class.getResource("images/tabclose.png"));
-	private static final Border CLOSE_PANEL_BORDER = 
-		BorderFactory.createEmptyBorder(4, 0, 0, 0);
 	private static final Border CLOSE_BUTTON_BORDER = 
 		BorderFactory.createEmptyBorder(0, 10, 0, 0);
+
+	private static final boolean DEFAULT_ADD_CLOSEABLE = true;
 	
 	private final Icon closeIcon;
 
@@ -86,8 +87,6 @@ public class CloseableJTabbedPane extends JTabbedPane {
 		super(tabPlacement, tabLayoutPolicy);
 		this.closeIcon = closeIcon;
 	}
-	
-	
 
 	public void addTabCloseListener(TabCloseListener listener) {
 		this.listenerList.add(TabCloseListener.class, listener);
@@ -96,7 +95,7 @@ public class CloseableJTabbedPane extends JTabbedPane {
 	public void removeTabCloseListener(TabCloseListener listener) {
 		this.listenerList.remove(TabCloseListener.class, listener);
 	}
-	
+
 	public void fireTabClosingEvent(int index) {
 		final TabCloseEvent event = new TabCloseEvent(this, TabCloseEvent.TAB_CLOSING, index);
 		for (TabCloseListener listener : this.listenerList.getListeners(TabCloseListener.class)) {
@@ -108,6 +107,11 @@ public class CloseableJTabbedPane extends JTabbedPane {
 		}
 	}
 	
+	public boolean isCloseableTabAt(int index) {
+		Component component = this.getTabComponentAt(index);
+		return component != null && CloseTab.class.isInstance(component);
+	}
+	
 	public void fireTabCloseEvent(int index) {
 		final TabCloseEvent event = new TabCloseEvent(this, TabCloseEvent.TAB_CLOSED, index);
 		for (TabCloseListener listener : this.listenerList.getListeners(TabCloseListener.class)) {
@@ -115,30 +119,23 @@ public class CloseableJTabbedPane extends JTabbedPane {
 		}
 	}
 
-	public void addCloseableTab(String title, Component component) {
-		final Component tabComponent = this.add(title, component);
-		final int index = this.indexOfTabComponent(tabComponent);
-		
-		if (index != -1) {
-			this.setTabComponentAt(index, null);
-		}
-	}
-	
-	/* (non-Javadoc)
-	 * @see javax.swing.JTabbedPane#addTab(java.lang.String, java.awt.Component)
-	 */
 	@Override
 	public void addTab(String title, Component component) {
+		addTab(title, component, DEFAULT_ADD_CLOSEABLE);
+	}
+
+	public void addTab(String title, Component component, boolean closeable) {
 		super.addTab(title, component);
 		final int index = this.indexOfComponent(component);
 		if (index != -1) {
-			this.setTabComponentAt(index, new CloseTab());
+			this.setTabComponentAt(index, getTabComponent(closeable));
 		}
 	}
-	
-	/* (non-Javadoc)
-	 * @see javax.swing.JTabbedPane#addTab(java.lang.String, javax.swing.Icon, java.awt.Component)
-	 */
+
+	private Component getTabComponent(boolean closeable) {
+		return closeable ? new CloseTab() : new TabPanel();
+	}
+
 	@Override
 	public void addTab(String title, Icon icon, Component component) {
 		super.addTab(title, icon, component);
@@ -147,10 +144,7 @@ public class CloseableJTabbedPane extends JTabbedPane {
 			this.setTabComponentAt(index, new CloseTab());
 		}
 	}
-	
-	/* (non-Javadoc)
-	 * @see javax.swing.JTabbedPane#addTab(java.lang.String, javax.swing.Icon, java.awt.Component, java.lang.String)
-	 */
+
 	@Override
 	public void addTab(String title, Icon icon, Component component, String tip) {
 		super.addTab(title, icon, component, tip);
@@ -159,48 +153,62 @@ public class CloseableJTabbedPane extends JTabbedPane {
 			this.setTabComponentAt(index, new CloseTab());
 		}
 	}
-	
-	/* (non-Javadoc)
-	 * @see javax.swing.JTabbedPane#removeTabAt(int)
-	 */
+
 	@Override
 	public void removeTabAt(int index) {
 		super.removeTabAt(index);
 		this.fireTabCloseEvent(index);
 	}
 	
-	protected class CloseTab extends JPanel {
-		/**
-		 * 
-		 */
+	protected class TabPanel extends JPanel {
 		private static final long serialVersionUID = 1L;
-		
-		public CloseTab() {
+
+		public TabPanel() {
 			super(new BorderLayout());
-			
-			this.setBorder(CloseableJTabbedPane.CLOSE_PANEL_BORDER);
+
+			this.init();
+		}
+
+		protected void init() {
+			this.setBorder(CloseableJTabbedPane.TAB_PANEL_BORDER);
 			this.setOpaque(false);
 			
-			final JLabel label = new JLabel() {
-				private static final long serialVersionUID = 1L;
-
-				@Override
-				public Icon getIcon() {
-					final int i = CloseableJTabbedPane.this.indexOfTabComponent(CloseTab.this);
-					
-					return (i == -1)?null:CloseableJTabbedPane.this.getIconAt(i);
-				}
-				
-				@Override
-				public String getText() {
-					final int i = CloseableJTabbedPane.this.indexOfTabComponent(CloseTab.this);
-					
-					return (i == -1)?null:CloseableJTabbedPane.this.getTitleAt(i);
-				}
-			};
+			final JLabel label = new TabLabel(this);
 			label.setVerticalTextPosition(SwingConstants.CENTER);
 			
 			this.add(label, BorderLayout.CENTER);
+		}
+	}
+	
+	protected class TabLabel extends JLabel {
+		private static final long serialVersionUID = 1L;
+		private JComponent component;
+		
+		public TabLabel(JComponent component) {
+			this.component = component;
+		}
+		
+		@Override
+		public Icon getIcon() {
+			final int i = CloseableJTabbedPane.this.indexOfTabComponent(component);
+
+			return (i == -1) ? null : CloseableJTabbedPane.this.getIconAt(i);
+		}
+
+		@Override
+		public String getText() {
+			final int i = CloseableJTabbedPane.this.indexOfTabComponent(component);
+
+			return (i == -1) ? null : CloseableJTabbedPane.this.getTitleAt(i);
+		}		
+	}
+	
+	protected class CloseTab extends TabPanel {
+		private static final long serialVersionUID = 1L;
+
+		@Override
+		protected void init() {
+			super.init();
 			this.add(new CloseButton(), BorderLayout.EAST);
 		}
 		
@@ -227,8 +235,9 @@ public class CloseableJTabbedPane extends JTabbedPane {
 			}
 	
 			private boolean mustShowPopupMenu() {
-				return Workbench.CONFIG.getProperty("documentviewer.show_close_tabs_menu")!=null 
-						&& Workbench.CONFIG.getProperty("documentviewer.show_close_tabs_menu").equals("true");
+				String showCloseTabsMenu = Workbench.CONFIG.getProperty("documentviewer.show_close_tabs_menu");
+
+				return showCloseTabsMenu != null && showCloseTabsMenu.equals("true");
 			}
 
 			public JPopupMenu getComponentPopupMenu() {

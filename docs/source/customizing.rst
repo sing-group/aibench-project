@@ -655,5 +655,8 @@ area when the application starts.
 .. code-block:: xml
 
   <extension uid="aibench.workbench" name="aibench.workbench.view" >
-    <welcomescreen class="org.myorg.MyComponent" title="Welcome screen"/>
+    <welcomescreen class="org.myorg.MyComponent" title="Welcome screen" closeable="true"/>
   </extension>
+  
+The ``closeable`` property allows you to specify whether this welcome screen is closeable
+or not.

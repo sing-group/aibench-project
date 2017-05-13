@@ -402,8 +402,14 @@ public class MainWindow extends JFrame {
 	 * @param tabIndex the index of the tab that should be removed.
 	 */
 	protected void removeTabAt(int tabIndex) {
-		this.documentTabbedPane.removeTabAt(tabIndex);
-		this.updateDataMaps(tabIndex);
+		if (isCloseableTabAt(tabIndex)) {
+			this.documentTabbedPane.removeTabAt(tabIndex);
+			this.updateDataMaps(tabIndex);
+		}
+	}
+
+	protected boolean isCloseableTabAt(int tabIndex) {
+		return documentTabbedPane.isCloseableTabAt(tabIndex);
 	}
 
 	private JMenuBar getJJMenuBar() {

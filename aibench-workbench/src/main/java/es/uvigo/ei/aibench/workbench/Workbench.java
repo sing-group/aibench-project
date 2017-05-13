@@ -102,13 +102,15 @@ import es.uvigo.ei.aibench.workbench.utilities.Utilities;
  * configurable through the /conf/template.xml file</li>
  * </ul>
  * 
- * @author Ruben Dominguez Carbajales, Daniel Glez-Peña
+ * @author Ruben Dominguez Carbajales
+ * @author Daniel Glez-Peña
+ * @author Hugo López-Fernández
  */
 public class Workbench implements IGenericGUI, ClipboardListener {
 	/**
 	 * Logger
 	 */
-	final static Logger logger = Logger.getLogger(Workbench.class.getName());
+	final static Logger LOGGER = Logger.getLogger(Workbench.class.getName());
 
 	/**
 	 * Singleton reference
@@ -143,6 +145,7 @@ public class Workbench implements IGenericGUI, ClipboardListener {
 
 	private JComponent welcomeScreen;
 	private String welcomeScreenTitle;
+	private boolean welcomeScreenCloseable;
 	
 	/**
 	 * Custom operation icons
@@ -380,10 +383,10 @@ public class Workbench implements IGenericGUI, ClipboardListener {
 					this.fireDataShowed(data);
 
 				} else {
-					logger.warn("Not available views");
+					LOGGER.warn("Not available views");
 				}
 			} else {
-				logger.warn("Workbench.showData(): Data is NULL");
+				LOGGER.warn("Workbench.showData(): Data is NULL");
 			}
 		}
 	}
@@ -406,8 +409,8 @@ public class Workbench implements IGenericGUI, ClipboardListener {
 			this.setActiveData(this.openedItems.get(0));
 		}
 
-		if (logger.getEffectiveLevel().equals(Level.DEBUG))
-			logger.debug("Closed " + (data.getUserData()!=null?data.getUserData().toString().substring(0, Math.min(data.getUserData().toString().length(),100)):" null item"));
+		if (LOGGER.getEffectiveLevel().equals(Level.DEBUG))
+			LOGGER.debug("Closed " + (data.getUserData()!=null?data.getUserData().toString().substring(0, Math.min(data.getUserData().toString().length(),100)):" null item"));
 		
 	}
 	
@@ -1126,23 +1129,23 @@ public class Workbench implements IGenericGUI, ClipboardListener {
 	}
 
 	public void info(String info) {
-		logger.info(info);
+		LOGGER.info(info);
 		if(System.getProperty("aibench.nogui")!=null) return;
 		JOptionPane.showMessageDialog(null, info, "Information", JOptionPane.INFORMATION_MESSAGE);
 	}
 
 	public void warn(String info) {
-		logger.warn(info);
+		LOGGER.warn(info);
 		if(System.getProperty("aibench.nogui")!=null)return;
 		JOptionPane.showMessageDialog(null, info, "Warning", JOptionPane.WARNING_MESSAGE);
 
 	}
 
 	public void error(final String message) {
-		if (logger.getEffectiveLevel().equals(Level.DEBUG))
-			logger.debug("Error message received: " + message);
+		if (LOGGER.getEffectiveLevel().equals(Level.DEBUG))
+			LOGGER.debug("Error message received: " + message);
 		
-		logger.error(message);
+		LOGGER.error(message);
 		if (System.getProperty("aibench.nogui") != null)
 			return;
 		
@@ -1154,7 +1157,7 @@ public class Workbench implements IGenericGUI, ClipboardListener {
 	}
 	
 	public void error(final Throwable exception) {
-		logger.error(exception.toString());
+		LOGGER.error(exception.toString());
 
 		final ErrorNotifier notifier = this.errorNotifierProvider.createErrorNotifier();
 		
@@ -1162,7 +1165,7 @@ public class Workbench implements IGenericGUI, ClipboardListener {
 	}
 	
 	public void error(final Throwable exception, final String message) {
-		logger.error(message, exception);
+		LOGGER.error(message, exception);
 
 		final ErrorNotifier notifier = this.errorNotifierProvider.createErrorNotifier();
 		
@@ -1341,7 +1344,7 @@ public class Workbench implements IGenericGUI, ClipboardListener {
 		this.mainWindow = new MainWindow(interceptedOperations);
 		
 		if (this.welcomeScreen != null) {
-			this.mainWindow.getDocumentTabbedPane().addTab(this.welcomeScreenTitle, this.welcomeScreen);
+			this.mainWindow.getDocumentTabbedPane().addTab(this.welcomeScreenTitle, this.welcomeScreen, this.welcomeScreenCloseable);
 		}
 		
 		if (Boolean.parseBoolean(Core.CONFIG.getProperty("help.enabled", "false"))) {
@@ -1523,7 +1526,7 @@ public class Workbench implements IGenericGUI, ClipboardListener {
 
 						putItemInSlot(slotID, name, componentID, component);
 					} catch (Exception e) {
-						logger.error("Error creating component", e);
+						LOGGER.error("Error creating component", e);
 					}
 				}
 			}
@@ -1576,7 +1579,7 @@ public class Workbench implements IGenericGUI, ClipboardListener {
 					int maxSize = Integer.parseInt(CONFIG.getProperty("logarea.maxsize"));
 					TextAreaAppender.MAXSIZE = maxSize;
 				}catch(NumberFormatException e) {
-					logger.warn("logarea.maxsize should be integer");
+					LOGGER.warn("logarea.maxsize should be integer");
 				}
 			}
 		}
@@ -1635,22 +1638,34 @@ public class Workbench implements IGenericGUI, ClipboardListener {
 						title = "Welcome screen";
 					}
 
+					String closeableStr = node.getAttribute("closeable");
+					boolean closeable = true;
+					if (closeableStr != null) {
+						closeableStr = closeableStr.toLowerCase();
+						if(!closeableStr.equals("false") && !closeableStr.equals("true")) {
+							LOGGER.warn("Invalid value for closeable in welcomescreen extension: " + closeableStr);
+						} else {
+							closeable = Boolean.valueOf(closeableStr);
+						}
+					}
+
 					try {
 						final Class<?> extensionClass = extension.getPlugin().getPluginClassLoader().loadClass(className);
 						if (JComponent.class.isAssignableFrom(extensionClass)) {
 							try {
 								this.welcomeScreen = (JComponent) extensionClass.newInstance();
 								this.welcomeScreenTitle = title;
+								this.welcomeScreenCloseable = closeable;
 							} catch (InstantiationException | IllegalAccessException e) {
-								logger.warn(extensionClass + " can't be instantiated, ignoring extensiong point");
+								LOGGER.warn(extensionClass + " can't be instantiated, ignoring extensiong point");
 								continue;
 							}
 						} else {
-							logger.warn(extensionClass + " is not a JComponent, ignoring extensiong point");
+							LOGGER.warn(extensionClass + " is not a JComponent, ignoring extensiong point");
 							continue;
 						}
 					} catch (ClassNotFoundException e) {
-						logger.warn(e.getMessage() + " ignoring extensiong point");
+						LOGGER.warn(e.getMessage() + " ignoring extensiong point");
 					}
 					
 					/**
