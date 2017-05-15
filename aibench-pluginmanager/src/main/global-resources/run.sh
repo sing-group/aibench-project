@@ -4,7 +4,7 @@
 # #%L
 # The AIBench Plugin Manager Plugin
 # %%
-# Copyright (C) 2006 - 2016 Daniel Glez-Peña and Florentino Fdez-Riverola
+# Copyright (C) 2006 - 2017 Daniel Glez-Peña and Florentino Fdez-Riverola
 # %%
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU Lesser General Public License as
