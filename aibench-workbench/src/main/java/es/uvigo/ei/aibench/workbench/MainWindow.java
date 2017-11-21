@@ -109,6 +109,7 @@ public class MainWindow extends JFrame {
 	// STATUS BAR
 	String STATUS_DEFAULT_TEXT = Workbench.CONFIG.getProperty("mainwindow.statusbar.text");
 	private JLabel statusBar = new JLabel(STATUS_DEFAULT_TEXT);
+	private String maximizeOnStart = Workbench.CONFIG.getProperty("mainwindow.maximized");
 
 	// TOOLBAR NOTE: added by paulo maia
 	private JToolBar toolbar = null;
@@ -181,6 +182,9 @@ public class MainWindow extends JFrame {
 		initialize();
 
 		this.setSize(new Dimension(800,600));
+		if(this.maximizeOnStart.equalsIgnoreCase("true")) {
+			this.setExtendedState(JFrame.MAXIMIZED_BOTH);
+		}
 	}
 
 	public void packSplitters() {

@@ -47,6 +47,16 @@ behavior. They are all inside the ``src/main/global-resources/conf`` directory.
       AIBench project, remember that your configuration file will not be
       *active* in that project.
       
+Main window configuration
+-------------------------
+
+The ``workbench.conf`` allows you establish the following options to customize the
+main window:
+    
+    - ``mainwindow.title``: it allows you to define the title of the main window.
+    - ``mainwindow.maximized``: it can be ``true`` or ``false`` and allows
+      you to define if it must be maximized when the application starts or not.
+
 Menu bar configuration
 ----------------------
 
