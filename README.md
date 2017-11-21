@@ -22,6 +22,7 @@ Examples
 The following are examples of scientific applications developed on top of the AIBench framework:
 * [LA-iMageS](http://www.la-images.net/).
 * [Mass-Up](http://www.sing-group.org/mass-up/).
+* [S2P](http://www.sing-group.org/s2p/).
 * [OptFlux](http://www.optflux.org/).
 * [OptFerm](http://darwin.di.uminho.pt/optferm/).
 * [Biofilms Experiment Workbench](http://www.sing-group.org/bew/).
