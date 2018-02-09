@@ -4,7 +4,7 @@
 
 	<groupId>es.uvigo.ei.sing</groupId>
 	<artifactId>aibench-project</artifactId>
-	<version>2.10.0</version>
+	<version>2.10.1</version>
 	<!--
 		WARNING: change version using:
 			mvn versions:set -DnewVersion=[new_version]
@@ -17,9 +17,16 @@
 	-->
 	
 	<name>The AIBench Project</name>
+  <description>A Java application development framework focused on GUI-based scientific applications</description>
 	<inceptionYear>2006</inceptionYear>
 	<url>http://www.aibench.org</url>
 	<packaging>pom</packaging>
+
+  <scm>
+    <url>https://github.com/sing-group/aibench-project</url>
+    <connection>scm:git:git://github.com/sing-group/aibench-project.git</connection>
+    <developerConnection>scm:git:git@github.com:sing-group/aibench-project.git</developerConnection>
+  </scm>
 
 	<developers>
 		<developer>
@@ -83,6 +90,7 @@
 		<license-maven-plugin.version>1.8</license-maven-plugin.version>
 		<maven-compiler-plugin.version>3.1</maven-compiler-plugin.version>
 		<maven-dependency-plugin.version>3.0.0</maven-dependency-plugin.version>
+    <maven-gpg-plugin.version>1.6</maven-gpg-plugin.version>
 		<maven-javadoc-plugin.version>2.10.4</maven-javadoc-plugin.version>
 		<maven-jar-plugin.version>3.0.2</maven-jar-plugin.version>
 		<maven-resources-plugin.version>3.0.2</maven-resources-plugin.version>
@@ -94,20 +102,6 @@
 		<license.organizationName>SING Group (University of Vigo)</license.organizationName>
 		<license.addJavaLicenseAfterPackage>false</license.addJavaLicenseAfterPackage>
 	</properties>
-
-	<distributionManagement>
-		<repository>
-			<id>sing-maven-releases</id>
-			<name>SING Maven Releases</name>
-			<url>https://maven.sing-group.org/repository/maven-releases/</url>
-		</repository>
-
-		<snapshotRepository>
-			<id>sing-maven-releases</id>
-			<name>SING Maven Snapshots</name>
-			<url>https://maven.sing-group.org/repository/maven-snapshots/</url>
-		</snapshotRepository>
-	</distributionManagement>
 
 	<repositories>
 		<repository>
@@ -186,6 +180,12 @@
 					<artifactId>maven-compiler-plugin</artifactId>
 					<version>${maven-compiler-plugin.version}</version>
 				</plugin>
+
+        <plugin>
+          <groupId>org.apache.maven.plugins</groupId>
+          <artifactId>maven-gpg-plugin</artifactId>
+          <version>${maven-gpg-plugin.version}</version>
+        </plugin>
 
 				<plugin>
 					<groupId>org.apache.maven.plugins</groupId>
@@ -280,4 +280,72 @@
 			</plugin>
 		</plugins>
 	</build>
+
+  <profiles>
+    <profile>
+      <id>sign-artifacts</id>
+
+      <build>
+        <plugins>
+          <plugin>
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-gpg-plugin</artifactId>
+            <executions>
+              <execution>
+                <id>sign-artifacts</id>
+                <phase>verify</phase>
+                <goals>
+                  <goal>sign</goal>
+                </goals>
+                <configuration>
+                  <keyname>${aibench.gpg.keyname}</keyname>
+                  <passphraseServerId>${aibench.gpg.passphraseServerId}</passphraseServerId>
+                </configuration>
+              </execution>
+            </executions>
+          </plugin>
+        </plugins>
+      </build>
+    </profile>
+
+    <profile>
+      <id>sing-repository</id>
+      <activation>
+        <activeByDefault>false</activeByDefault>
+      </activation>
+      <distributionManagement>
+        <repository>
+          <id>sing-maven-releases</id>
+          <name>SING Maven Releases</name>
+          <url>https://maven.sing-group.org/repository/maven-releases</url>
+        </repository>
+
+        <snapshotRepository>
+          <id>sing-maven-snapshots</id>
+          <name>SING Maven Snapshots</name>
+          <url>https://maven.sing-group.org/repository/maven-snapshots</url>
+        </snapshotRepository>
+      </distributionManagement>
+    </profile>
+
+    <profile>
+      <id>maven-central-repository</id>
+      <activation>
+        <activeByDefault>false</activeByDefault>
+      </activation>
+      <distributionManagement>
+        <repository>
+          <id>maven-central-releases</id>
+          <name>Maven Central Releases</name>
+          <url>https://oss.sonatype.org/service/local/staging/deploy/maven2</url>
+        </repository>
+
+        <snapshotRepository>
+          <id>maven-central-snapshots</id>
+          <name>Maven Central Snapshots</name>
+          <url>https://oss.sonatype.org/content/repositories/snapshots</url>
+        </snapshotRepository>
+      </distributionManagement>
+    </profile>
+  </profiles>
 </project>
