@@ -145,7 +145,8 @@ public class PortExtras {
 	 * @param knownProperties the array of known properties
 	 */
 	public static void warnUnknownExtraProperties(PortExtras extras, Logger logger, boolean ignoreCase,
-			String... knownProperties) {
+		String... knownProperties
+	) {
 		for (String property : extras.getProperties()) {
 			boolean known = false;
 			for(String knownProprety : knownProperties) {

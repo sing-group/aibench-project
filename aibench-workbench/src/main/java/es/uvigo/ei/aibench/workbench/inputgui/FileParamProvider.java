@@ -65,7 +65,7 @@ public class FileParamProvider extends AbstractParamProvider {
 	private static final String SELECTION_MODE_DIRECTORIES = "directories";
 	private static final String SELECTION_MODE_FILES = "files";
 
-	private static final String[] KNOWN_PROPERTIES = {
+	public static final String[] KNOWN_PROPERTIES = {
 		CASE_SENSITIVE_FILTERS_EXTRAS_PROPERTY,
 		FILTERS_EXTRAS_PROPERTY,
 		FILTERS_EXTRAS_SELECTION_MODE

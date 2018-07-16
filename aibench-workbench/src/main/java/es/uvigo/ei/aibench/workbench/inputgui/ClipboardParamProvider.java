@@ -21,13 +21,19 @@
  */
 package es.uvigo.ei.aibench.workbench.inputgui;
 
+import static es.uvigo.ei.aibench.workbench.utilities.PortExtras.parse;
+import static es.uvigo.ei.aibench.workbench.utilities.PortExtras.warnUnknownExtraProperties;
+import static java.util.Arrays.asList;
+
 import java.awt.BorderLayout;
 import java.awt.Dimension;
 import java.awt.event.FocusAdapter;
 import java.awt.event.FocusEvent;
 import java.awt.event.FocusListener;
+import java.io.File;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.LinkedList;
 import java.util.List;
 
 import javax.swing.ImageIcon;
@@ -57,7 +63,7 @@ import es.uvigo.ei.aibench.workbench.utilities.Utilities;
 
 public class ClipboardParamProvider extends AbstractParamProvider {
 	final static ImageIcon ICON_OPERATIONS = new ImageIcon(ArrayParamProvider.class.getResource("images/operations.png"));
-	private final static Logger LOGGER = Logger.getLogger(FileParamProvider.class);
+	private final static Logger LOGGER = Logger.getLogger(ClipboardParamProvider.class);
 
 	private static final String REQUIRED = "required";
 	private static final String[] KNOWN_PROPERTIES = { REQUIRED };
@@ -111,9 +117,19 @@ public class ClipboardParamProvider extends AbstractParamProvider {
 	}
 
 	private void parseExtras(String extrasString) {
-		PortExtras extras = PortExtras.parse(extrasString);
+		PortExtras extras = parse(extrasString);
 		this.allowTextFieldEmptyString = !extras.containsProperty(REQUIRED);
-		PortExtras.warnUnknownExtraProperties(extras, LOGGER, true, KNOWN_PROPERTIES);
+
+		if (clazz.getComponentType() != null && clazz.getComponentType().equals(File.class)) {
+			List<String> knownProperties = new LinkedList<>();
+			knownProperties.addAll(asList(KNOWN_PROPERTIES));
+			knownProperties.addAll(asList(FileParamProvider.KNOWN_PROPERTIES));
+
+			warnUnknownExtraProperties(extras, LOGGER, true,
+				knownProperties.toArray(new String[knownProperties.size()]));
+		} else {
+			warnUnknownExtraProperties(extras, LOGGER, true, KNOWN_PROPERTIES);
+		}
 	}
 
 	public synchronized JComponent getComponent() {
